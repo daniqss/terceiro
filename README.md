@@ -84,3 +84,22 @@ src/main.py # Debe tener permisos de ejecución, chmod +x src/main.py
 # Para salir del entorno
 deactivate # En Windows: venv\Scripts\deactivate
 ```
+Para que funcione correctamente, debe estar corriendo la API en el puerto 8000
+
+### Cómo ejecutar la API
+
+En otro terminal ejecutamos
+```bash
+cd medications-backend
+python3 -m venv venv
+source venv/bin/activate # En Windows: venv\Scripts\activate, lo tendremos que hacer cada vez que queramos arrancar la API
+pip install -r requirements.txt
+
+# Para ejecutar
+fastapi run
+
+# Para salir del entorno
+deactivate # En Windows: venv\Scripts\deactivate
+```
+
+Para comprobar que funciona miramos en http://localhost:8000/patients si devuelve JSON
