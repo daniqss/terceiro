@@ -1,0 +1,4 @@
+pygobject-stubs
+pygobject
+pycairo
+requests

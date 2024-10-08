@@ -28,7 +28,7 @@ Este repositorio contiene:
 
 - Apellido1 Apellido2, Nombre : github username : udc username : role
 - Apellido1 Apellido2, Nombre : github username : udc username : role
-- Apellido1 Apellido2, Nombre : github username : udc username : role
+- Queijo Seoane, Daniel : github daniqss : udc daniel.queijo.seoane@udc.es : Analista
 
 
 ## Pasos para realizar la práctica
@@ -67,3 +67,20 @@ Este repositorio contiene:
 
 14. Presentar la práctica ya finializada.
  
+
+## Cómo ejecutar
+
+```bash
+# Preparamos el entorno
+python3 -m venv venv
+source venv/bin/activate # En Windows: venv\Scripts\activate, lo tendremos que hacer en cada terminal
+
+# Instalamos las dependencias(las que instalamos con pip)
+pip install -r requirements.txt
+
+# Ejecutamos la aplicación
+src/main.py # Debe tener permisos de ejecución, chmod +x src/main.py
+
+# Para salir del entorno
+deactivate # En Windows: venv\Scripts\deactivate
+```
