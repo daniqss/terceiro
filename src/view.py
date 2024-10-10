@@ -32,7 +32,7 @@ class View(Adw.Application):
         menu_button.set_popover(popover_menu)
         header_bar.pack_end(menu_button)
 
-        # Crear una caja principal con un pane dividido
+        # Crear una caja principal con un panel dividido
         pane = Gtk.Paned.new(Gtk.Orientation.HORIZONTAL)
         main_box.append(pane)
 
