@@ -32,12 +32,12 @@ class View(Adw.Application):
         menu_button.set_popover(popover_menu)
         header_bar.pack_end(menu_button)
 
-        # Crear una caja principal con un panel dividido
-        pane = Gtk.Paned.new(Gtk.Orientation.HORIZONTAL)
-        main_box.append(pane)
+        # Create a main box with a split panel
+        paned = Gtk.Paned.new(Gtk.Orientation.HORIZONTAL)
+        main_box.append(paned)
 
         left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        pane.set_start_child(left_box)
+        paned.set_start_child(left_box)
 
         label_patients = Gtk.Label(label="Patients")
         left_box.append(label_patients)
@@ -58,7 +58,7 @@ class View(Adw.Application):
             listbox_patients.append(row)
 
         right_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        pane.set_end_child(right_box)
+        paned.set_end_child(right_box)
 
         label_medications = Gtk.Label(label="Medications")
         right_box.append(label_medications)
