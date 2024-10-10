@@ -18,7 +18,10 @@ class Controller:
         ]
 
         # Filtrar los medicamentos por patient_id
-        return [med for med in medications if med["patient_id"] == patient_id]
+        return medications
+
+    def get_posologies(self, patient_id, medication_id):
+        return [{"medication_id":1,"id":1,"hour":22,"minute":0},{"medication_id":1,"id":2,"hour":10,"minute":0}]
 
     def get_patients(self) -> List[dict]:
         return [

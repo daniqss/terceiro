@@ -5,7 +5,6 @@ from gi.repository import Adw, Gio, Gtk, Pango
 
 from src.utils import APPLICATION_ID
 
-
 class View(Adw.Application):
     def __init__(self, handler, *args, **kwargs):
         super().__init__(*args, application_id=APPLICATION_ID, **kwargs)
@@ -157,8 +156,8 @@ class View(Adw.Application):
             self.medication_list_box.append(empty_label)
 
     def create_medication_row(self, medication):
+        container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-
         row.set_margin_top(10)
         row.set_margin_bottom(10)
         row.set_margin_start(10)
@@ -173,13 +172,57 @@ class View(Adw.Application):
         row.append(label_dosage)
         row.append(label_duration)
         row.append(label_start_date)
- 
-        button = Gtk.Button(label="Edit") 
-        button.connect("clicked", self.on_edit_medication, medication['id']) 
-        button.set_halign(Gtk.Align.END)  
-        row.append(button)
 
-        return row
+        expander_button = Gtk.Button(label="Show posologies")
+        expander_button.set_halign(Gtk.Align.END)
+        expander_button.set_vexpand(False)
+        row.append(expander_button)
+
+        container.append(row)
+        posology_rows = []
+
+        expander_button.connect("clicked", self.on_expander_clicked, medication, container, posology_rows)
+
+        return container
+
+    def on_expander_clicked(self, button, medication, container, posology_rows):
+        if hasattr(self, 'title_row') and self.title_row in container:
+            container.remove(self.title_row)
+        
+        if posology_rows:
+            for posology_row in posology_rows:
+                container.remove(posology_row)
+            posology_rows.clear()
+            button.set_label("Show posologies")
+        else:
+            self.title_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            title_content = Gtk.Label(label=f"<span font_size='12000'><b>{medication['name']} Posologies:</b></span>")
+            title_content.set_use_markup(True)
+            self.title_row.append(title_content)
+            container.append(self.title_row)
+
+            posologies = self.handler.get_posologies(1, medication['id'])
+            if posologies:
+                for posology in posologies:
+                    posology_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+                    label_hour = Gtk.Label(label=f"<span font_size='12000'><b>Hour:</b> {posology.get('hour')}</span>")
+                    label_hour.set_use_markup(True)
+
+                    label_minute = Gtk.Label(label=f"<span font_size='12000'><b>Minute:</b> {posology.get('minute')}</span>")
+                    label_minute.set_use_markup(True)
+
+                    posology_row.append(label_hour)
+                    posology_row.append(label_minute)
+                    container.append(posology_row)
+                    posology_rows.append(posology_row)
+            else:
+                no_posology_label = self.create_medication_label(f"<i>No posologies available</i>")
+                posology_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+                posology_row.append(no_posology_label)
+                container.append(posology_row)
+                posology_rows.append(posology_row)
+
+            button.set_label("Hide posologies")
 
     def create_medication_label(self, text):
         label = Gtk.Label(label=text)
@@ -189,9 +232,6 @@ class View(Adw.Application):
         label.set_ellipsize(Pango.EllipsizeMode.END)  
         label.set_max_width_chars(30)
         return label
-
-    def on_edit_medication(self, button, medication_id):
-        print(f"Editing medication with ID: {medication_id}")
 
     def on_patient_selected(self, _listbox, row, patients):
         self.selected_patient = patients[row.get_index()]
