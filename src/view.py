@@ -14,20 +14,16 @@ class View(Adw.Application):
         self.handler = handler
 
     def do_activate(self):
-        # Crear ventana principal
         window = Adw.ApplicationWindow(application=self)
-        window.set_title("Patient and Medication Manager")
+        window.set_title("Patients - ACDC")
         window.set_default_size(800, 600)
         
-        # Crear el contenedor principal
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         window.set_content(main_box)
 
-        # Crear HeaderBar
         header_bar = Adw.HeaderBar()
         main_box.append(header_bar)
 
-        # Crear botón de menú en la barra de título
         menu_button = Gtk.MenuButton()
         popover_menu = Gtk.PopoverMenu()
         menu_model = Gio.Menu()
@@ -40,7 +36,6 @@ class View(Adw.Application):
         pane = Gtk.Paned.new(Gtk.Orientation.HORIZONTAL)
         main_box.append(pane)
 
-        # Lado izquierdo: Pacientes
         left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         pane.set_start_child(left_box)
 
@@ -53,7 +48,6 @@ class View(Adw.Application):
         listbox_patients = Gtk.ListBox()
         scrolled_window_patients.set_child(listbox_patients)
 
-        # Ejemplo de pacientes
         for patient_name in ["John Doe", "Jane Roe", "Alice Smith"]:
             row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
             label = Gtk.Label(label=patient_name)
@@ -63,7 +57,6 @@ class View(Adw.Application):
             row.append(button)
             listbox_patients.append(row)
 
-        # Lado derecho: Medicamentos
         right_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         pane.set_end_child(right_box)
 
@@ -73,44 +66,9 @@ class View(Adw.Application):
         listbox_medications = Gtk.ListBox()
         right_box.append(listbox_medications)
 
-        # Agregar filas de medicamentos (Adw.EntryRow)
-        for med_name in ["Aspirin", "Ibuprofen", "Paracetamol"]:
-            entry_row = Adw.EntryRow()
-            entry_row.set_title(med_name)
-            listbox_medications.append(entry_row)
-
-        # Botones de acciones inferiores
-        action_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        main_box.append(action_box)
-
-        button_add_patient = Gtk.Button(label="Add Patient")
-        button_add_patient.connect("clicked", self.on_add_patient)
-        action_box.append(button_add_patient)
-
-        button_remove_patient = Gtk.Button(label="Remove Patient")
-        button_remove_patient.connect("clicked", self.on_remove_patient)
-        action_box.append(button_remove_patient)
-
-        button_exit = Gtk.Button(label="Exit")
-        button_exit.connect("clicked", self.on_exit)
-        action_box.append(button_exit)
 
         window.show()
 
     def on_patient_selected(self, button, patient_name):
         self.selected_patient = patient_name
         print(f"Selected patient: {self.selected_patient}")
-
-    def on_add_patient(self, button):
-        print("Add patient functionality")
-
-    def on_remove_patient(self, button):
-        if self.selected_patient:
-            print(f"Removing patient: {self.selected_patient}")
-        else:
-            print("No patient selected")
-
-    def on_exit(self, button):
-        self.quit()
-
-         
