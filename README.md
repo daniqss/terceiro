@@ -26,9 +26,9 @@ Este repositorio contiene:
 
 ## Miembros del equipo:
 
-- Apellido1 Apellido2, Nombre : github username : udc username : role
-- Apellido1 Apellido2, Nombre : github username : udc username : role
-- Queijo Seoane, Daniel : github daniqss : udc daniel.queijo.seoane@udc.es : Analista
+- Manotas Ruiz, Javier : github javiermanotasruiz : udc j.manotas : Curador
+- Garea Cidre, Santiago : github yagogarea : udc s.garea : Facilitador-Administrador
+- Queijo Seoane, Daniel : github daniqss : udc daniel.queijo.seoane : Analista
 
 
 ## Pasos para realizar la práctica
