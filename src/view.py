@@ -1,7 +1,7 @@
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version('Adw', '1')
-from gi.repository import Adw, Gtk, Pango
+from gi.repository import Adw, Gtk, Pango # type: ignore
 from src.views.buttons import Buttons
 
 from src.utils import APPLICATION_ID
@@ -49,31 +49,60 @@ class View(Adw.Application):
         header_bar = Adw.HeaderBar()
         return header_bar
 
-    def create_split_panel(self):
-        return Gtk.Paned.new(Gtk.Orientation.HORIZONTAL)
+    def create_split_panel(self) -> Gtk.Paned:
+        return Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
 
     def update_patient_list_panel(self) -> Gtk.Box:
-        left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        # scrolled = Gtk.ScrolledWindow()
-        # scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        # scrolled.set_vexpand(True)
-        # scrolled.set_hexpand(True)
-        
+        left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, margin_start=8, margin_end=8, margin_top=0, margin_bottom=8)
+        patients_label = Gtk.Label(label="Patients")
+        patients_search = Gtk.SearchEntry()
+        patients_search.set_placeholder_text("Search patients by code")
+
+        scrolled = Gtk.ScrolledWindow()
+        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scrolled.set_vexpand(True)
+        scrolled.set_hexpand(True)
+
         # List of patients, we'll add patients boxes for each patient
-        listbox_patients = Gtk.ListBox()
-        patients = self.handler.get_patients()
-        for patient in patients:
-            print(patient)
-            patient_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-            patient_box.append(self.create_patient_row(patient))
-            listbox_patients.append(patient_box)
-        listbox_patients.connect(
+        self.listbox_patients = Gtk.ListBox()
+        self.listbox_patients.add_css_class("boxed-list")
+
+        self.patients = self.handler.get_patients()
+        self.update_patient_list()
+
+        self.listbox_patients.connect(
             "row-activated",
-            lambda listbox, row: self.handler.on_patient_selected(listbox, row, patients)
+            lambda listbox, row: self.handler.on_patient_selected(listbox, row, self.patients)
         )
         
-        left_box.append(listbox_patients)
+        # Connect the search entry to the filter function
+        patients_search.connect("search-changed", self.filter_patients)
+
+        scrolled.set_child(self.listbox_patients)
+        left_box.append(patients_label)
+        left_box.append(patients_search)
+        left_box.append(scrolled)
         return left_box
+
+    def update_patient_list(self, filtered_patients=None):
+        # Remove all rows from the ListBox
+        while row := self.listbox_patients.get_first_child():
+            self.listbox_patients.remove(row)
+
+        # Add patients to the list
+        patients_to_display = filtered_patients if filtered_patients is not None else self.patients
+        for patient in patients_to_display:
+            patient_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+            patient_box.append(self.create_patient_row(patient))
+            self.listbox_patients.append(patient_box)
+
+    def filter_patients(self, search_entry):
+        search_text = search_entry.get_text().lower()
+        filtered_patients = [
+            patient for patient in self.patients
+            if search_text in patient.get('code', '').lower()
+        ]
+        self.update_patient_list(filtered_patients)
 
     def create_patient_row(self, patient) -> Gtk.Box:
         row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
@@ -146,7 +175,8 @@ class View(Adw.Application):
         self.label_select_patient.set_markup(f'<span font="20">Selected patient: {patient_id}</span>')
         self.right_box.append(self.label_select_patient)
         
-        self.medication_list_box = Gtk.ListBox()  
+        self.medication_scroll = Gtk.ScrolledWindow()
+        self.medication_list_box = Gtk.ListBox()
         self.right_box.append(self.medication_list_box) 
         
         print(f"Medications: {medications}")
