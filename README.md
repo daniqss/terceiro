@@ -92,14 +92,15 @@ En otro terminal ejecutamos
 ```bash
 cd medications-backend
 python3 -m venv venv
-source venv/bin/activate # En Windows: venv\Scripts\activate, lo tendremos que hacer cada vez que queramos arrancar la API
+source venv/bin/activate # lo tendremos que hacer cada vez que queramos arrancar la API
 pip install -r requirements.txt
 
 # Para ejecutar
 fastapi run
 
 # Para salir del entorno
-deactivate # En Windows: venv\Scripts\deactivate
+deactivate
 ```
 
 Para comprobar que funciona miramos en http://localhost:8000/patients si devuelve JSON
+En http://localhost:8000/docs tenemos los esquemas y los endpoints de la API
