@@ -201,10 +201,12 @@ class View(Adw.Application):
 
         self.add_medication_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
 
-        add_button = Gtk.Button(label="Add Medication")
-        self.add_medication_box.append(add_button)
+        self.add_button = Gtk.Button(label="Add Medication")
+        self.add_button.connect("clicked", lambda _: self.handler.on_add_medication(patient_id))
+        self.add_medication_box.append(self.add_button)
 
         self.right_box.append(self.add_medication_box)
+
 
     def create_medication_row(self, patient_id, medication):
         container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
@@ -241,8 +243,8 @@ class View(Adw.Application):
         buttons.set_margin_bottom(6)
         
         buttons.set_halign(Gtk.Align.END)
-        button_update = self.buttons.editButton(handler=lambda _: self.handler.update_medication(patient_id, medication))
-        button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_medication(patient_id, medication))
+        button_update = self.buttons.editButton(handler=lambda _: self.handler.on_edit_medication(patient_id, medication))
+        button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_medication(patient_id, medication['id']))
         buttons.append(button_update)
         buttons.append(button_delete)
         buttons.append(expander_button)
@@ -305,7 +307,7 @@ class View(Adw.Application):
                 # Botones de acción
                 buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
                 buttons.set_halign(Gtk.Align.START)
-                button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_medication(patient_id, medication))
+                button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_posologie(patient_id, medication['id'], posology))
                 buttons.append(button_delete)
                 posology_row.append(buttons)
 
@@ -328,3 +330,84 @@ class View(Adw.Application):
 
         self.buttons.switchExpandableButton(button)
 
+    def create_medication_input_row(self, patient_id, name, dosage, duration, start_date):
+        # Verificar si ya hay una fila de entrada y eliminarla si existe
+        if hasattr(self, 'input_row') and self.input_row is not None:
+            self.add_medication_box.remove(self.input_row)
+            self.input_row = None
+        
+        if hasattr(self, 'label_select_patient'):
+            self.right_box.remove(self.label_select_patient)
+
+        if hasattr(self, 'medication_list_box'):
+            self.right_box.remove(self.medication_list_box)
+
+        # Crear un contenedor vertical
+        container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        container.set_margin_top(10)
+        container.set_margin_bottom(10)
+        container.set_margin_start(10)
+        container.set_margin_end(10)
+
+        # Crear las filas de entrada usando Adw.EntryRow (con valores iniciales)
+        entry_name = Adw.EntryRow()
+        entry_name.set_title("Medication Name")
+        entry_name.set_text(name)  # Establecer el nombre de la medicación
+        entry_name.show()
+        
+        entry_dosage = Adw.EntryRow()
+        entry_dosage.set_title("Dosage (mg)")
+        entry_dosage.set_text(dosage)  # Establecer la dosis
+
+        entry_duration = Adw.EntryRow()
+        entry_duration.set_title("Duration (days)")
+        entry_duration.set_text(duration)  # Establecer la duración
+
+        entry_start_date = Adw.EntryRow()
+        entry_start_date.set_title("Start Date (YYYY-MM-DD)")
+        entry_start_date.set_text(start_date)  # Establecer la fecha de inicio
+
+        # Añadir las EntryRows al contenedor
+        container.append(entry_name)
+        container.append(entry_dosage)
+        container.append(entry_duration)
+        container.append(entry_start_date)
+
+        # Crear una caja para los botones
+        buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        buttons.set_halign(Gtk.Align.END)
+        buttons.set_margin_start(6)
+        buttons.set_margin_end(6)
+        buttons.set_margin_top(6)
+        buttons.set_margin_bottom(6)
+
+        # Botón para confirmar la adición de la medicación
+        button_save = Gtk.Button(label="Confirm")
+        button_save.connect("clicked", lambda _: self.handler.on_save_medication(patient_id, 
+                                                                                entry_name.get_text(), 
+                                                                                entry_dosage.get_text(), 
+                                                                                entry_duration.get_text(), 
+                                                                                entry_start_date.get_text()))
+
+        # Botón para cancelar la acción y eliminar el formulario
+        button_cancel = Gtk.Button(label="Cancel")
+        button_cancel.connect("clicked", lambda _: self.handler.on_cancel_medication(patient_id))
+
+        # Añadir botones al contenedor de botones
+        buttons.append(button_save)
+        buttons.append(button_cancel)
+
+        # Añadir el contenedor de botones al contenedor principal
+        container.append(buttons)
+
+        # Guardar la fila de entrada
+        self.input_row = container
+
+        # Añadir el contenedor a la caja principal de medicaciones
+        self.add_medication_box.append(container)
+
+
+    def update_medication(self, patient_id, name, dosage, duration, start_date):
+        if hasattr(self, 'add_button') and self.add_button is not None:
+            self.add_medication_box.remove(self.add_button)
+        self.create_medication_input_row(patient_id, name, dosage, duration, start_date)
