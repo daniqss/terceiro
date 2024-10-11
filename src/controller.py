@@ -9,9 +9,8 @@ class Controller:
     def run(self):
         self.view.run()
 
-    def on_patient_selected(self, _listbox, row, patients):
-        self.selected_patient = patients[row.get_index()]
-        print(f"Selected patient: {self.selected_patient["id"]}")
+    def on_patient_selected(self, patient: dict):
+        self.selected_patient = patient
         self.view.update_medication_list_panel_patient(self.selected_patient["id"], self.model.get_medications(self.selected_patient["id"]))
 
     def on_add_medication(self, button):

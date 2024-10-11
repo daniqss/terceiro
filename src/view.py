@@ -12,6 +12,7 @@ class View(Adw.Application):
         self.buttons = Buttons()
         self.selected_patient = None
         self.handler = handler
+        self.patients_index_relations = []
 
     def do_activate(self):
         window = self.create_main_window()
@@ -68,13 +69,15 @@ class View(Adw.Application):
         self.listbox_patients.add_css_class("boxed-list")
 
         self.patients = self.handler.get_patients()
-        self.update_patient_list()
 
-        self.listbox_patients.connect(
-            "row-activated",
-            lambda listbox, row: self.handler.on_patient_selected(listbox, row, self.patients)
-        )
+        def on_row_activated(_, row):
+            # get the patient from the tuple that relates the index in the patient list and the index in the listbox after a search
+            self.handler.on_patient_selected(self.patients[self.patients_index_relations[row.get_index()][0]])
+        self.listbox_patients.connect("row-activated", on_row_activated)
+
         
+        # if its the first time we show the patients, we filter them
+        self.filter_patients(patients_search)
         # Connect the search entry to the filter function
         patients_search.connect("search-changed", self.filter_patients)
 
@@ -91,10 +94,19 @@ class View(Adw.Application):
 
         # Add patients to the list
         patients_to_display = filtered_patients if filtered_patients is not None else self.patients
-        for patient in patients_to_display:
+        index_relations = []
+        
+        for new_index, patient in enumerate(patients_to_display):
             patient_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
             patient_box.append(self.create_patient_row(patient))
             self.listbox_patients.append(patient_box)
+            
+            # Find the original index of this patient
+            original_index = next((i for i, p in enumerate(self.patients) if p['id'] == patient['id']), None)
+            if original_index is not None:
+                index_relations.append((original_index, new_index))
+
+        self.patients_index_relations = index_relations
 
     def filter_patients(self, search_entry):
         search_text = search_entry.get_text().lower()
