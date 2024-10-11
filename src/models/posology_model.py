@@ -38,7 +38,7 @@ class PosologyModel:
             "medication_id": medication_id
         }
         posology, status = request_data(url, "PATCH", data)
-        if status is 204:
+        if status == 204:
             return posology
         return None
     
