@@ -27,11 +27,11 @@ class View(Adw.Application):
         main_box.append(paned)
         
         # Left panel: Patient list
-        left_box = self.create_patient_list_panel()
+        left_box = self.update_patient_list_panel()
         paned.set_start_child(left_box)
 
         # Right panel: Medication list
-        right_box = self.create_medication_list_panel()
+        right_box = self.create_empty_medication_list_panel()
         paned.set_end_child(right_box)
         self.right_box = right_box
 
@@ -52,7 +52,7 @@ class View(Adw.Application):
     def create_split_panel(self):
         return Gtk.Paned.new(Gtk.Orientation.HORIZONTAL)
 
-    def create_patient_list_panel(self) -> Gtk.Box:
+    def update_patient_list_panel(self) -> Gtk.Box:
         left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
         # scrolled = Gtk.ScrolledWindow()
         # scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -69,7 +69,7 @@ class View(Adw.Application):
             listbox_patients.append(patient_box)
         listbox_patients.connect(
             "row-activated",
-            lambda listbox, row: self.on_patient_selected(listbox, row, patients)
+            lambda listbox, row: self.handler.on_patient_selected(listbox, row, patients)
         )
         
         left_box.append(listbox_patients)
@@ -114,7 +114,7 @@ class View(Adw.Application):
         row.set_header = patient["id"]
         return row
 
-    def create_medication_list_panel(self):
+    def create_empty_medication_list_panel(self):
         right_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
 
         label_medications = Gtk.Label(label="Medications")
@@ -129,7 +129,7 @@ class View(Adw.Application):
 
         return right_box
     
-    def create_medication_list_panel_patient(self, patient_id):
+    def update_medication_list_panel_patient(self, patient_id, medications):
         print(f"Creating medication list for patient: {patient_id}")
 
         if hasattr(self, 'label_select_patient'):
@@ -149,7 +149,6 @@ class View(Adw.Application):
         self.medication_list_box = Gtk.ListBox()  
         self.right_box.append(self.medication_list_box) 
         
-        medications = self.handler.get_medications(patient_id)  
         print(f"Medications: {medications}")
         if medications:  
             for medication in medications:
@@ -183,17 +182,14 @@ class View(Adw.Application):
         row.append(label_duration)
         row.append(label_start_date)
 
-        posology_rows = []
         expander_button = self.buttons.expandButton(
-            handler=lambda _: self.on_expander_clicked(
+            handler=lambda _: self.handler.on_expand_medication(
                 expander_button,
-                patient_id,
-                medication,
                 container,
-                posology_rows
+                patient_id,
+                medication['id']
             )
         )
-
 
         buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         buttons.set_halign(Gtk.Align.START)
@@ -213,73 +209,7 @@ class View(Adw.Application):
         container.append(row)
 
         return container
-
-    def on_expander_clicked(self, button, patient_id, medication, container, posology_rows):
-        if hasattr(self, 'title_row') and self.title_row in container:
-            container.remove(self.title_row)
-
-        if hasattr(self, 'add_posologie_box') and self.add_posologie_box in container:
-                container.remove(self.add_posologie_box)
-        
-        if posology_rows:
-            for posology_row in posology_rows:
-                container.remove(posology_row)
-            posology_rows.clear()
-            self.buttons.switchExpandableButton(button)
-        else:
-            self.title_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-            self.title_row.set_halign(Gtk.Align.CENTER)
-            title_content = Gtk.Label(label=f"<span font_size='12000'><b>{medication['name']} Posologies:</b></span>")
-            title_content.set_use_markup(True)
-            self.title_row.append(title_content)
-            container.append(self.title_row)
-
-            posologies = self.handler.get_posologies(patient_id, medication['id'])
-            if posologies:
-                for posology in posologies:
-                    posology_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-                    posology_row.set_halign(Gtk.Align.CENTER)
-                    label_hour = Gtk.Label(label=f"<span font_size='12000'><b>Hour:</b> {posology.get('hour')}</span>")
-                    label_hour.set_use_markup(True)
-
-                    label_minute = Gtk.Label(label=f"<span font_size='12000'><b>Minute:</b> {posology.get('minute')}</span>")
-                    label_minute.set_use_markup(True)
-
-                    posology_row.append(label_hour)
-                    posology_row.append(label_minute)
-
-                    buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-                    buttons.set_halign(Gtk.Align.START)
-                    buttons.set_margin_start(6)
-                    buttons.set_margin_end(6)
-                    buttons.set_margin_top(6)
-                    buttons.set_margin_bottom(6)
-                    
-                    buttons.set_halign(Gtk.Align.END)
-                    
-                    button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_medication(patient_id, medication))
-                    buttons.append(button_delete)
-
-                    posology_row.append(buttons)
-
-                    container.append(posology_row)
-                    posology_rows.append(posology_row)
-            else:
-                no_posology_label = self.create_medication_label(f"<i>No posologies available</i>")
-                posology_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-                posology_row.append(no_posology_label)
-                container.append(posology_row)
-                posology_rows.append(posology_row)
-
-            self.add_posologie_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-
-            add_button = Gtk.Button(label="Add Posologies")
-            self.add_posologie_box.append(add_button)
-
-            container.append(self.add_posologie_box)
-
-            self.buttons.switchExpandableButton(button)
-
+    
     def create_medication_label(self, text):
         label = Gtk.Label(label=text)
         label.set_use_markup(True)
@@ -288,8 +218,71 @@ class View(Adw.Application):
         label.set_ellipsize(Pango.EllipsizeMode.END)  
         label.set_max_width_chars(30)
         return label
+    
+    def update_posology_list_panel(self, button, container, posologies):
+        if hasattr(self, 'title_row') and self.title_row in container:
+            container.remove(self.title_row)
+            
+            if hasattr(self, 'posology_rows'):
+                for posology_row in self.posology_rows:
+                    if posology_row in container:
+                        container.remove(posology_row)
+                self.posology_rows.clear()
 
-    def on_patient_selected(self, _listbox, row, patients):
-        self.selected_patient = patients[row.get_index()]
-        print(f"Selected patient: {self.selected_patient["id"]}")
-        self.create_medication_list_panel_patient(self.selected_patient["id"])
+            if hasattr(self, 'add_posologie_box') and self.add_posologie_box in container:
+                container.remove(self.add_posologie_box)
+                
+            self.buttons.switchExpandableButton(button)
+            return  
+
+        self.title_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        self.title_row.set_halign(Gtk.Align.CENTER)
+        title_content = Gtk.Label(label="<span font_size='12000'><b>Posologies:</b></span>")
+        title_content.set_use_markup(True)
+        self.title_row.append(title_content)
+
+        if not hasattr(self, 'posology_rows'):
+            self.posology_rows = []
+
+        container.append(self.title_row)
+
+        if posologies:
+            for posology in posologies:
+                posology_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+                posology_row.set_halign(Gtk.Align.CENTER)
+
+                # Etiquetas de hora y minuto
+                label_hour = Gtk.Label(label=f"<span font_size='12000'><b>Hour:</b> {posology.get('hour')}</span>")
+                label_hour.set_use_markup(True)
+                label_minute = Gtk.Label(label=f"<span font_size='12000'><b>Minute:</b> {posology.get('minute')}</span>")
+                label_minute.set_use_markup(True)
+
+                posology_row.append(label_hour)
+                posology_row.append(label_minute)
+
+                # Botones de acción
+                buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+                buttons.set_halign(Gtk.Align.START)
+                button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_medication(patient_id, medication))
+                buttons.append(button_delete)
+                posology_row.append(buttons)
+
+                self.posology_rows.append(posology_row)
+
+        else:
+            no_posology_label = self.create_medication_label(f"<i>No posologies available</i>")
+            posology_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            posology_row.append(no_posology_label)
+
+            self.posology_rows.append(posology_row)
+
+        for posology_row in self.posology_rows:
+            container.append(posology_row)
+
+        self.add_posologie_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        add_button = Gtk.Button(label="Add Posologies")
+        self.add_posologie_box.append(add_button)
+        container.append(self.add_posologie_box)
+
+        self.buttons.switchExpandableButton(button)
+
