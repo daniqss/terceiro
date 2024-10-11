@@ -19,7 +19,6 @@ class Model:
     #region Patient
 
     def get_patients(self) -> List[dict]:
-<<<<<<< HEAD
         url = f"{path}/patients"
         patients, status = request_data(url, "GET")
         if status == 200:
@@ -31,20 +30,6 @@ class Model:
         for patient in patients:
             if patient["code"] == code:
                 return patient
-=======
-        return [
-            {"name": "Jessica", "surname": "Horne", "id": 1, "code": "597-35-8499"},
-            {"name": "Joy", "surname": "Lozano", "id": 2, "code": "873-08-4337"},
-            {"name": "Mary", "surname": "Kelly", "id": 3, "code": "677-75-4864"},
-            {"name": "Michael", "surname": "Watson", "id": 4, "code": "752-92-3826"},
-            {"name": "David", "surname": "Anderson", "id": 5, "code": "149-63-9475"},
-            {"name": "Alice", "surname": "Brown", "id": 6, "code": "519-24-9814"},
-            {"name": "John", "surname": "Smith", "id": 7, "code": "462-55-1739"},
-            {"name": "Emily", "surname": "Johnson", "id": 8, "code": "815-92-6394"},
-            {"name": "Chris", "surname": "Lee", "id": 9, "code": "194-82-9376"},
-            {"name": "Nina", "surname": "Carter", "id": 10, "code": "341-23-8056"}
-        ]
->>>>>>> 166366f (feat(#3): Add search bar for patients)
 
     def get_patient(self, patient_id: int) -> Optional[dict]:
         url = f"{path}/patients/{patient_id}"
@@ -141,6 +126,14 @@ class Model:
         
         print(f"Failed to delete posology")
         return False
+    
+    # Returns the lowest posology id avaliable for a patient
+    def next_posology_id(self, patient_id: int, medication_id: int):
+        lowest = None
+        for i in self.get_posologies(patient_id, medication_id):
+            if lowest == None or lowest == i["id"]:
+                lowest = i["id"] + 1
+        return lowest
         
     def add_posology(self, patient_id: int, medication_id: int, posology_id:int, minute:int, hour:int):
         response = request(

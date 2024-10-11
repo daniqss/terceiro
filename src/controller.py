@@ -28,7 +28,8 @@ class Controller:
             "start_date": start_date,
             "patient_id": patient_id
         }
-        # self.model.add_medication(medication)
+        nextId = self.model.next_medication_id(patient_id)
+        self.model.add_medication(patient_id, nextId, name, dosage, start_date, duration)
         self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
 
     def on_cancel_medication(self, patient_id):
@@ -44,27 +45,33 @@ class Controller:
 
     def on_expand_medication(self, button, container, patient_id, medication_id):
         posologies = self.model.get_posologies(patient_id, medication_id)
-        self.view.update_posology_list_panel(button, container, posologies)
+        self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
-    def on_delete_medication(self, button):
-        # Lógica para eliminar un medicamento
-        medication = self.view.get_selected_medication()
-        if medication:
-            self.model.delete_medication(medication.id)
-            self.view.update_medication_list(self.model.get_medications())
+    def on_delete_medication(self, paciente_id, medication_id):
+        self.model.delete_medication(paciente_id, medication_id)
+        self.view.update_medication_list_panel_patient(paciente_id, self.model.get_medications(paciente_id))
+        
+    def on_add_posology(self, button, container, patient_id, medication_id):
+        self.view.create_posology_input_row(button, container, patient_id, medication_id)
 
-    def on_add_posology(self, button):
-        # Lógica para añadir una posología
-        posology = self.view.get_posology_data()
-        self.model.add_posology(posology)
-        self.view.update_posology_list(self.model.get_posologies())
+    def on_delete_posology(self, button, container, patient_id, medication_id, posology_id):
+        self.model.delete_posology(patient_id, medication_id, posology_id)
+        posologies = self.model.get_posologies(patient_id, medication_id)
+        self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
+        
+    def on_save_posology(self, button, container, patient_id, medication_id, hour, minute):
+        posology = {
+            'hour': hour,
+            'minute': minute
+        },
+        nextId = self.model.next_posology_id(patient_id, medication_id)
+        self.model.add_posology(patient_id, medication_id, nextId, minute, hour)
+        posologies = self.model.get_posologies(patient_id, medication_id)
+        self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
-    def on_delete_posology(self, button):
-        # Lógica para eliminar una posología
-        posology = self.view.get_selected_posology()
-        if posology:
-            self.model.delete_posology(posology.id)
-            self.view.update_posology_list(self.model.get_posologies())
+    def on_cancel_posology(self, button, container, patient_id, medication_id):
+        posologies = self.model.get_posologies(patient_id, medication_id)
+        self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
     def get_patients(self):
         return self.model.get_patients()

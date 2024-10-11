@@ -244,7 +244,7 @@ class View(Adw.Application):
         
         buttons.set_halign(Gtk.Align.END)
         button_update = self.buttons.editButton(handler=lambda _: self.handler.on_edit_medication(patient_id, medication))
-        button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_medication(patient_id, medication['id']))
+        button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.on_delete_medication(patient_id, medication['id']))
         buttons.append(button_update)
         buttons.append(button_delete)
         buttons.append(expander_button)
@@ -262,8 +262,9 @@ class View(Adw.Application):
         label.set_ellipsize(Pango.EllipsizeMode.END)  
         label.set_max_width_chars(30)
         return label
-    
-    def update_posology_list_panel(self, button, container, posologies):
+
+    def update_posology_list_panel(self, button, container, patient_id, medication_id, posologies):
+
         if hasattr(self, 'title_row') and self.title_row in container:
             container.remove(self.title_row)
             
@@ -307,7 +308,7 @@ class View(Adw.Application):
                 # Botones de acción
                 buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
                 buttons.set_halign(Gtk.Align.START)
-                button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_posologie(patient_id, medication['id'], posology))
+                button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.on_delete_posology(button, container, patient_id, medication_id, posology['id']))
                 buttons.append(button_delete)
                 posology_row.append(buttons)
 
@@ -324,8 +325,9 @@ class View(Adw.Application):
             container.append(posology_row)
 
         self.add_posologie_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        add_button = Gtk.Button(label="Add Posologies")
-        self.add_posologie_box.append(add_button)
+        self.add_button = Gtk.Button(label="Add Posologies")
+        self.add_button.connect("clicked", lambda _: self.handler.on_add_posology(button, container, patient_id, medication_id))
+        self.add_posologie_box.append(self.add_button)
         container.append(self.add_posologie_box)
 
         self.buttons.switchExpandableButton(button)
@@ -405,6 +407,77 @@ class View(Adw.Application):
 
         # Añadir el contenedor a la caja principal de medicaciones
         self.add_medication_box.append(container)
+
+
+    def create_posology_input_row(self, button, container, patient_id, medication_id):
+        # Verificar si ya hay una fila de entrada y eliminarla si existe
+        if hasattr(self, 'input_row') and self.input_row is not None:
+            container.remove(self.input_row)  # Remover del container pasado como parámetro
+            self.input_row = None
+
+        # Si existía una label de selección de paciente o una caja de posología previa, eliminarlas
+        if hasattr(self, 'label_select_patient') and self.label_select_patient in container:
+            container.remove(self.label_select_patient)
+
+        if hasattr(self, 'add_posologie_box') and self.add_posologie_box in container:
+            container.remove(self.add_posologie_box)
+
+        # Crear un nuevo contenedor vertical
+        self.add_posologie_box.set_margin_top(10)
+        self.add_posologie_box.set_margin_bottom(10)
+        self.add_posologie_box.set_margin_start(10)
+        self.add_posologie_box.set_margin_end(10)
+
+        # Crear las filas de entrada usando Adw.EntryRow
+        entry_hour = Adw.EntryRow()
+        entry_hour.set_title("Hour")
+        entry_hour.set_text("")  # Puedes establecer un texto inicial si es necesario
+        entry_hour.show()
+
+        entry_minute = Adw.EntryRow()
+        entry_minute.set_title("Minute")
+        entry_minute.set_text("")  # Puedes establecer un texto inicial si es necesario
+        entry_minute.show()
+
+        # Añadir las EntryRows al contenedor
+        self.add_posologie_box.append(entry_hour)
+        self.add_posologie_box.append(entry_minute)
+
+        # Crear una caja para los botones
+        buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        buttons.set_halign(Gtk.Align.END)
+        buttons.set_margin_start(6)
+        buttons.set_margin_end(6)
+        buttons.set_margin_top(6)
+        buttons.set_margin_bottom(6)
+
+        # Botón para confirmar la adición de la medicación
+        button_save = Gtk.Button(label="Confirm")
+        button_save.connect("clicked", lambda _: self.handler.on_save_posology(button, 
+                                                                            container,
+                                                                            patient_id, 
+                                                                            medication_id,
+                                                                            int(entry_hour.get_text()), 
+                                                                            int(entry_minute.get_text())))
+        button_save.show()
+
+        # Botón para cancelar la acción y eliminar el formulario
+        button_cancel = Gtk.Button(label="Cancel")
+        button_cancel.connect("clicked", lambda _: self.handler.on_cancel_posology(patient_id))
+        button_cancel.show()
+
+        # Añadir botones al contenedor de botones
+        buttons.append(button_save)
+        buttons.append(button_cancel)
+
+        # Añadir el contenedor de botones al contenedor principal
+        self.add_posologie_box.append(buttons)
+
+        # Guardar la fila de entrada
+        self.input_row = self.add_posologie_box
+
+        # Añadir el contenedor posology_box al contenedor principal pasado por parámetro
+        container.append(self.add_posologie_box)
 
 
     def update_medication(self, patient_id, name, dosage, duration, start_date):
