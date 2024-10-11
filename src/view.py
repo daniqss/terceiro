@@ -1,13 +1,15 @@
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version('Adw', '1')
-from gi.repository import Adw, Gio, Gtk, Pango
+from gi.repository import Adw, Gio, Gdk, Gtk, Pango
+from src.views.buttons import Buttons
 
 from src.utils import APPLICATION_ID
 
 class View(Adw.Application):
     def __init__(self, handler, *args, **kwargs):
         super().__init__(*args, application_id=APPLICATION_ID, **kwargs)
+        self.buttons = Buttons()
         self.selected_patient = None
         self.handler = handler
 
@@ -65,7 +67,6 @@ class View(Adw.Application):
             patient_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
             patient_box.append(self.create_patient_row(patient))
             listbox_patients.append(patient_box)
-            # listbox_2.connect('row-activated', self.on_row_activated)
         listbox_patients.connect(
             "row-activated",
             lambda listbox, row: self.on_patient_selected(listbox, row, patients)
@@ -101,11 +102,10 @@ class View(Adw.Application):
         buttons.set_margin_end(6)
         buttons.set_margin_top(6)
         buttons.set_margin_bottom(6)
+        
         buttons.set_halign(Gtk.Align.END)
-        button_update = Gtk.Button.new_with_label("Update")
-        button_update.connect("clicked", lambda _: self.handler.update_patient(patient))
-        button_delete = Gtk.Button.new_with_label("Delete")
-        button_delete.connect("clicked", lambda _: self.handler.delete_patient(patient))
+        button_update = self.buttons.editButton(handler=lambda _: self.handler.update_patient(patient))
+        button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_patient(patient))
         buttons.append(button_update)
         buttons.append(button_delete)
 
