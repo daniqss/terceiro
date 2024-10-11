@@ -7,51 +7,42 @@ class Buttons:
     def __init__(self):
         self.theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
 
+    def _createButton(self, icon_name, handler) -> Gtk.Button:
+        icon = self.theme.lookup_icon(
+            icon_name,
+            None,
+            24,
+            1,
+            Gtk.TextDirection.NONE,
+            Gtk.IconLookupFlags.FORCE_SYMBOLIC
+        )
+        image = Gtk.Image.new_from_paintable(icon)
+        button = Gtk.Button()
+        button.set_child(image)
+        button.connect("clicked", handler)
+
+        return button
+
     def deleteButton(self, handler) -> Gtk.Button:
-        trash_icon = self.theme.lookup_icon(
-            "user-trash-symbolic",
-            None,
-            24,
-            1,
-            Gtk.TextDirection.NONE,
-            Gtk.IconLookupFlags.FORCE_SYMBOLIC
-        )
-        image_delete = Gtk.Image.new_from_paintable(trash_icon)
-        button_delete = Gtk.Button()
-        button_delete.set_child(image_delete)
-        button_delete.connect("clicked", handler)
-
-        return button_delete
+        return self._createButton("user-trash-symbolic", handler)
     
-    def editButton(self, handler) -> Gtk.Button:
-        edit_icon = self.theme.lookup_icon(
-            "document-edit-symbolic",
-            None,
-            24,
-            1,
-            Gtk.TextDirection.NONE,
-            Gtk.IconLookupFlags.FORCE_SYMBOLIC
-        )
-        image_edit = Gtk.Image.new_from_paintable(edit_icon)
-        button_edit = Gtk.Button()
-        button_edit.set_child(image_edit)
-        button_edit.connect("clicked", handler)
+    def addButton(self, handler) -> Gtk.Button:
+        return self._createButton("list-add-symbolic", handler)
 
-        return button_edit
+
+    def editButton(self, handler) -> Gtk.Button:
+        return self._createButton("document-edit-symbolic", handler)
     
     def refreshButton(self, handler) -> Gtk.Button:
-        refresh_icon = self.theme.lookup_icon(
-            "view-refresh-symbolic",
-            None,
-            24,
-            1,
-            Gtk.TextDirection.NONE,
-            Gtk.IconLookupFlags.FORCE_SYMBOLIC
-        )
-        image_refresh = Gtk.Image.new_from_paintable(refresh_icon)
-        button_refresh = Gtk.Button()
-        button_refresh.set_child(image_refresh)
-        button_refresh.connect("clicked", handler)
+        return self._createButton("view-refresh-symbolic", handler)
 
-        return button_refresh
+    def expandButton(self, handler) -> Gtk.Button:
+        return self._createButton("go-down-symbolic", handler)
 
+    def switchExpandableButton(self, button):
+        iconButton = button.get_child()
+
+        if iconButton.get_icon_name() == "go-down-symbolic":
+            iconButton.set_from_icon_name("go-up-symbolic")
+        else:
+            iconButton.set_from_icon_name("go-down-symbolic")

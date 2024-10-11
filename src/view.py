@@ -1,7 +1,7 @@
 import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version('Adw', '1')
-from gi.repository import Adw, Gio, Gdk, Gtk, Pango
+from gi.repository import Adw, Gtk, Pango
 from src.views.buttons import Buttons
 
 from src.utils import APPLICATION_ID
@@ -16,7 +16,7 @@ class View(Adw.Application):
     def do_activate(self):
         window = self.create_main_window()
         window.set_title("Patients - ACDC")
-        window.set_default_size(800, 600)
+        window.set_default_size(1300, 1200)
         main_box = self.create_main_layout(window)
         
         # Create header and split panel
@@ -138,11 +138,14 @@ class View(Adw.Application):
         if hasattr(self, 'medication_list_box'):
             self.right_box.remove(self.medication_list_box)
 
+        if hasattr(self, 'add_medication_box'):
+            self.right_box.remove(self.add_medication_box)
+
         self.label_select_patient = Gtk.Label(label=f'Selected patient: {patient_id}')
         self.label_select_patient.set_halign(Gtk.Align.CENTER)
         self.label_select_patient.set_markup(f'<span font="20">Selected patient: {patient_id}</span>')
         self.right_box.append(self.label_select_patient)
-
+        
         self.medication_list_box = Gtk.ListBox()  
         self.right_box.append(self.medication_list_box) 
         
@@ -150,12 +153,19 @@ class View(Adw.Application):
         print(f"Medications: {medications}")
         if medications:  
             for medication in medications:
-                self.medication_list_box.append(self.create_medication_row(medication))
+                self.medication_list_box.append(self.create_medication_row(patient_id, medication))
         else:
             empty_label = Gtk.Label(label="No medications available for this patient.")
             self.medication_list_box.append(empty_label)
 
-    def create_medication_row(self, medication):
+        self.add_medication_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+
+        add_button = Gtk.Button(label="Add Medication")
+        self.add_medication_box.append(add_button)
+
+        self.right_box.append(self.add_medication_box)
+
+    def create_medication_row(self, patient_id, medication):
         container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         row.set_margin_top(10)
@@ -173,38 +183,62 @@ class View(Adw.Application):
         row.append(label_duration)
         row.append(label_start_date)
 
-        expander_button = Gtk.Button(label="Show posologies")
-        expander_button.set_halign(Gtk.Align.END)
-        expander_button.set_vexpand(False)
-        row.append(expander_button)
-
-        container.append(row)
         posology_rows = []
+        expander_button = self.buttons.expandButton(
+            handler=lambda _: self.on_expander_clicked(
+                expander_button,
+                patient_id,
+                medication,
+                container,
+                posology_rows
+            )
+        )
 
-        expander_button.connect("clicked", self.on_expander_clicked, medication, container, posology_rows)
+
+        buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        buttons.set_halign(Gtk.Align.START)
+        buttons.set_margin_start(6)
+        buttons.set_margin_end(6)
+        buttons.set_margin_top(6)
+        buttons.set_margin_bottom(6)
+        
+        buttons.set_halign(Gtk.Align.END)
+        button_update = self.buttons.editButton(handler=lambda _: self.handler.update_medication(patient_id, medication))
+        button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_medication(patient_id, medication))
+        buttons.append(button_update)
+        buttons.append(button_delete)
+        buttons.append(expander_button)
+
+        row.append(buttons)
+        container.append(row)
 
         return container
 
-    def on_expander_clicked(self, button, medication, container, posology_rows):
+    def on_expander_clicked(self, button, patient_id, medication, container, posology_rows):
         if hasattr(self, 'title_row') and self.title_row in container:
             container.remove(self.title_row)
+
+        if hasattr(self, 'add_posologie_box') and self.add_posologie_box in container:
+                container.remove(self.add_posologie_box)
         
         if posology_rows:
             for posology_row in posology_rows:
                 container.remove(posology_row)
             posology_rows.clear()
-            button.set_label("Show posologies")
+            self.buttons.switchExpandableButton(button)
         else:
             self.title_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+            self.title_row.set_halign(Gtk.Align.CENTER)
             title_content = Gtk.Label(label=f"<span font_size='12000'><b>{medication['name']} Posologies:</b></span>")
             title_content.set_use_markup(True)
             self.title_row.append(title_content)
             container.append(self.title_row)
 
-            posologies = self.handler.get_posologies(1, medication['id'])
+            posologies = self.handler.get_posologies(patient_id, medication['id'])
             if posologies:
                 for posology in posologies:
                     posology_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+                    posology_row.set_halign(Gtk.Align.CENTER)
                     label_hour = Gtk.Label(label=f"<span font_size='12000'><b>Hour:</b> {posology.get('hour')}</span>")
                     label_hour.set_use_markup(True)
 
@@ -213,6 +247,21 @@ class View(Adw.Application):
 
                     posology_row.append(label_hour)
                     posology_row.append(label_minute)
+
+                    buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+                    buttons.set_halign(Gtk.Align.START)
+                    buttons.set_margin_start(6)
+                    buttons.set_margin_end(6)
+                    buttons.set_margin_top(6)
+                    buttons.set_margin_bottom(6)
+                    
+                    buttons.set_halign(Gtk.Align.END)
+                    
+                    button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_medication(patient_id, medication))
+                    buttons.append(button_delete)
+
+                    posology_row.append(buttons)
+
                     container.append(posology_row)
                     posology_rows.append(posology_row)
             else:
@@ -222,7 +271,14 @@ class View(Adw.Application):
                 container.append(posology_row)
                 posology_rows.append(posology_row)
 
-            button.set_label("Hide posologies")
+            self.add_posologie_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+
+            add_button = Gtk.Button(label="Add Posologies")
+            self.add_posologie_box.append(add_button)
+
+            container.append(self.add_posologie_box)
+
+            self.buttons.switchExpandableButton(button)
 
     def create_medication_label(self, text):
         label = Gtk.Label(label=text)
