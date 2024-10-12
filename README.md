@@ -102,5 +102,5 @@ fastapi run
 deactivate
 ```
 
-Para comprobar que funciona miramos en http://localhost:8000/patients si devuelve JSON
+Para comprobar que funciona miramos en http://localhost:8000/patients si devuelve JSON.
 En http://localhost:8000/docs tenemos los esquemas y los endpoints de la API
