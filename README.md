@@ -73,16 +73,16 @@ Este repositorio contiene:
 ```bash
 # Preparamos el entorno
 python3 -m venv venv
-source venv/bin/activate # En Windows: venv\Scripts\activate, lo tendremos que hacer en cada terminal
+source venv/bin/activate # lo tendremos que hacer en cada terminal
 
 # Instalamos las dependencias(las que instalamos con pip)
 pip install -r requirements.txt
 
 # Ejecutamos la aplicación
-python3 -m src.main # Debe tener permisos de ejecución, chmod +x src/main.py
+python3 -m src.main
 
 # Para salir del entorno
-deactivate # En Windows: venv\Scripts\deactivate
+deactivate
 ```
 Para que funcione correctamente, debe estar corriendo la API en el puerto 8000
 
