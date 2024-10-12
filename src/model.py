@@ -78,7 +78,6 @@ class Model:
             url=f"{path}/patients/{patient_id}/medications", 
             method="POST", 
             data=json.dumps({
-                "id": medication_id,
                 "name": name, 
                 "dosage": dosage,             
                 "start_date": start_date,
@@ -94,7 +93,6 @@ class Model:
             url=f"{path}/patients/{patient_id}/medications/{medication_id}", 
             method="PATCH", 
             data=json.dumps({
-                "id": medication_id,
                 "name": name, 
                 "dosage": dosage,             
                 "start_date": start_date,
@@ -123,9 +121,16 @@ class Model:
             return True
         
         #FIXME borra pero muestra el errores de todos modos
-        
         print(f"Failed to delete posology")
         return False
+    
+    # Returns the lowest posology id avaliable for a patient
+    def next_posology_id(self, patient_id: int, medication_id: int):
+        lowest = None
+        for i in self.get_posologies(patient_id, medication_id):
+            if lowest == None or lowest == i["id"]:
+                lowest = i["id"] + 1
+        return lowest
         
     def add_posology(self, patient_id: int, medication_id: int, posology_id:int, minute:int, hour:int):
         response = request(
@@ -156,3 +161,4 @@ class Model:
         print(f"--> {response}")
 
     #endregion
+
