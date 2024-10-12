@@ -79,7 +79,7 @@ source venv/bin/activate # En Windows: venv\Scripts\activate, lo tendremos que h
 pip install -r requirements.txt
 
 # Ejecutamos la aplicación
-src/main.py # Debe tener permisos de ejecución, chmod +x src/main.py
+python3 -m src.main # Debe tener permisos de ejecución, chmod +x src/main.py
 
 # Para salir del entorno
 deactivate # En Windows: venv\Scripts\deactivate
