@@ -2,7 +2,7 @@ import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version('Adw', '1')
 from gi.repository import Adw, Gtk, Pango # type: ignore
-from src.views.buttons import Buttons
+from src.buttons import Buttons
 
 from src.utils import APPLICATION_ID
 
