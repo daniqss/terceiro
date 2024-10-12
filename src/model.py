@@ -78,7 +78,6 @@ class Model:
             url=f"{path}/patients/{patient_id}/medications", 
             method="POST", 
             data=json.dumps({
-                "id": medication_id,
                 "name": name, 
                 "dosage": dosage,             
                 "start_date": start_date,
@@ -94,7 +93,6 @@ class Model:
             url=f"{path}/patients/{patient_id}/medications/{medication_id}", 
             method="PATCH", 
             data=json.dumps({
-                "id": medication_id,
                 "name": name, 
                 "dosage": dosage,             
                 "start_date": start_date,
@@ -123,7 +121,6 @@ class Model:
             return True
         
         #FIXME borra pero muestra el errores de todos modos
-        
         print(f"Failed to delete posology")
         return False
     
