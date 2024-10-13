@@ -1,3 +1,4 @@
+# Diagrama de clases
 ```mermaid
 classDiagram
     class Model {
@@ -83,4 +84,64 @@ classDiagram
     Controller --> Model
     Controller --> View
 
+```
+# Diagrama de secuencia
+```mermaid
+sequenceDiagram
+    participant User
+    participant Controller
+    participant View
+    participant Model
+
+    User ->> Controller: on_patient_selected(patient)
+    Controller ->> Model: get_medications(patient_id)
+    Model -->> Controller: medications
+    Controller ->> View: update_medication_list_panel_patient(patient_id, medications)
+
+    User ->> Controller: on_add_medication(patient_id)
+    Controller ->> View: create_medication_input_row(patient_id, name, dosage, duration, start_date)
+    User ->> View: fill medication details
+    User ->> View: save medication
+    View ->> Controller: on_save_medication(patient_id, name, dosage, duration, start_date)
+    Controller ->> Model: add_medication(patient_id, name, dosage, start_date, duration)
+    Model -->> Controller: confirmation
+    Controller ->> Model: get_medications(patient_id)
+    Model -->> Controller: updated medications
+    Controller ->> View: update_medication_list_panel_patient(patient_id, updated_medications)
+
+    User ->> Controller: on_edit_medication(patient_id, medication)
+    Controller ->> View: update_medication(patient_id, name, dosage, duration, start_date)
+    User ->> View: edit medication details
+    User ->> View: save edited medication
+    View ->> Controller: on_save_medication(patient_id, name, dosage, duration, start_date)
+    Controller ->> Model: update_medication(patient_id, medication_id, name, dosage, start_date, duration)
+    Model -->> Controller: confirmation
+    Controller ->> Model: get_medications(patient_id)
+    Model -->> Controller: updated medications
+    Controller ->> View: update_medication_list_panel_patient(patient_id, updated_medications)
+
+    User ->> Controller: on_delete_medication(patient_id, medication_id)
+    Controller ->> Model: delete_medication(patient_id, medication_id)
+    Model -->> Controller: confirmation
+    Controller ->> Model: get_medications(patient_id)
+    Model -->> Controller: updated medications
+    Controller ->> View: update_medication_list_panel_patient(patient_id, updated_medications)
+
+    User ->> Controller: on_add_posology(button, container, patient_id, medication_id)
+    Controller ->> View: create_posology_input_row(button, container, patient_id, medication_id)
+    User ->> View: fill posology details
+    User ->> View: save posology
+    View ->> Controller: on_save_posology(button, container, patient_id, medication_id, hour, minute)
+    Controller ->> Model: add_posology(patient_id, medication_id, minute, hour)
+    Model -->> Controller: confirmation
+    Controller ->> Model: get_posologies(patient_id, medication_id)
+    Model -->> Controller: posologies
+    Controller ->> View: update_posology_list_panel(button, container, patient_id, medication_id, posologies)
+
+    User ->> Controller: on_delete_posology(button, container, patient_id, medication_id, posology_id)
+    Controller ->> Model: delete_posology(patient_id, medication_id, posology_id)
+    Model -->> Controller: confirmation
+    Controller ->> Model: get_posologies(patient_id, medication_id)
+    Model -->> Controller: updated posologies
+    Controller ->> View: update_posology_list_panel(button, container, patient_id, medication_id, updated_posologies)
 ```
