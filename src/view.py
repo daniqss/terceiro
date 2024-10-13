@@ -145,10 +145,11 @@ class View(Adw.Application):
         buttons.set_margin_bottom(6)
         
         buttons.set_halign(Gtk.Align.END)
-        button_update = self.buttons.editButton(handler=lambda _: self.handler.update_patient(patient))
-        button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_patient(patient))
-        buttons.append(button_update)
-        buttons.append(button_delete)
+        # if is requested in a future iteration, we can add the update and delete patients buttons
+        # button_update = self.buttons.editButton(handler=lambda _: self.handler.update_patient(patient))
+        # button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_patient(patient))
+        # buttons.append(button_update)
+        # buttons.append(button_delete)
 
         row.append(patient_data)
         row.append(buttons)
