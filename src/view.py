@@ -173,13 +173,13 @@ class View(Adw.Application):
     def update_medication_list_panel_patient(self, patient_id, medications):
         print(f"Creating medication list for patient: {patient_id}")
 
-        if hasattr(self, 'label_select_patient'):
+        if hasattr(self, 'label_select_patient') and self.label_select_patient in self.right_box:
             self.right_box.remove(self.label_select_patient)
 
-        if hasattr(self, 'medication_list_box'):
+        if hasattr(self, 'medication_list_box') and self.medication_list_box in self.right_box:
             self.right_box.remove(self.medication_list_box)
 
-        if hasattr(self, 'add_medication_box'):
+        if hasattr(self, 'add_medication_box') and self.add_medication_box in self.right_box:
             self.right_box.remove(self.add_medication_box)
 
         self.label_select_patient = Gtk.Label(label=f'Selected patient: {patient_id}')
@@ -296,7 +296,6 @@ class View(Adw.Application):
                 posology_row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
                 posology_row.set_halign(Gtk.Align.CENTER)
 
-                # Etiquetas de hora y minuto
                 label_hour = Gtk.Label(label=f"<span font_size='12000'><b>Hour:</b> {posology.get('hour')}</span>")
                 label_hour.set_use_markup(True)
                 label_minute = Gtk.Label(label=f"<span font_size='12000'><b>Minute:</b> {posology.get('minute')}</span>")
@@ -305,7 +304,6 @@ class View(Adw.Application):
                 posology_row.append(label_hour)
                 posology_row.append(label_minute)
 
-                # Botones de acción
                 buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
                 buttons.set_halign(Gtk.Align.START)
                 button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.on_delete_posology(button, container, patient_id, medication_id, posology['id']))
@@ -333,49 +331,41 @@ class View(Adw.Application):
         self.buttons.switchExpandableButton(button)
 
     def create_medication_input_row(self, patient_id, name, dosage, duration, start_date):
-        # Verificar si ya hay una fila de entrada y eliminarla si existe
-        if hasattr(self, 'input_row') and self.input_row is not None:
+        if hasattr(self, 'input_row') and self.input_row in self.add_medication_box:
             self.add_medication_box.remove(self.input_row)
-            self.input_row = None
-        
-        if hasattr(self, 'label_select_patient'):
+        if hasattr(self, 'label_select_patient') and self.label_select_patient in self.right_box:
             self.right_box.remove(self.label_select_patient)
-
-        if hasattr(self, 'medication_list_box'):
+        if hasattr(self, 'medication_list_box') and self.medication_list_box in self.right_box:
             self.right_box.remove(self.medication_list_box)
 
-        # Crear un contenedor vertical
         container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         container.set_margin_top(10)
         container.set_margin_bottom(10)
         container.set_margin_start(10)
         container.set_margin_end(10)
 
-        # Crear las filas de entrada usando Adw.EntryRow (con valores iniciales)
         entry_name = Adw.EntryRow()
         entry_name.set_title("Medication Name")
-        entry_name.set_text(name)  # Establecer el nombre de la medicación
+        entry_name.set_text(name)
         entry_name.show()
         
         entry_dosage = Adw.EntryRow()
         entry_dosage.set_title("Dosage (mg)")
-        entry_dosage.set_text(dosage)  # Establecer la dosis
+        entry_dosage.set_text(dosage)
 
         entry_duration = Adw.EntryRow()
         entry_duration.set_title("Duration (days)")
-        entry_duration.set_text(duration)  # Establecer la duración
+        entry_duration.set_text(duration)
 
         entry_start_date = Adw.EntryRow()
         entry_start_date.set_title("Start Date (YYYY-MM-DD)")
-        entry_start_date.set_text(start_date)  # Establecer la fecha de inicio
+        entry_start_date.set_text(start_date)
 
-        # Añadir las EntryRows al contenedor
         container.append(entry_name)
         container.append(entry_dosage)
         container.append(entry_duration)
         container.append(entry_start_date)
 
-        # Crear una caja para los botones
         buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         buttons.set_halign(Gtk.Align.END)
         buttons.set_margin_start(6)
@@ -383,7 +373,6 @@ class View(Adw.Application):
         buttons.set_margin_top(6)
         buttons.set_margin_bottom(6)
 
-        # Botón para confirmar la adición de la medicación
         button_save = Gtk.Button(label="Confirm")
         button_save.connect("clicked", lambda _: self.handler.on_save_medication(patient_id, 
                                                                                 entry_name.get_text(), 
@@ -391,59 +380,51 @@ class View(Adw.Application):
                                                                                 entry_duration.get_text(), 
                                                                                 entry_start_date.get_text()))
 
-        # Botón para cancelar la acción y eliminar el formulario
         button_cancel = Gtk.Button(label="Cancel")
         button_cancel.connect("clicked", lambda _: self.handler.on_cancel_medication(patient_id))
 
-        # Añadir botones al contenedor de botones
         buttons.append(button_save)
         buttons.append(button_cancel)
 
-        # Añadir el contenedor de botones al contenedor principal
         container.append(buttons)
 
-        # Guardar la fila de entrada
         self.input_row = container
 
-        # Añadir el contenedor a la caja principal de medicaciones
         self.add_medication_box.append(container)
 
 
     def create_posology_input_row(self, button, container, patient_id, medication_id):
-        # Verificar si ya hay una fila de entrada y eliminarla si existe
-        if hasattr(self, 'input_row') and self.input_row is not None:
-            container.remove(self.input_row)  # Remover del container pasado como parámetro
+        if hasattr(self, 'input_row') and self.input_row is not None and self.input_row in container:
+            container.remove(self.input_row)
             self.input_row = None
 
-        # Si existía una label de selección de paciente o una caja de posología previa, eliminarlas
         if hasattr(self, 'label_select_patient') and self.label_select_patient in container:
             container.remove(self.label_select_patient)
+            self.label_select_patient = None
 
         if hasattr(self, 'add_posologie_box') and self.add_posologie_box in container:
             container.remove(self.add_posologie_box)
+            self.add_posologie_box = None
 
-        # Crear un nuevo contenedor vertical
+        self.add_posologie_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.add_posologie_box.set_margin_top(10)
         self.add_posologie_box.set_margin_bottom(10)
         self.add_posologie_box.set_margin_start(10)
         self.add_posologie_box.set_margin_end(10)
 
-        # Crear las filas de entrada usando Adw.EntryRow
         entry_hour = Adw.EntryRow()
         entry_hour.set_title("Hour")
-        entry_hour.set_text("")  # Puedes establecer un texto inicial si es necesario
+        entry_hour.set_text("")
         entry_hour.show()
 
         entry_minute = Adw.EntryRow()
         entry_minute.set_title("Minute")
-        entry_minute.set_text("")  # Puedes establecer un texto inicial si es necesario
+        entry_minute.set_text("")
         entry_minute.show()
 
-        # Añadir las EntryRows al contenedor
         self.add_posologie_box.append(entry_hour)
         self.add_posologie_box.append(entry_minute)
 
-        # Crear una caja para los botones
         buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         buttons.set_halign(Gtk.Align.END)
         buttons.set_margin_start(6)
@@ -451,7 +432,6 @@ class View(Adw.Application):
         buttons.set_margin_top(6)
         buttons.set_margin_bottom(6)
 
-        # Botón para confirmar la adición de la medicación
         button_save = Gtk.Button(label="Confirm")
         button_save.connect("clicked", lambda _: self.handler.on_save_posology(button, 
                                                                             container,
@@ -461,24 +441,17 @@ class View(Adw.Application):
                                                                             int(entry_minute.get_text())))
         button_save.show()
 
-        # Botón para cancelar la acción y eliminar el formulario
         button_cancel = Gtk.Button(label="Cancel")
-        button_cancel.connect("clicked", lambda _: self.handler.on_cancel_posology(patient_id))
+        button_cancel.connect("clicked", lambda _: self.handler.on_cancel_posology(button, container, patient_id, medication_id))  # Pasa los argumentos correctos
         button_cancel.show()
 
-        # Añadir botones al contenedor de botones
         buttons.append(button_save)
         buttons.append(button_cancel)
 
-        # Añadir el contenedor de botones al contenedor principal
         self.add_posologie_box.append(buttons)
 
-        # Guardar la fila de entrada
         self.input_row = self.add_posologie_box
-
-        # Añadir el contenedor posology_box al contenedor principal pasado por parámetro
         container.append(self.add_posologie_box)
-
 
     def update_medication(self, patient_id, name, dosage, duration, start_date):
         if hasattr(self, 'add_button') and self.add_button is not None:
