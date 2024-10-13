@@ -13,5 +13,5 @@ def request_data(url: str, method: str = "GET", data: Optional[dict] = None) -> 
         return None, None
 
 PORT: int = int(getenv("PORT", 8000))
-APPLICATION_ID: str = "es.udc.fic.ipm.pacientes"
+APPLICATION_ID: str = "es.udc.fic.ipm.acdc.pacientes"
 WINDOW_PADDING: int = 24
