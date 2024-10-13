@@ -32,16 +32,29 @@ class Controller:
         self.model.add_medication(patient_id, name, dosage, start_date, duration)
         self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
 
+    def on_update_medication(self, patient_id, medication_id, name, dosage, duration, start_date):
+        medication = {
+            "name": name,
+            "dosage": dosage,
+            "treatment_duration": duration,
+            "start_date": start_date,
+            "patient_id": patient_id
+        }
+
+        self.model.update_medication(patient_id, medication_id, name, dosage, start_date, duration)
+        self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
+
     def on_cancel_medication(self, patient_id):
         medication = self.model.get_medications(patient_id)
         self.view.update_medication_list_panel_patient(patient_id, medication)
     
     def on_edit_medication(self, patient_id, medication):
+        id = medication["id"]
         name = medication["name"]
         dosage = str(medication["dosage"])
         duration = str(medication["treatment_duration"])
         start_date = str(medication["start_date"])
-        self.view.update_medication(patient_id, name, dosage, duration, start_date)
+        self.view.update_medication(patient_id, id, name, dosage, duration, start_date)
 
     def on_expand_medication(self, button, container, patient_id, medication_id):
         posologies = self.model.get_posologies(patient_id, medication_id)

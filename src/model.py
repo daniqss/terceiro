@@ -13,8 +13,7 @@ headers = {
 
 class Model:
     def __init__(self):
-        self.update_posology(1, 1, 1, 55, 10)
-        print(self.get_posologies(1, 1))
+        pass
     
     #region Patient
 
