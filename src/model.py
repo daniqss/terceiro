@@ -66,14 +66,8 @@ class Model:
         return False
 
     # Returns the lowest medication id avaliable for a patient
-    def next_medication_id(self, patient_id: int):
-        lowest = None
-        for i in self.get_medications(patient_id):
-            if lowest == None or lowest == i["id"]:
-                lowest = i["id"] + 1
-        return lowest
 
-    def add_medication(self, patient_id: int, medication_id: int, name: str, dosage:int, start_date: str, treatement_duration: int):
+    def add_medication(self, patient_id: int, name: str, dosage:int, start_date: str, treatement_duration: int):
         response = request(
             url=f"{path}/patients/{patient_id}/medications", 
             method="POST", 
@@ -123,21 +117,12 @@ class Model:
         #FIXME borra pero muestra el errores de todos modos
         print(f"Failed to delete posology")
         return False
-    
-    # Returns the lowest posology id avaliable for a patient
-    def next_posology_id(self, patient_id: int, medication_id: int):
-        lowest = None
-        for i in self.get_posologies(patient_id, medication_id):
-            if lowest == None or lowest == i["id"]:
-                lowest = i["id"] + 1
-        return lowest
         
-    def add_posology(self, patient_id: int, medication_id: int, posology_id:int, minute:int, hour:int):
+    def add_posology(self, patient_id: int, medication_id: int, minute:int, hour:int):
         response = request(
             url=f"{path}/patients/{patient_id}/medications/{medication_id}/posologies", 
             method="POST", 
             data=json.dumps({
-                "id": posology_id,
                 "medication_id": medication_id,
                 "minute": minute,             
                 "hour": hour
@@ -161,4 +146,3 @@ class Model:
         print(f"--> {response}")
 
     #endregion
-

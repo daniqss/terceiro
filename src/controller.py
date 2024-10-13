@@ -28,8 +28,8 @@ class Controller:
             "start_date": start_date,
             "patient_id": patient_id
         }
-        nextId = self.model.next_medication_id(patient_id)
-        self.model.add_medication(patient_id, nextId, name, dosage, start_date, duration)
+        #nextId = self.model.next_medication_id(patient_id)
+        self.model.add_medication(patient_id, name, dosage, start_date, duration)
         self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
 
     def on_cancel_medication(self, patient_id):
@@ -64,8 +64,8 @@ class Controller:
             'hour': hour,
             'minute': minute
         },
-        nextId = self.model.next_posology_id(patient_id, medication_id)
-        self.model.add_posology(patient_id, medication_id, nextId, minute, hour)
+        # nextId = self.model.next_posology_id(patient_id, medication_id)
+        self.model.add_posology(patient_id, medication_id, minute, hour)
         posologies = self.model.get_posologies(patient_id, medication_id)
         self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
