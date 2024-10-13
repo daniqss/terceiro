@@ -28,4 +28,40 @@
   - Conflictos, desviaciones, etc.
   
 
-## Estado del repositorio en la semama 1
+## Estado del repositorio en la semana 1
+### 1. Evaluar casos de uso y diseños individuales
+- **Descripción**: Revisión de los casos de uso y diseños individuales propuestos por los integrantes del grupo.
+- **Responsables**: Curador, Analista, Facilitador.
+- **Estado**: Completado.
+- **Conflictos**: Diferencias en la interpretación de algunos casos de uso, resueltos mediante análisis conjunto.
+
+### 2. Crear el diseño de la interfaz
+- **Descripción**: Creación de un diseño de la interfaz a partir de los diseños individuales.
+- **Responsables**: Analista.
+- **Estado**: Completado.
+
+### 3. Selección del patrón arquitectónico
+- **Descripción**: Elección del patrón arquitectónico a utilizar en la implementación de la aplicación.
+- **Responsables**: Curador, Analista, Facilitador.
+- **Patrón**: Modelo-Vista-Controlador (MVC).
+- **Estado**: Completado.
+
+### 4. Diseño software (patrón seleccionado)
+- **Descripción**: Diseño de la aplicación siguiendo el patrón arquitectónico seleccionado.
+- **Responsables**: Curador, Analista, Facilitador.
+- **Estado**: Completado.
+
+### 5. Implementación de la vista
+- **Descripción**: Implementación de la parte visual de la aplicación.
+- **Responsables**: Analista, Facilitador.
+- **Estado**: Completado.
+
+### 6. Implementación del controlador
+- **Descripción**: Implementación de la gestion de eventos y la lógica de la aplicación.
+- **Responsables**: Facilitador.
+- **Estado**: Completado.
+
+### 7. Implementación del modelo
+- **Descripción**: Implementación de la gestión de datos de la aplicación.
+- **Responsables**: Curador.
+- **Estado**: Completado.
