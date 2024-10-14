@@ -21,26 +21,11 @@ class Controller:
         self.view.create_medication_input_row(patient_id, name, dosage, duration, start_date)
 
     def on_save_medication(self, patient_id, name, dosage, duration, start_date):
-        medication = {
-            "name": name,
-            "dosage": dosage,
-            "treatment_duration": duration,
-            "start_date": start_date,
-            "patient_id": patient_id
-        }
         #nextId = self.model.next_medication_id(patient_id)
         self.model.add_medication(patient_id, name, dosage, start_date, duration)
         self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
 
     def on_update_medication(self, patient_id, medication_id, name, dosage, duration, start_date):
-        medication = {
-            "name": name,
-            "dosage": dosage,
-            "treatment_duration": duration,
-            "start_date": start_date,
-            "patient_id": patient_id
-        }
-
         self.model.update_medication(patient_id, medication_id, name, dosage, start_date, duration)
         self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
 
@@ -73,10 +58,6 @@ class Controller:
         self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
         
     def on_save_posology(self, button, container, patient_id, medication_id, hour, minute):
-        posology = {
-            'hour': hour,
-            'minute': minute
-        },
         # nextId = self.model.next_posology_id(patient_id, medication_id)
         self.model.add_posology(patient_id, medication_id, minute, hour)
         posologies = self.model.get_posologies(patient_id, medication_id)
