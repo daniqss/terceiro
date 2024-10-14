@@ -64,17 +64,25 @@ class View(Adw.Application):
         scrolled.set_vexpand(True)
         scrolled.set_hexpand(True)
 
+
+        self.patients = self.handler.get_patients()
+
+        # empty list due to a network error
+        if self.patients == []:
+            error_message = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+            error_message.append(Gtk.Label(label="No patients available", css_classes=["title-3"], halign=Gtk.Align.CENTER))
+            left_box.append(error_message)
+            return left_box
+
         # List of patients, we'll add patients boxes for each patient
         self.listbox_patients = Gtk.ListBox()
         self.listbox_patients.add_css_class("boxed-list")
 
-        self.patients = self.handler.get_patients()
-
-        def on_row_activated(_, row):
-            # get the patient from the tuple that relates the index in the patient list and the index in the listbox after a search
-            self.handler.on_patient_selected(self.patients[self.patients_index_relations[row.get_index()][0]])
-        self.listbox_patients.connect("row-activated", on_row_activated)
-
+        # get the patient from the tuple that relates the index in the patient list and the index in the listbox after a search
+        self.listbox_patients.connect(
+            "row-activated",
+            lambda _, row: self.handler.on_patient_selected(self.patients[self.patients_index_relations[row.get_index()][0]])
+        )
         
         # if its the first time we show the patients, we filter them
         self.filter_patients(patients_search)

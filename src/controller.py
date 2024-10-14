@@ -1,3 +1,4 @@
+from typing import List
 from src.model import Model
 from src.view import View
 
@@ -68,10 +69,21 @@ class Controller:
         self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
     def get_patients(self):
-        return self.model.get_patients()
-    
-    def get_medications(self, patient_id):
-        return self.model.get_medications(patient_id)
+        try:
+            return self.model.get_patients()
+        except Exception as e:
+            print(f"Error: {e}")
+            return []    
+    def get_medications(self, patient_id) -> List[dict]:
+        try:
+            return self.model.get_medications(patient_id)
+        except Exception as e:
+            print(f"Error: {e}")
+            return []
     
     def get_posologies(self, patient_id, medication_id):
-        return self.model.get_posologies(patient_id, medication_id)
+        try:
+            return self.model.get_posologies(patient_id, medication_id)
+        except Exception as e:
+            print(f"Error: {e}")
+            return []
