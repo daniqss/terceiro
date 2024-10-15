@@ -511,11 +511,14 @@ class View(Adw.Application):
         buttons.set_margin_bottom(6)
 
         button_save = Gtk.Button(label="Confirm")
-        button_save.connect("clicked", lambda _: self.handler.on_save_posology(button, 
-                                                                            container,
-                                                                            patient_id, 
-                                                                            medication_id,
-                                                                            int(entry_hour.get_text()), 
+        button_save.connect(
+            "clicked",
+            lambda _: self.handler.on_save_posology(
+                button, 
+                container,
+                patient_id, 
+                medication_id,
+                int(entry_hour.get_text()), 
                 int(entry_minute.get_text())
             )
         )
