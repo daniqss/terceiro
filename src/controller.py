@@ -14,6 +14,12 @@ class Controller:
         self.selected_patient = patient
         self.view.update_medication_list_panel_patient(self.selected_patient["id"], self.model.get_medications(self.selected_patient["id"]))
 
+    def on_refresh_patients(self):
+        self.view.update_patient_list(self.get_patients())
+
+    def on_network_error(self, message: str):
+        self.view.show_network_error(message)
+
     def on_add_medication(self, patient_id):
         name = ""
         dosage = ""

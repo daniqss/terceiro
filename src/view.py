@@ -28,8 +28,8 @@ class View(Adw.Application):
         main_box.append(paned)
         
         # Left panel: Patient list
-        left_box = self.update_patient_list_panel()
-        paned.set_start_child(left_box)
+        self.left_box = self.update_patient_list_panel()
+        paned.set_start_child(self.left_box)
 
         # Right panel: Medication list
         right_box = self.create_empty_medication_list_panel()
@@ -54,10 +54,16 @@ class View(Adw.Application):
         return Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
 
     def update_patient_list_panel(self) -> Gtk.Box:
-        left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, margin_start=8, margin_end=8, margin_top=0, margin_bottom=8)
+        self.left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, margin_start=8, margin_end=8, margin_top=0, margin_bottom=8)
+        patients_top_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         patients_label = Gtk.Label(label="Patients")
         patients_search = Gtk.SearchEntry()
+        patients_search.set_hexpand(True)
         patients_search.set_placeholder_text("Search patients by code")
+        patients_top_box.append(patients_search)
+        refresh_button = self.buttons.refreshButton(handler=lambda _: self.handler.on_refresh_patients())
+        refresh_button.set_halign(Gtk.Align.END)
+        patients_top_box.append(refresh_button)
 
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -66,34 +72,37 @@ class View(Adw.Application):
 
 
         self.patients = self.handler.get_patients()
-
-        # empty list due to a network error
+        # manage no patients due to network error
         if self.patients == []:
-            error_message = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-            error_message.append(Gtk.Label(label="No patients available", css_classes=["title-3"], halign=Gtk.Align.CENTER))
-            left_box.append(error_message)
-            return left_box
+            self.handler.on_network_error("No patients available. Please try again later.")
 
-        # List of patients, we'll add patients boxes for each patient
         self.listbox_patients = Gtk.ListBox()
         self.listbox_patients.add_css_class("boxed-list")
+
+        # if its the first time we show the patients, we filter them
+        self.filter_patients(patients_search)
+        # Connect the search entry to the filter function
+        patients_search.connect("search-changed", self.filter_patients)
 
         # get the patient from the tuple that relates the index in the patient list and the index in the listbox after a search
         self.listbox_patients.connect(
             "row-activated",
             lambda _, row: self.handler.on_patient_selected(self.patients[self.patients_index_relations[row.get_index()][0]])
         )
-        
-        # if its the first time we show the patients, we filter them
-        self.filter_patients(patients_search)
-        # Connect the search entry to the filter function
-        patients_search.connect("search-changed", self.filter_patients)
-
         scrolled.set_child(self.listbox_patients)
-        left_box.append(patients_label)
-        left_box.append(patients_search)
-        left_box.append(scrolled)
-        return left_box
+
+        self.left_box.append(patients_label)
+        self.left_box.append(patients_top_box)
+        self.left_box.append(scrolled)
+        return self.left_box
+    
+    def filter_patients(self, search_entry):
+        search_text = search_entry.get_text().lower()
+        filtered_patients = [
+            patient for patient in self.patients
+            if search_text in patient.get('code', '').lower()
+        ]
+        self.update_patient_list(filtered_patients)
 
     def update_patient_list(self, filtered_patients=None):
         # Remove all rows from the ListBox
@@ -115,14 +124,6 @@ class View(Adw.Application):
                 index_relations.append((original_index, new_index))
 
         self.patients_index_relations = index_relations
-
-    def filter_patients(self, search_entry):
-        search_text = search_entry.get_text().lower()
-        filtered_patients = [
-            patient for patient in self.patients
-            if search_text in patient.get('code', '').lower()
-        ]
-        self.update_patient_list(filtered_patients)
 
     def create_patient_row(self, patient) -> Gtk.Box:
         row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
@@ -534,3 +535,39 @@ class View(Adw.Application):
         if hasattr(self, 'add_button') and self.add_button is not None:
             self.add_medication_box.remove(self.add_button)
         self.update_medication_input_row(patient_id, medication_id, name, dosage, duration, start_date)
+
+
+    def show_network_error(self, message: str):
+        # the dialog prints a critical error message on close, but its a gkt bug
+        # there's an open issue since august 2024 https://gitlab.gnome.org/GNOME/libadwaita/-/issues/912
+        dialog = Adw.AlertDialog()
+        # dialog.set_size_request(300, 300)
+        # dialog.set_content_height(480)
+        # dialog.set_content_width(360)
+
+        trigger = Gtk.ShortcutTrigger.parse_string("Escape");
+        close_action = Gtk.CallbackAction().new(lambda dialog, _: dialog.close())
+        shortcut = Gtk.Shortcut().new(trigger, close_action)
+        dialog.add_shortcut(shortcut)
+
+        view = Adw.ToolbarView()
+
+        top = Adw.HeaderBar()
+        title = Adw.WindowTitle(title="Network Error")
+        top.set_title_widget(title)
+        view.add_top_bar(top)
+
+        view.set_content(
+            Gtk.Label(
+                label=message,
+                css_classes=["urgent", "title-3"],
+                margin_bottom=12,
+                margin_top=12,
+                margin_start=12,
+                margin_end=12,
+            ),
+        )
+        
+
+        dialog.set_child(view)
+        dialog.present()

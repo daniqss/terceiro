@@ -1,6 +1,6 @@
 from gi import require_version
 require_version('Gtk', '4.0')
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk # type: ignore
 
 
 class Buttons:
