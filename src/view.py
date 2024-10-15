@@ -1,4 +1,5 @@
 import gi
+
 gi.require_version("Gtk", "4.0")
 gi.require_version('Adw', '1')
 from gi.repository import Adw, Gtk, Pango # type: ignore
@@ -71,10 +72,7 @@ class View(Adw.Application):
         scrolled.set_hexpand(True)
 
 
-        self.patients = self.handler.get_patients()
-        # manage no patients due to network error
-        if self.patients == []:
-            self.handler.on_network_error("No patients available. Please try again later.")
+        self.patients = self.handler.on_get_patients()
 
         self.listbox_patients = Gtk.ListBox()
         self.listbox_patients.add_css_class("boxed-list")
@@ -105,6 +103,8 @@ class View(Adw.Application):
         self.update_patient_list(filtered_patients)
 
     def update_patient_list(self, filtered_patients=None):
+        if filtered_patients is None or filtered_patients == []:
+            return
         # Remove all rows from the ListBox
         while row := self.listbox_patients.get_first_child():
             self.listbox_patients.remove(row)
@@ -543,7 +543,7 @@ class View(Adw.Application):
         self.update_medication_input_row(patient_id, medication_id, name, dosage, duration, start_date)
 
 
-    def show_network_error(self, message: str):
+    def show_dialog(self, title: str, message: str):
         dialog = Adw.AlertDialog()
         dialog.set_size_request(300, 300)
 
@@ -555,14 +555,13 @@ class View(Adw.Application):
         view = Adw.ToolbarView()
 
         top = Adw.HeaderBar()
-        title = Adw.WindowTitle(title="Network Error")
-        top.set_title_widget(title)
+        top.set_title_widget(Adw.WindowTitle(title=title))
         view.add_top_bar(top)
 
         view.set_content(
             Gtk.Label(
                 label=message,
-                css_classes=["urgent", "title-3"],
+                css_classes=["title-3"],
                 margin_bottom=12,
                 margin_top=12,
                 margin_start=12,

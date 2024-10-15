@@ -10,15 +10,21 @@ class Controller:
     def run(self):
         self.view.run()
 
+    def on_get_patients(self):
+        patients = self.get_patients()
+        if patients == []:
+            self.view.show_dialog("Network Error", "No se han encontrado pacientes")
+        return patients 
+        
     def on_patient_selected(self, patient: dict):
         self.selected_patient = patient
         self.view.update_medication_list_panel_patient(self.selected_patient["id"], self.model.get_medications(self.selected_patient["id"]))
 
     def on_refresh_patients(self):
-        self.view.update_patient_list(self.get_patients())
-
-    def on_network_error(self, message: str):
-        self.view.show_network_error(message)
+        patients = self.get_patients()
+        if patients == []:
+            self.view.show_dialog("Network Error", "Cannot connect to the server")
+        self.view.update_patient_list(patients)
 
     def on_add_medication(self, patient_id):
         name = ""
