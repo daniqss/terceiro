@@ -15,10 +15,10 @@ class View(Adw.Application):
         self.patients_index_relations = []
 
     def do_activate(self):
-        window = self.create_main_window()
-        window.set_title("Patients - ACDC")
-        window.set_default_size(1300, 1200)
-        main_box = self.create_main_layout(window)
+        self.window = self.create_main_window()
+        self.window.set_title("Patients - ACDC")
+        self.window.set_default_size(1300, 1200)
+        main_box = self.create_main_layout(self.window)
         
         # Create header and split panel
         header_bar = self.create_header_bar()
@@ -36,7 +36,7 @@ class View(Adw.Application):
         paned.set_end_child(right_box)
         self.right_box = right_box
 
-        window.show()
+        self.window.show()
 
     def create_main_window(self):
         return Adw.ApplicationWindow(application=self)
@@ -516,7 +516,10 @@ class View(Adw.Application):
                                                                             patient_id, 
                                                                             medication_id,
                                                                             int(entry_hour.get_text()), 
-                                                                            int(entry_minute.get_text())))
+                int(entry_minute.get_text())
+            )
+        )
+        
         button_save.show()
 
         button_cancel = Gtk.Button(label="Cancel")
@@ -538,12 +541,8 @@ class View(Adw.Application):
 
 
     def show_network_error(self, message: str):
-        # the dialog prints a critical error message on close, but its a gkt bug
-        # there's an open issue since august 2024 https://gitlab.gnome.org/GNOME/libadwaita/-/issues/912
         dialog = Adw.AlertDialog()
-        # dialog.set_size_request(300, 300)
-        # dialog.set_content_height(480)
-        # dialog.set_content_width(360)
+        dialog.set_size_request(300, 300)
 
         trigger = Gtk.ShortcutTrigger.parse_string("Escape");
         close_action = Gtk.CallbackAction().new(lambda dialog, _: dialog.close())
@@ -570,4 +569,4 @@ class View(Adw.Application):
         
 
         dialog.set_child(view)
-        dialog.present()
+        dialog.present(self.window)
