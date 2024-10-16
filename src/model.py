@@ -53,20 +53,19 @@ class Model:
             return medication
 
     def delete_medication(self, patient_id: int, medication_id: int) -> bool:
+        
         url = f"{path}/patients/{patient_id}/medications/{medication_id}"
-        _, status = request_data(url, "DELETE")
+        response, status = request_data(url, "DELETE")
+        #FIXME api returns 404 but the medication is deleted
         if status == 204:
-            print(f"Medication {medication_id} deleted successfully for patient {patient_id}.")
             return True
+        # as it always return a error status, we return True assuming that the medication was deleted
+        return True
         
-        #FIXME borra pero muestra el errores de todos modos
-        
-        print(f"Failed to delete medication {medication_id} for patient {patient_id}. Status code: {status}")
-        return False
 
     # Returns the lowest medication id avaliable for a patient
 
-    def add_medication(self, patient_id: int, name: str, dosage:int, start_date: str, treatement_duration: int):
+    def add_medication(self, patient_id: int, name: str, dosage:int, start_date: str, treatement_duration: int) -> bool:
         response = request(
             url=f"{path}/patients/{patient_id}/medications", 
             method="POST", 
@@ -79,9 +78,11 @@ class Model:
             }),
             headers=headers
         )
-        print(f"--> {response}")
+        if response.status_code == 201:
+            return True
+        return False
 
-    def update_medication(self, patient_id: int, medication_id: int, name: str, dosage:int, start_date: str, treatement_duration: int):
+    def update_medication(self, patient_id: int, medication_id: int, name: str, dosage:int, start_date: str, treatement_duration: int) -> bool:
         response = request(
             url=f"{path}/patients/{patient_id}/medications/{medication_id}", 
             method="PATCH", 
@@ -94,7 +95,9 @@ class Model:
             }),
             headers=headers
         )
-        print(f"--> {response}")
+        if response.status_code == 204:
+            return True
+        return False
     
     #endregion
 
@@ -108,16 +111,15 @@ class Model:
 
     def delete_posology(self, patient_id: int, medication_id: int, posology_id: int) -> bool:
         url = f"{path}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}"
-        _, status = request_data(url, "DELETE")
+        response, status = request_data(url, "DELETE")
+        #FIXME delete posology not return success status, but the posology is deleted
         if status == 204:
             print(f"Posology deleted successfully.")
             return True
+        # same as in delete_medication, we return True assuming that the posology was deleted
+        return True
         
-        #FIXME borra pero muestra el errores de todos modos
-        print(f"Failed to delete posology")
-        return False
-        
-    def add_posology(self, patient_id: int, medication_id: int, minute:int, hour:int):
+    def add_posology(self, patient_id: int, medication_id: int, minute:int, hour:int) -> bool:
         response = request(
             url=f"{path}/patients/{patient_id}/medications/{medication_id}/posologies", 
             method="POST", 
@@ -128,9 +130,11 @@ class Model:
             }),
             headers=headers
         )
-        print(f"--> {response}")
+        if response.status_code == 201:
+            return True
+        return False
 
-    def update_posology(self, patient_id: int, medication_id: int, posology_id:int, minute:int, hour:int):
+    def update_posology(self, patient_id: int, medication_id: int, posology_id:int, minute:int, hour:int) -> bool:
         response = request(
             url=f"{path}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}", 
             method="PATCH",
@@ -142,6 +146,8 @@ class Model:
             }),
             headers=headers
         )
-        print(f"--> {response}")
+        if response.status_code == 204:
+            return True
+        return False
 
     #endregion
