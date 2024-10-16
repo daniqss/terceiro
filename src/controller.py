@@ -18,7 +18,15 @@ class Controller:
         
     def on_patient_selected(self, patient: dict):
         self.selected_patient = patient
-        self.view.update_medication_list_panel_patient(self.selected_patient["id"], self.model.get_medications(self.selected_patient["id"]))
+        try: 
+            medications = self.model.get_medications(patient["id"])
+            if medications is not None or medications != []:
+                self.view.update_medication_list_panel_patient(patient["id"], medications)
+            else:
+                self.view.show_dialog("Error", "Cannot get medications")
+        except Exception as e:
+            print(f"Error: {e}")
+            self.view.show_dialog("Network Error", "Cannot get medications")
 
     def on_refresh_patients(self):
         patients = self.get_patients()

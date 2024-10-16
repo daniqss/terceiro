@@ -569,6 +569,6 @@ class View(Adw.Application):
             ),
         )
         
-
         dialog.set_child(view)
         dialog.present(self.window)
+        

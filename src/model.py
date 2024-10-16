@@ -112,12 +112,9 @@ class Model:
     def delete_posology(self, patient_id: int, medication_id: int, posology_id: int) -> bool:
         url = f"{path}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}"
         response, status = request_data(url, "DELETE")
-        #FIXME delete posology not return success status, but the posology is deleted
         if status == 204:
-            print(f"Posology deleted successfully.")
             return True
-        # same as in delete_medication, we return True assuming that the posology was deleted
-        return True
+        return False
         
     def add_posology(self, patient_id: int, medication_id: int, minute:int, hour:int) -> bool:
         response = request(
