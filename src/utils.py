@@ -2,15 +2,22 @@ from os import getenv
 from typing import Optional
 from requests import request
 from requests.exceptions import RequestException
+# from requests.exceptions import JSONDecodeError
+from src.exceptions import NetworkErrorException
 
-def request_data(url: str, method: str = "GET", data: Optional[dict] = None) -> tuple[Optional[dict | list], int | None]:
+def request_data(url: str, method: str = "GET", data: Optional[dict] = None) -> tuple[dict | list, int]:
     try: 
         response = request(method=method, url=url, data=data)
+        
+        #FIXME super horrible solution, we must fix this problem with the .json() exceptions
+        # but works for now
+        if response.status_code == 204:
+            return {}, 204
+        
         return response.json(), response.status_code
-    
     except RequestException as e:
-        print(f"An error occurred: {e}")
-        return None, None
+        print(f"Error: {e}")
+        raise NetworkErrorException("Error de red")
 
 PORT: int = int(getenv("PORT", 8000))
 APPLICATION_ID: str = "es.udc.fic.ipm.acdc.pacientes"

@@ -1,4 +1,5 @@
 import gi
+
 gi.require_version("Gtk", "4.0")
 gi.require_version('Adw', '1')
 from gi.repository import Adw, Gtk, Pango # type: ignore
@@ -15,10 +16,10 @@ class View(Adw.Application):
         self.patients_index_relations = []
 
     def do_activate(self):
-        window = self.create_main_window()
-        window.set_title("Patients - ACDC")
-        window.set_default_size(1300, 1200)
-        main_box = self.create_main_layout(window)
+        self.window = self.create_main_window()
+        self.window.set_title("Patients - ACDC")
+        self.window.set_default_size(1300, 1200)
+        main_box = self.create_main_layout(self.window)
         
         # Create header and split panel
         header_bar = self.create_header_bar()
@@ -28,15 +29,15 @@ class View(Adw.Application):
         main_box.append(paned)
         
         # Left panel: Patient list
-        left_box = self.update_patient_list_panel()
-        paned.set_start_child(left_box)
+        self.left_box = self.update_patient_list_panel()
+        paned.set_start_child(self.left_box)
 
         # Right panel: Medication list
         right_box = self.create_empty_medication_list_panel()
         paned.set_end_child(right_box)
         self.right_box = right_box
 
-        window.show()
+        self.window.show()
 
     def create_main_window(self):
         return Adw.ApplicationWindow(application=self)
@@ -51,43 +52,61 @@ class View(Adw.Application):
         return header_bar
 
     def create_split_panel(self) -> Gtk.Paned:
-        return Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
+        paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
+        paned.set_position(300)
+        return paned
 
     def update_patient_list_panel(self) -> Gtk.Box:
-        left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, margin_start=8, margin_end=8, margin_top=0, margin_bottom=8)
+        self.left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, margin_start=8, margin_end=8, margin_top=0, margin_bottom=8)
+        patients_top_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         patients_label = Gtk.Label(label="Patients")
         patients_search = Gtk.SearchEntry()
+        patients_search.set_hexpand(True)
         patients_search.set_placeholder_text("Search patients by code")
+        patients_top_box.append(patients_search)
+        refresh_button = self.buttons.refreshButton(handler=lambda _: self.handler.on_refresh_patients())
+        refresh_button.set_halign(Gtk.Align.END)
+        patients_top_box.append(refresh_button)
 
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         scrolled.set_vexpand(True)
         scrolled.set_hexpand(True)
 
-        # List of patients, we'll add patients boxes for each patient
+
+        self.patients = self.handler.on_get_patients()
+
         self.listbox_patients = Gtk.ListBox()
         self.listbox_patients.add_css_class("boxed-list")
 
-        self.patients = self.handler.get_patients()
-
-        def on_row_activated(_, row):
-            # get the patient from the tuple that relates the index in the patient list and the index in the listbox after a search
-            self.handler.on_patient_selected(self.patients[self.patients_index_relations[row.get_index()][0]])
-        self.listbox_patients.connect("row-activated", on_row_activated)
-
-        
         # if its the first time we show the patients, we filter them
         self.filter_patients(patients_search)
         # Connect the search entry to the filter function
         patients_search.connect("search-changed", self.filter_patients)
 
+        # get the patient from the tuple that relates the index in the patient list and the index in the listbox after a search
+        self.listbox_patients.connect(
+            "row-activated",
+            lambda _, row: self.handler.on_patient_selected(self.patients[self.patients_index_relations[row.get_index()][0]])
+        )
         scrolled.set_child(self.listbox_patients)
-        left_box.append(patients_label)
-        left_box.append(patients_search)
-        left_box.append(scrolled)
-        return left_box
+
+        self.left_box.append(patients_label)
+        self.left_box.append(patients_top_box)
+        self.left_box.append(scrolled)
+        return self.left_box
+    
+    def filter_patients(self, search_entry):
+        search_text = search_entry.get_text().lower()
+        filtered_patients = [
+            patient for patient in self.patients
+            if search_text in patient.get('code', '').lower()
+        ]
+        self.update_patient_list(filtered_patients)
 
     def update_patient_list(self, filtered_patients=None):
+        if filtered_patients is None or filtered_patients == []:
+            return
         # Remove all rows from the ListBox
         while row := self.listbox_patients.get_first_child():
             self.listbox_patients.remove(row)
@@ -107,14 +126,6 @@ class View(Adw.Application):
                 index_relations.append((original_index, new_index))
 
         self.patients_index_relations = index_relations
-
-    def filter_patients(self, search_entry):
-        search_text = search_entry.get_text().lower()
-        filtered_patients = [
-            patient for patient in self.patients
-            if search_text in patient.get('code', '').lower()
-        ]
-        self.update_patient_list(filtered_patients)
 
     def create_patient_row(self, patient) -> Gtk.Box:
         row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
@@ -502,12 +513,18 @@ class View(Adw.Application):
         buttons.set_margin_bottom(6)
 
         button_save = Gtk.Button(label="Confirm")
-        button_save.connect("clicked", lambda _: self.handler.on_save_posology(button, 
-                                                                            container,
-                                                                            patient_id, 
-                                                                            medication_id,
-                                                                            int(entry_hour.get_text()), 
-                                                                            int(entry_minute.get_text())))
+        button_save.connect(
+            "clicked",
+            lambda _: self.handler.on_save_posology(
+                button, 
+                container,
+                patient_id, 
+                medication_id,
+                int(entry_hour.get_text()), 
+                int(entry_minute.get_text())
+            )
+        )
+        
         button_save.show()
 
         button_cancel = Gtk.Button(label="Cancel")
@@ -526,3 +543,34 @@ class View(Adw.Application):
         if hasattr(self, 'add_button') and self.add_button is not None:
             self.add_medication_box.remove(self.add_button)
         self.update_medication_input_row(patient_id, medication_id, name, dosage, duration, start_date)
+
+
+    def show_dialog(self, title: str, message: str):
+        dialog = Adw.AlertDialog()
+        dialog.set_size_request(300, 300)
+
+        trigger = Gtk.ShortcutTrigger.parse_string("Escape");
+        close_action = Gtk.CallbackAction().new(lambda dialog, _: dialog.close())
+        shortcut = Gtk.Shortcut().new(trigger, close_action)
+        dialog.add_shortcut(shortcut)
+
+        view = Adw.ToolbarView()
+
+        top = Adw.HeaderBar()
+        top.set_title_widget(Adw.WindowTitle(title=title))
+        view.add_top_bar(top)
+
+        view.set_content(
+            Gtk.Label(
+                label=message,
+                css_classes=["title-3"],
+                margin_bottom=12,
+                margin_top=12,
+                margin_start=12,
+                margin_end=12,
+            ),
+        )
+        
+        dialog.set_child(view)
+        dialog.present(self.window)
+ 
