@@ -1,5 +1,5 @@
 from typing import List, Any, Optional
-from src.utils import request_data, PORT
+from src.utils import request_data, PORT, block_execution
 from requests import request
 from src.exceptions import NetworkErrorException
 from src.exceptions import DataErrorException
@@ -17,7 +17,7 @@ class Model:
         pass
     
     #region Patient
-
+    @block_execution
     def get_patients(self) -> List[dict]:
         url = f"{path}/patients"
         patients, status = request_data(url, "GET")
@@ -25,12 +25,14 @@ class Model:
             raise DataErrorException("Error getting patients")
         return patients
     
+    @block_execution
     def get_patient_by_code(self, code: str) -> Optional[dict]:
         patients = self.get_patients()
         for patient in patients:
             if patient["code"] == code:
                 return patient
 
+    @block_execution
     def get_patient(self, patient_id: int) -> Optional[dict]:
         url = f"{path}/patients/{patient_id}"
         patient, status = request_data(url, "GET")
@@ -40,7 +42,7 @@ class Model:
     #endregion
     
     #region Medication
-
+    @block_execution
     def get_medications(self, patient_id: int) -> Optional[List[dict]]:
         url = f"{path}/patients/{patient_id}/medications"
         medications, status = request_data(url, "GET")
@@ -49,6 +51,7 @@ class Model:
             raise DataErrorException("Error getting medications")
         return medications
 
+    @block_execution
     def get_medication(self, patient_id: int, medication_id: int) -> Optional[dict]:
         url = f"{path}/patients/{patient_id}/medications/{medication_id}"
         medication, status = request_data(url, "GET")
@@ -57,6 +60,7 @@ class Model:
             raise DataErrorException("Error getting medication")
         return medication
 
+    @block_execution
     def delete_medication(self, patient_id: int, medication_id: int):
         
         url = f"{path}/patients/{patient_id}/medications/{medication_id}"
@@ -67,7 +71,7 @@ class Model:
         
 
     # Returns the lowest medication id avaliable for a patient
-
+    @block_execution
     def add_medication(self, patient_id: int, name: str, dosage:int, start_date: str, treatement_duration: int):
         response = request(
             url=f"{path}/patients/{patient_id}/medications", 
@@ -84,6 +88,7 @@ class Model:
         if response.status_code != 201:
             raise DataErrorException("Error adding medication")
 
+    @block_execution
     def update_medication(self, patient_id: int, medication_id: int, name: str, dosage:int, start_date: str, treatement_duration: int):
         response = request(
             url=f"{path}/patients/{patient_id}/medications/{medication_id}", 
@@ -103,7 +108,7 @@ class Model:
     #endregion
 
     #region Posogies
-
+    @block_execution
     def get_posologies(self, patient_id: int, medication_id: int) -> Optional[List[dict]]:
         url = f"{path}/patients/{patient_id}/medications/{medication_id}/posologies"
         posologies, status = request_data(url, "GET")
@@ -112,12 +117,14 @@ class Model:
         else:
             raise DataErrorException("Error getting posologies")
 
+    @block_execution
     def delete_posology(self, patient_id: int, medication_id: int, posology_id: int) -> bool:
         url = f"{path}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}"
         _, status = request_data(url, "DELETE")
         if status != 204:
             raise DataErrorException("Error deleting posology")
-        
+    
+    @block_execution
     def add_posology(self, patient_id: int, medication_id: int, minute:int, hour:int) -> bool:
         response = request(
             url=f"{path}/patients/{patient_id}/medications/{medication_id}/posologies", 
@@ -132,6 +139,7 @@ class Model:
         if response.status_code != 201:
             raise DataErrorException("Error adding posology")
 
+    @block_execution
     def update_posology(self, patient_id: int, medication_id: int, posology_id:int, minute:int, hour:int):
         response = request(
             url=f"{path}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}", 
