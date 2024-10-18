@@ -52,7 +52,9 @@ class View(Adw.Application):
         return header_bar
 
     def create_split_panel(self) -> Gtk.Paned:
-        return Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
+        paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
+        paned.set_position(300)
+        return paned
 
     def update_patient_list_panel(self) -> Gtk.Box:
         self.left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, margin_start=8, margin_end=8, margin_top=0, margin_bottom=8)
