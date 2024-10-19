@@ -1,16 +1,9 @@
-from typing import List, Any, Optional
-from src.utils import request_data, PORT
+from typing import List, Optional
+from src.utils import request_data, PORT, HOST
 from requests import request
-from src.exceptions import NetworkErrorException
 from src.exceptions import DataErrorException
-import json
 
-path = f"http://localhost:{PORT}"
-
-headers = {
-    "Content-Type": "application/json"  # Ensure the request sends JSON data
-}
-
+PATH = f"http://{HOST}:{PORT}"
 
 class Model:
     def __init__(self):
@@ -19,7 +12,7 @@ class Model:
     #region Patient
 
     def get_patients(self) -> List[dict]:
-        url = f"{path}/patients"
+        url = f"{PATH}/patients"
         patients, status = request_data(url, "GET")
         if status != 200:
             raise DataErrorException("Error getting patients")
@@ -32,7 +25,7 @@ class Model:
                 return patient
 
     def get_patient(self, patient_id: int) -> Optional[dict]:
-        url = f"{path}/patients/{patient_id}"
+        url = f"{PATH}/patients/{patient_id}"
         patient, status = request_data(url, "GET")
         if status != 200:
             raise DataErrorException("Error getting patient")
@@ -42,7 +35,7 @@ class Model:
     #region Medication
 
     def get_medications(self, patient_id: int) -> Optional[List[dict]]:
-        url = f"{path}/patients/{patient_id}/medications"
+        url = f"{PATH}/patients/{patient_id}/medications"
         medications, status = request_data(url, "GET")
 
         if status != 200:
@@ -50,101 +43,126 @@ class Model:
         return medications
 
     def get_medication(self, patient_id: int, medication_id: int) -> Optional[dict]:
-        url = f"{path}/patients/{patient_id}/medications/{medication_id}"
-        medication, status = request_data(url, "GET")
+        medication, status = request_data(
+            url=f"{PATH}/patients/{patient_id}/medications/{medication_id}",
+            method="GET"
+        )
         
         if status != 200:
             raise DataErrorException("Error getting medication")
         return medication
 
     def delete_medication(self, patient_id: int, medication_id: int):
-        
-        url = f"{path}/patients/{patient_id}/medications/{medication_id}"
-        response, status = request_data(url, "DELETE")
-        #FIXME api returns 404 but the medication is deleted
+        response, status = request_data(
+            f"{PATH}/patients/{patient_id}/medications/{medication_id}",
+            "DELETE"
+        )
+
         if status != 204:
             raise DataErrorException("Error deleting medication")
         
 
-    # Returns the lowest medication id avaliable for a patient
-
-    def add_medication(self, patient_id: int, name: str, dosage:int, start_date: str, treatement_duration: int):
-        response = request(
-            url=f"{path}/patients/{patient_id}/medications", 
-            method="POST", 
-            data=json.dumps({
+    def add_medication(
+            self,
+            patient_id: int,
+            name: str,
+            dosage:int,
+            start_date: str,
+            treatement_duration: int
+        ) -> dict:
+        response, status = request_data(
+            f"{PATH}/patients/{patient_id}/medications", 
+            "POST", 
+            {
                 "name": name, 
                 "dosage": dosage,             
                 "start_date": start_date,
                 "treatment_duration": treatement_duration,  
                 "patient_id": patient_id
-            }),
-            headers=headers
+            }
         )
-        if response.status_code != 201:
+        if status != 201:
             raise DataErrorException("Error adding medication")
+        return response
 
-    def update_medication(self, patient_id: int, medication_id: int, name: str, dosage:int, start_date: str, treatement_duration: int):
-        response = request(
-            url=f"{path}/patients/{patient_id}/medications/{medication_id}", 
-            method="PATCH", 
-            data=json.dumps({
+    def update_medication(
+            self,
+            patient_id: int,
+            medication_id: int,
+            name: str,
+            dosage:int,
+            start_date: str,
+            treatement_duration: int
+        ) -> dict:
+        response, status = request_data(
+            f"{PATH}/patients/{patient_id}/medications/{medication_id}", 
+            "PATCH", 
+            {
                 "name": name, 
                 "dosage": dosage,             
                 "start_date": start_date,
                 "treatment_duration": treatement_duration,  
                 "patient_id": patient_id
-            }),
-            headers=headers
+            }
         )
-        if response.status_code != 204:
+
+        if status != 204:
             raise DataErrorException("Error updating medication")
+        return response
     
     #endregion
 
     #region Posogies
 
     def get_posologies(self, patient_id: int, medication_id: int) -> Optional[List[dict]]:
-        url = f"{path}/patients/{patient_id}/medications/{medication_id}/posologies"
-        posologies, status = request_data(url, "GET")
-        if status == 200:
-            return posologies
-        else:
+        posologies, status = request_data(
+            f"{PATH}/patients/{patient_id}/medications/{medication_id}/posologies",
+            "GET"
+        )
+        
+        if status != 200:
             raise DataErrorException("Error getting posologies")
+        return posologies
 
     def delete_posology(self, patient_id: int, medication_id: int, posology_id: int) -> bool:
-        url = f"{path}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}"
-        _, status = request_data(url, "DELETE")
+        response, status = request_data(
+            f"{PATH}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}",
+            "DELETE"
+        )
+
         if status != 204:
             raise DataErrorException("Error deleting posology")
+        return response
         
     def add_posology(self, patient_id: int, medication_id: int, minute:int, hour:int) -> bool:
-        response = request(
-            url=f"{path}/patients/{patient_id}/medications/{medication_id}/posologies", 
-            method="POST", 
-            data=json.dumps({
+        response, status = request_data(
+            f"{PATH}/patients/{patient_id}/medications/{medication_id}/posologies", 
+            "POST", 
+            {
                 "medication_id": medication_id,
                 "minute": minute,             
                 "hour": hour
-            }),
-            headers=headers
+            }
         )
-        if response.status_code != 201:
+
+        if status != 201:
             raise DataErrorException("Error adding posology")
+        return response
 
     def update_posology(self, patient_id: int, medication_id: int, posology_id:int, minute:int, hour:int):
-        response = request(
-            url=f"{path}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}", 
-            method="PATCH",
-            data=json.dumps({
+        response, status = request_data(
+            f"{PATH}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}", 
+            "PATCH",
+            {
                 "id": posology_id,
                 "hour": hour,
                 "minute": minute,             
                 "medication_id": medication_id
-            }),
-            headers=headers
+            }
         )
-        if response.status_code != 204:
+
+        if status != 204:
             raise DataErrorException("Error updating posology")
+        return response
 
     #endregion
