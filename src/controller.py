@@ -10,6 +10,8 @@ class Controller:
     def __init__(self):
         self.view = View(self)
         self.model = Model()
+        self.selected_patient = None
+        self.abbort_operation = False
 
     def run(self):
         self.view.run()
@@ -22,9 +24,13 @@ class Controller:
     
     @run_async
     def on_patient_selected(self, patient: dict):
+        self.selected_patient = patient["id"]
+        self.abbort_operation = True
         try:
             medications = self.model.get_medications(patient["id"])
-            self.view.update_medication_list_panel_patient(patient["id"], medications)
+            if self.selected_patient == patient["id"]:
+                self.abbort_operation = False
+                self.view.update_medication_list_panel_patient(patient["id"], medications)
         except NetworkErrorException as e:
             print(f"Error: {e}")
             self.view.show_dialog("Network Error", "Cannot get medications")
@@ -35,6 +41,8 @@ class Controller:
     @run_async
     def on_refresh_patients(self):
         patients = self.get_patients()
+        if self.abbort_operation:
+            return
         if patients != []:
             self.view.update_patient_list(patients)
         else: 
@@ -51,6 +59,8 @@ class Controller:
     def on_save_medication(self, patient_id, name, dosage, duration, start_date):
         try:
             self.model.add_medication(patient_id, name, dosage, start_date, duration)
+            if self.abbort_operation:
+                return
             self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
 
         except NetworkErrorException as e:
@@ -64,6 +74,8 @@ class Controller:
     def on_update_medication(self, patient_id, medication_id, name, dosage, duration, start_date):
         try:
             self.model.update_medication(patient_id, medication_id, name, dosage, start_date, duration)
+            if self.abbort_operation:
+                return
             self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
             
         except NetworkErrorException as e:
@@ -77,6 +89,8 @@ class Controller:
     def on_cancel_medication(self, patient_id):
         try: 
             medication = self.model.get_medications(patient_id)
+            if self.abbort_operation:
+                return
             self.view.update_medication_list_panel_patient(patient_id, medication)
 
         except NetworkErrorException as e:
@@ -98,6 +112,8 @@ class Controller:
     def on_expand_medication(self, button, container, patient_id, medication_id):
         try:
             posologies = self.model.get_posologies(patient_id, medication_id)
+            if self.abbort_operation:
+                return
             self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
         except NetworkErrorException as e:
@@ -111,6 +127,8 @@ class Controller:
     def on_delete_medication(self, paciente_id, medication_id):
         try:
             self.model.delete_medication(paciente_id, medication_id)
+            if self.abbort_operation:
+                return
             self.view.update_medication_list_panel_patient(paciente_id, self.model.get_medications(paciente_id))
 
         except NetworkErrorException as e:
@@ -127,11 +145,14 @@ class Controller:
     def on_delete_posology(self, button, container, patient_id, medication_id, posology_id):
         try:
             self.model.delete_posology(patient_id, medication_id, posology_id)
-            
+            if self.abbort_operation:
+                return
             try:
                 posologies = self.model.get_posologies(patient_id, medication_id)
+                if self.abbort_operation:
+                    return
                 self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
-                
+            
             except NetworkErrorException as e:
                 print(f"Error: {e}")
                 self.view.show_dialog("Network Error", "Cannot get posologies")
@@ -149,8 +170,12 @@ class Controller:
     def on_save_posology(self, button, container, patient_id, medication_id, hour, minute):
         try:
             self.model.add_posology(patient_id, medication_id, minute, hour)
+            if self.abbort_operation:
+                return
             try:
                 posologies = self.model.get_posologies(patient_id, medication_id)
+                if self.abbort_operation:
+                    return
                 self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
                 
             except NetworkErrorException as e:
@@ -171,6 +196,8 @@ class Controller:
     def on_cancel_posology(self, button, container, patient_id, medication_id):
         try:
             posologies = self.model.get_posologies(patient_id, medication_id)
+            if self.abbort_operation:
+                return
             self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
         except NetworkErrorException as e:
