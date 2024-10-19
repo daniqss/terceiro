@@ -11,7 +11,6 @@ headers = {
     "Content-Type": "application/json"  # Ensure the request sends JSON data
 }
 
-
 class Model:
     def __init__(self):
         pass

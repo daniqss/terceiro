@@ -1,8 +1,10 @@
+import threading
 from typing import List
 from src.model import Model
 from src.view import View
 from src.exceptions import NetworkErrorException
 from src.exceptions import DataErrorException
+from src.utils import run_async
 
 class Controller:
     def __init__(self):
@@ -11,18 +13,18 @@ class Controller:
 
     def run(self):
         self.view.run()
-
+    
     def on_get_patients(self):
         patients = self.get_patients()
         if patients == []:
             self.view.show_dialog("Network Error", "No se han encontrado pacientes")
         return patients 
-        
+    
+    @run_async
     def on_patient_selected(self, patient: dict):
-        self.selected_patient = patient
-        try: 
+        try:
             medications = self.model.get_medications(patient["id"])
-            self.view.update_medication_list_panel_patient(self.selected_patient["id"], medications)
+            self.view.update_medication_list_panel_patient(patient["id"], medications)
         except NetworkErrorException as e:
             print(f"Error: {e}")
             self.view.show_dialog("Network Error", "Cannot get medications")
@@ -30,6 +32,7 @@ class Controller:
             print(f"Error: {e}")
             self.view.show_dialog("Error", "Cannot get medications")
 
+    @run_async
     def on_refresh_patients(self):
         patients = self.get_patients()
         if patients != []:
@@ -44,6 +47,7 @@ class Controller:
         start_date = ""
         self.view.create_medication_input_row(patient_id, name, dosage, duration, start_date)
 
+    @run_async
     def on_save_medication(self, patient_id, name, dosage, duration, start_date):
         try:
             self.model.add_medication(patient_id, name, dosage, start_date, duration)
@@ -56,6 +60,7 @@ class Controller:
             print(f"Error: {e}")
             self.view.show_dialog("Error", "Medication could not be added")
 
+    @run_async
     def on_update_medication(self, patient_id, medication_id, name, dosage, duration, start_date):
         try:
             self.model.update_medication(patient_id, medication_id, name, dosage, start_date, duration)
@@ -68,6 +73,7 @@ class Controller:
             print(f"Error: {e}")
             self.view.show_dialog("Error", "Cannot get medications")
 
+    @run_async
     def on_cancel_medication(self, patient_id):
         try: 
             medication = self.model.get_medications(patient_id)
@@ -88,6 +94,7 @@ class Controller:
         start_date = str(medication["start_date"])
         self.view.update_medication(patient_id, id, name, dosage, duration, start_date)
 
+    @run_async
     def on_expand_medication(self, button, container, patient_id, medication_id):
         try:
             posologies = self.model.get_posologies(patient_id, medication_id)
@@ -100,6 +107,7 @@ class Controller:
             print(f"Error: {e}")
             self.view.show_dialog("Error", "Cannot get posologies")
 
+    @run_async
     def on_delete_medication(self, paciente_id, medication_id):
         try:
             self.model.delete_medication(paciente_id, medication_id)
@@ -115,6 +123,7 @@ class Controller:
     def on_add_posology(self, button, container, patient_id, medication_id):
         self.view.create_posology_input_row(button, container, patient_id, medication_id)
 
+    @run_async
     def on_delete_posology(self, button, container, patient_id, medication_id, posology_id):
         try:
             self.model.delete_posology(patient_id, medication_id, posology_id)
@@ -135,7 +144,8 @@ class Controller:
         except DataErrorException as e:
             print(f"Error: {e}")
             self.view.show_dialog("Error", "Cannot get posologies")
-        
+    
+    @run_async
     def on_save_posology(self, button, container, patient_id, medication_id, hour, minute):
         try:
             self.model.add_posology(patient_id, medication_id, minute, hour)
@@ -157,6 +167,7 @@ class Controller:
             print(f"Error: {e}")
             self.view.show_dialog("Error", "Cannot add posology")
 
+    @run_async
     def on_cancel_posology(self, button, container, patient_id, medication_id):
         try:
             posologies = self.model.get_posologies(patient_id, medication_id)
@@ -168,14 +179,15 @@ class Controller:
         except DataErrorException as e:
             print(f"Error: {e}")
             self.view.show_dialog("Error", "Cannot get posologies")
-
+    
     def get_patients(self):
         try:
             return self.model.get_patients()
         except Exception as e:
             print(f"Error: {e}")
             return []    
-        
+    
+    @run_async
     def get_medications(self, patient_id) -> List[dict]:
         try:
             return self.model.get_medications(patient_id)
@@ -183,6 +195,7 @@ class Controller:
             print(f"Error: {e}")
             return []
     
+    @run_async
     def get_posologies(self, patient_id, medication_id):
         try:
             return self.model.get_posologies(patient_id, medication_id)
