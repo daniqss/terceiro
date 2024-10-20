@@ -41,6 +41,7 @@ class Controller:
     @run_async
     def on_refresh_patients(self):
         patients = self.get_patients()
+        self.view.update_patients(patients)
         if self.abbort_operation:
             return
 
