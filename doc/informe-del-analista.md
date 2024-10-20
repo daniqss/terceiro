@@ -77,3 +77,44 @@
   h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
   titulación?<br>
   Como diseñar un software por capas independientes e como utilizar diferentes tecnoloxías de xeito adecuado ao seu contexto.    
+
+  
+## Evaluación final de la semana 1
+
+   - Yago Garea Cidre
+    - 4
+    - Como facilitador organizou o traballo a facer, axudou ao resto do equipo nas dificultades que se nos presenteron e arranxou diferentes bugs, novos e antigos
+  - Javi Manotas Ruiz
+    - 4
+    - Como curador explicounos ao resto do equipo o funcionamento de certas novas características a implementar e de certas funcionalidades de Python.
+  - Daniel Queijo Seoane
+    - 4
+    - Como analista seguín realizando a tarefa do análise. En relación co código engadín o manexo de errores de distinta índole nas diferentes capas da aplicación.
+
+## Retrospectiva de la semana 2
+
+  a) ¿Qué ha sido lo mejor de la práctica?<br>
+  Traballo fluido e a posta en común cos compañeiros de equipo.
+  
+  b) ¿Qué fue lo peor?<br>
+  Nada en particular.
+
+  c) ¿Cuál fue el mejor momento de esta semana durante el trabajo del
+     equipo?<br>
+  Os tres membros traballando xuntos.istribuiu a carga de traballo e organizou ao equipo de xeito exitoso. Realizou as tarefas q se lle asignaron de xeito correcto e con gran eficiencia.
+
+  d) ¿Cuál ha sido el peor?<br>
+  Nada en particular.
+
+  e) ¿Qué has aprendido?<br>
+  A existencia e a utilidade dos decorators en python.
+
+  f) ¿Qué necesitáis conservar -como equipo- para las próximas semanas?<br>
+  A eficacia no desenvolvemento das nosas tarefas.
+
+  g) ¿Qué tenéis que mejorar -como equipo- para las próximas semanas?<br>
+  Nada en particular
+
+  h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
+  titulación?<br>
+  Relaciónase cos contidos doutras asignaturas sobre concurrencia e software tolerante a fallos.
