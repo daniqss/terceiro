@@ -114,7 +114,6 @@ class View(Adw.Application):
         # Add patients to the list
         patients_to_display = filtered_patients if filtered_patients is not None else self.patients
         index_relations = []
-        
         for new_index, patient in enumerate(patients_to_display):
             patient_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
             patient_box.append(self.create_patient_row(patient))
@@ -124,8 +123,7 @@ class View(Adw.Application):
             original_index = next((i for i, p in enumerate(self.patients) if p['id'] == patient['id']), None)
             if original_index is not None:
                 index_relations.append((original_index, new_index))
-
-        self.patients_index_relations = index_relations
+        self.patients_index_relations = index_relations 
 
     def create_patient_row(self, patient) -> Gtk.Box:
         row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
@@ -573,4 +571,6 @@ class View(Adw.Application):
         
         dialog.set_child(view)
         dialog.present(self.window)
- 
+
+    def update_patients(self, patients):
+        self.patients = patients

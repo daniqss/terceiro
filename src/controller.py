@@ -32,6 +32,7 @@ class Controller:
 
     def on_refresh_patients(self):
         patients = self.get_patients()
+        self.view.update_patients(patients)
         if patients != []:
             self.view.update_patient_list(patients)
         else: 
