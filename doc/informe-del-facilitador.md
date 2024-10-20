@@ -28,7 +28,6 @@
   - Conflictos, desviaciones, etc.
   
 
-## Estado del repositorio en la semana 1
 ### 1. Evaluar casos de uso y diseños individuales
 - **Descripción**: Revisión de los casos de uso y diseños individuales propuestos por los integrantes del grupo.
 - **Responsables**: Curador, Analista, Facilitador.
@@ -65,3 +64,19 @@
 - **Descripción**: Implementación de la gestión de datos de la aplicación.
 - **Responsables**: Curador.
 - **Estado**: Completado.
+
+##  Registro de tareas llevadas a cabo durante la semana 2
+1. **Solucionar errores**
+   - **Descripción**: Corregir errores en el código de la semana anterior.
+   - **Responsable**: Analista, Facilitador.
+   - **Estado**: Completado.
+
+2. **Añadir concurrencia**
+   - **Descripción**: Implementar concurrencia para mejorar el rendimiento.
+   - **Responsable**: Curador.
+   - **Estado**: Completado.
+
+3. **Manejo de errores**
+   - **Descripción**: Añadir el manejo de errores.
+   - **Responsable**: Analista, Facilitador.
+   - **Estado**: Completado.
