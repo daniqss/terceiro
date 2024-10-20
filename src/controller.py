@@ -43,6 +43,7 @@ class Controller:
         patients = self.get_patients()
         if self.abbort_operation:
             return
+
         if patients != []:
             self.view.update_patient_list(patients)
         else: 
