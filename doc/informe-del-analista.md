@@ -79,7 +79,7 @@
   Como diseñar un software por capas independientes e como utilizar diferentes tecnoloxías de xeito adecuado ao seu contexto.    
 
   
-## Evaluación final de la semana 1
+## Evaluación final de la semana 2
 
    - Yago Garea Cidre
     - 4
