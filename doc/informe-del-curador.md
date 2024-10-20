@@ -24,4 +24,14 @@ Para ellos hemos empleado la [documentación oficial](https://python-gtk-3-tutor
 	
 ## Otros recursos empleados en la semana 1
   - Visual studio code for the web: Nos permitió acelerar considerablemente la primera fase de prototipado del proyecto
-  - Chatgpt: Lo empleamos para consultar de manera rápida la documentación de ciertas funciones de python 
+  - Chatgpt: Lo empleamos para consultar de manera rápida la documentación de ciertas funciones de python
+
+
+## Objetivos de aprendizaje de la semana 2
+
+ - Uno de los principales objetivos de esta semana es aprender como funciona la [concurrencia en Python3](https://www.geeksforgeeks.org/python-program-with-concurrency/) y añadirla a las funciones más costosas de nuestra aplicación para así evitar bloquear toda la interfaz. Para llevar a cabo esto hemos decidido usar [decorators](https://realpython.com/primer-on-python-decorators/) y evitar así repetirnos mucho en nuestro código.
+ - Además hemos aprendido a gestionar los errores en nuestra aplicación de una manera más óptima.
+
+
+## Otros recursos empleados en la semana 2
+ - A lo largo de esta semana hemos vuelto a utilizar diversos recursos empleados en la semana pasada como visual studio code for the web y conventional commits.

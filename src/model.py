@@ -1,16 +1,17 @@
 from typing import List, Optional
-from src.utils import request_data, PORT, HOST
+from src.utils import request_data, PORT, HOST, block_execution
 from requests import request
 from src.exceptions import DataErrorException
 
 PATH = f"http://{HOST}:{PORT}"
+
 
 class Model:
     def __init__(self):
         pass
     
     #region Patient
-
+    @block_execution
     def get_patients(self) -> List[dict]:
         url = f"{PATH}/patients"
         patients, status = request_data(url, "GET")
@@ -18,12 +19,14 @@ class Model:
             raise DataErrorException("Error getting patients")
         return patients
     
+    @block_execution
     def get_patient_by_code(self, code: str) -> Optional[dict]:
         patients = self.get_patients()
         for patient in patients:
             if patient["code"] == code:
                 return patient
 
+    @block_execution
     def get_patient(self, patient_id: int) -> Optional[dict]:
         url = f"{PATH}/patients/{patient_id}"
         patient, status = request_data(url, "GET")
@@ -33,7 +36,7 @@ class Model:
     #endregion
     
     #region Medication
-
+    @block_execution
     def get_medications(self, patient_id: int) -> Optional[List[dict]]:
         url = f"{PATH}/patients/{patient_id}/medications"
         medications, status = request_data(url, "GET")
@@ -42,6 +45,7 @@ class Model:
             raise DataErrorException("Error getting medications")
         return medications
 
+    @block_execution
     def get_medication(self, patient_id: int, medication_id: int) -> Optional[dict]:
         medication, status = request_data(
             url=f"{PATH}/patients/{patient_id}/medications/{medication_id}",
@@ -52,6 +56,7 @@ class Model:
             raise DataErrorException("Error getting medication")
         return medication
 
+    @block_execution
     def delete_medication(self, patient_id: int, medication_id: int):
         response, status = request_data(
             f"{PATH}/patients/{patient_id}/medications/{medication_id}",
@@ -61,7 +66,8 @@ class Model:
         if status != 204:
             raise DataErrorException("Error deleting medication")
         
-
+    # Returns the lowest medication id avaliable for a patient
+    @block_execution
     def add_medication(
             self,
             patient_id: int,
@@ -69,7 +75,7 @@ class Model:
             dosage:int,
             start_date: str,
             treatement_duration: int
-        ) -> dict:
+    ) -> dict:
         response, status = request_data(
             f"{PATH}/patients/{patient_id}/medications", 
             "POST", 
@@ -85,6 +91,7 @@ class Model:
             raise DataErrorException("Error adding medication")
         return response
 
+    @block_execution
     def update_medication(
             self,
             patient_id: int,
@@ -113,7 +120,7 @@ class Model:
     #endregion
 
     #region Posogies
-
+    @block_execution
     def get_posologies(self, patient_id: int, medication_id: int) -> Optional[List[dict]]:
         posologies, status = request_data(
             f"{PATH}/patients/{patient_id}/medications/{medication_id}/posologies",
@@ -124,6 +131,7 @@ class Model:
             raise DataErrorException("Error getting posologies")
         return posologies
 
+    @block_execution
     def delete_posology(self, patient_id: int, medication_id: int, posology_id: int) -> bool:
         response, status = request_data(
             f"{PATH}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}",
@@ -134,6 +142,8 @@ class Model:
             raise DataErrorException("Error deleting posology")
         return response
         
+    
+    @block_execution
     def add_posology(self, patient_id: int, medication_id: int, minute:int, hour:int) -> bool:
         response, status = request_data(
             f"{PATH}/patients/{patient_id}/medications/{medication_id}/posologies", 
@@ -149,6 +159,7 @@ class Model:
             raise DataErrorException("Error adding posology")
         return response
 
+    @block_execution
     def update_posology(self, patient_id: int, medication_id: int, posology_id:int, minute:int, hour:int):
         response, status = request_data(
             f"{PATH}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}", 
