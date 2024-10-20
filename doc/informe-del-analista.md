@@ -101,7 +101,7 @@
 
   c) ¿Cuál fue el mejor momento de esta semana durante el trabajo del
      equipo?<br>
-  Os tres membros traballando xuntos.istribuiu a carga de traballo e organizou ao equipo de xeito exitoso. Realizou as tarefas q se lle asignaron de xeito correcto e con gran eficiencia.
+  Os tres membros traballando xuntos.
 
   d) ¿Cuál ha sido el peor?<br>
   Nada en particular.
