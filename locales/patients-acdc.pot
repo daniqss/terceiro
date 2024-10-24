@@ -14,153 +14,153 @@ msgstr ""
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/exceptions.py:25
 msgid "Network Error"
-msgstr "Error de Red"
+msgstr ""
 
 #: src/exceptions.py:28
 msgid "Cannot connect to the server"
-msgstr "No se pudo conectarse al servidor"
+msgstr ""
 
 #: src/exceptions.py:37
 msgid "Data Error"
-msgstr "Error de datos"
+msgstr ""
 
 #: src/exceptions.py:44
 msgid "Cannot get patients, status "
-msgstr "No se pudo obtener los pacientes, estado "
+msgstr ""
 
 #: src/exceptions.py:46
 msgid "Cannot add patient, status"
-msgstr "No se pudo añadir al paciente, estado "
+msgstr ""
 
 #: src/exceptions.py:48
 msgid "Cannot update patient, status"
-msgstr "No se pudo actualizar el paciente, status "
+msgstr ""
 
 #: src/exceptions.py:50
 msgid "Cannot delete patient, status"
-msgstr "No se pudo eliminar al paciente, estado "
+msgstr ""
 
 #: src/exceptions.py:55
 msgid "Cannot get medications, status"
-msgstr "No se pudo obtener la medicación, estado "
+msgstr ""
 
 #: src/exceptions.py:57
 msgid "Cannot add medication, status"
-msgstr "No se pudo añadir la medicación, estado "
+msgstr ""
 
 #: src/exceptions.py:59
 msgid "Cannot update medication, status"
-msgstr "No se pudo actualizar la medicación, estado "
+msgstr ""
 
 #: src/exceptions.py:61
 msgid "Cannot delete medication, status"
-msgstr "No se pudo eliminar la medicación, estado "
+msgstr ""
 
 #: src/exceptions.py:66
 msgid "Cannot get posologies, status"
-msgstr "No se pudo obtener las posologías, estado"
+msgstr ""
 
 #: src/exceptions.py:68
 msgid "Cannot add posology, status"
-msgstr "No se pudo añadir la posología, estado"
+msgstr ""
 
 #: src/exceptions.py:70
 msgid "Cannot delete posology, status"
-msgstr "No se pudo eliminar la posología, estado"
+msgstr ""
 
 #: src/exceptions.py:72
 msgid "Cannot get data, status"
-msgstr "No se pudo obtener los datos, estado"
+msgstr ""
 
 #: src/view.py:23 src/view.py:65
 msgid "Patients"
-msgstr "Pacientes"
+msgstr ""
 
 #: src/view.py:68
 msgid "Search patients by code"
-msgstr "Buscar por código"
+msgstr ""
 
 #: src/view.py:174
 msgid "Medications"
-msgstr "Medicaciones"
+msgstr ""
 
 #: src/view.py:177 src/view.py:180
 msgid "Select a patient"
-msgstr "Selecciona un paciente"
+msgstr ""
 
 #: src/view.py:197
 msgid "Selected patient: {}"
-msgstr "Paciente seleccionado: {}"
+msgstr ""
 
 #: src/view.py:199
 msgid "Selected patient:"
-msgstr "Paciente seleccionado:"
+msgstr ""
 
 #: src/view.py:210
 msgid "No medications available for this patient."
-msgstr "No se le han seleccionado medicaciones a este paciente."
+msgstr ""
 
 #: src/view.py:215
 msgid "Add Medication"
-msgstr "Añadir Medicación"
+msgstr ""
 
 #: src/view.py:230
 msgid "Name"
-msgstr "Nombre"
+msgstr ""
 
 #: src/view.py:231 src/view.py:377 src/view.py:434
 msgid "Dosage"
-msgstr "Dosis"
+msgstr ""
 
 #: src/view.py:232 src/view.py:381 src/view.py:438
 msgid "Duration"
-msgstr "Duración"
+msgstr ""
 
 #: src/view.py:233 src/view.py:385 src/view.py:442
 msgid "Start Date"
-msgstr "Fecha de comienzo"
+msgstr ""
 
 #: src/view.py:310
 msgid "Posologies"
-msgstr "Posologías"
+msgstr ""
 
 #: src/view.py:320 src/view.py:497
 msgid "Hour"
-msgstr "Hora"
+msgstr ""
 
 #: src/view.py:322 src/view.py:502
 msgid "Minute"
-msgstr "Minutos"
+msgstr ""
 
 #: src/view.py:338
 msgid "No posologies available"
-msgstr "Posologías no disponibles"
+msgstr ""
 
 #: src/view.py:347
 msgid "Add Posologies"
-msgstr "Añadir posologías"
+msgstr ""
 
 #: src/view.py:372 src/view.py:429
 msgid "Medication Name"
-msgstr "Nombre de la medicación"
+msgstr ""
 
 #: src/view.py:381 src/view.py:438
 msgid "days"
-msgstr "Días"
+msgstr ""
 
 #: src/view.py:400 src/view.py:457 src/view.py:516
 msgid "Confirm"
-msgstr "Confirmar"
+msgstr ""
 
 #: src/view.py:409 src/view.py:467 src/view.py:531
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr ""
 
 #: src/view.py:553
 msgid "Escape"
-msgstr "Escape"
+msgstr ""

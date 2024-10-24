@@ -7,6 +7,8 @@ from src.exceptions import NetworkErrorException, DataErrorException
 import time
 from functools import wraps
 import threading
+import locale
+import gettext
 
 # Helper decorator made to slowdown http requests and ensure that concurrency works properly
 def block_execution(func):
@@ -44,6 +46,19 @@ def request_data(url: str, method: str = "GET", data: Optional[dict] = None) -> 
         raise NetworkErrorException(e)
     except Exception as e:
         raise DataErrorException(e)
+    
+def get_locales():
+    lang, encoding = locale.getdefaultlocale()
+    try:
+        print(lang)
+        print(encoding)
+
+        translation = gettext.translation('patients-acdc', localedir='locales', languages=[lang])
+
+        print(translation)
+    except FileNotFoundError as e:
+        print(e)
+        translation = gettext.NullTranslations()
 
 PORT: int = int(getenv("PORT", 8000))
 HOST: str = getenv("HOST", "localhost")
