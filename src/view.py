@@ -4,9 +4,16 @@ gi.require_version("Gtk", "4.0")
 gi.require_version('Adw', '1')
 from gi.repository import Adw, Gtk, Pango # type: ignore
 from src.buttons import Buttons
-from src.utils import get_locales
+import gettext
+import locale
 
-_ = get_locales()
+lang, encoding = locale.getdefaultlocale()
+try:
+    translation = gettext.translation('patients-acdc', localedir='locales', languages=[lang])
+except FileNotFoundError as e:
+    print(e)
+    translation = gettext.NullTranslations()
+_ = translation.gettext
 
 from src.utils import APPLICATION_ID
 

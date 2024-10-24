@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-24 19:01+0200\n"
+"POT-Creation-Date: 2024-10-24 19:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,150 +17,150 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/exceptions.py:25
+#: src/exceptions.py:32
 msgid "Network Error"
 msgstr ""
 
-#: src/exceptions.py:28
+#: src/exceptions.py:35
 msgid "Cannot connect to the server"
 msgstr ""
 
-#: src/exceptions.py:37
+#: src/exceptions.py:44
 msgid "Data Error"
 msgstr ""
 
-#: src/exceptions.py:44
+#: src/exceptions.py:51
 msgid "Cannot get patients, status "
 msgstr ""
 
-#: src/exceptions.py:46
+#: src/exceptions.py:53
 msgid "Cannot add patient, status"
 msgstr ""
 
-#: src/exceptions.py:48
+#: src/exceptions.py:55
 msgid "Cannot update patient, status"
 msgstr ""
 
-#: src/exceptions.py:50
+#: src/exceptions.py:57
 msgid "Cannot delete patient, status"
 msgstr ""
 
-#: src/exceptions.py:55
+#: src/exceptions.py:62
 msgid "Cannot get medications, status"
 msgstr ""
 
-#: src/exceptions.py:57
+#: src/exceptions.py:64
 msgid "Cannot add medication, status"
 msgstr ""
 
-#: src/exceptions.py:59
+#: src/exceptions.py:66
 msgid "Cannot update medication, status"
 msgstr ""
 
-#: src/exceptions.py:61
+#: src/exceptions.py:68
 msgid "Cannot delete medication, status"
 msgstr ""
 
-#: src/exceptions.py:66
+#: src/exceptions.py:73
 msgid "Cannot get posologies, status"
 msgstr ""
 
-#: src/exceptions.py:68
+#: src/exceptions.py:75
 msgid "Cannot add posology, status"
 msgstr ""
 
-#: src/exceptions.py:70
+#: src/exceptions.py:77
 msgid "Cannot delete posology, status"
 msgstr ""
 
-#: src/exceptions.py:72
+#: src/exceptions.py:79
 msgid "Cannot get data, status"
 msgstr ""
 
-#: src/view.py:23 src/view.py:65
+#: src/view.py:30 src/view.py:72
 msgid "Patients"
 msgstr ""
 
-#: src/view.py:68
+#: src/view.py:75
 msgid "Search patients by code"
 msgstr ""
 
-#: src/view.py:174
+#: src/view.py:181
 msgid "Medications"
 msgstr ""
 
-#: src/view.py:177 src/view.py:180
+#: src/view.py:184 src/view.py:187
 msgid "Select a patient"
 msgstr ""
 
-#: src/view.py:197
+#: src/view.py:204
 msgid "Selected patient: {}"
 msgstr ""
 
-#: src/view.py:199
+#: src/view.py:206
 msgid "Selected patient:"
 msgstr ""
 
-#: src/view.py:210
+#: src/view.py:217
 msgid "No medications available for this patient."
 msgstr ""
 
-#: src/view.py:215
+#: src/view.py:222
 msgid "Add Medication"
 msgstr ""
 
-#: src/view.py:230
+#: src/view.py:237
 msgid "Name"
 msgstr ""
 
-#: src/view.py:231 src/view.py:377 src/view.py:434
+#: src/view.py:238 src/view.py:384 src/view.py:441
 msgid "Dosage"
 msgstr ""
 
-#: src/view.py:232 src/view.py:381 src/view.py:438
+#: src/view.py:239 src/view.py:388 src/view.py:445
 msgid "Duration"
 msgstr ""
 
-#: src/view.py:233 src/view.py:385 src/view.py:442
+#: src/view.py:240 src/view.py:392 src/view.py:449
 msgid "Start Date"
 msgstr ""
 
-#: src/view.py:310
+#: src/view.py:317
 msgid "Posologies"
 msgstr ""
 
-#: src/view.py:320 src/view.py:497
+#: src/view.py:327 src/view.py:504
 msgid "Hour"
 msgstr ""
 
-#: src/view.py:322 src/view.py:502
+#: src/view.py:329 src/view.py:509
 msgid "Minute"
 msgstr ""
 
-#: src/view.py:338
+#: src/view.py:345
 msgid "No posologies available"
 msgstr ""
 
-#: src/view.py:347
+#: src/view.py:354
 msgid "Add Posologies"
 msgstr ""
 
-#: src/view.py:372 src/view.py:429
+#: src/view.py:379 src/view.py:436
 msgid "Medication Name"
 msgstr ""
 
-#: src/view.py:381 src/view.py:438
+#: src/view.py:388 src/view.py:445
 msgid "days"
 msgstr ""
 
-#: src/view.py:400 src/view.py:457 src/view.py:516
+#: src/view.py:407 src/view.py:464 src/view.py:523
 msgid "Confirm"
 msgstr ""
 
-#: src/view.py:409 src/view.py:467 src/view.py:531
+#: src/view.py:416 src/view.py:474 src/view.py:538
 msgid "Cancel"
 msgstr ""
 
-#: src/view.py:553
+#: src/view.py:560
 msgid "Escape"
 msgstr ""
