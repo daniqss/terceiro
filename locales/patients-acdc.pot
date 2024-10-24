@@ -1,0 +1,169 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2024-10-24 15:56+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: src/exceptions.py:28
+msgid "Network Error"
+msgstr ""
+
+#: src/exceptions.py:31
+msgid "Cannot connect to the server"
+msgstr ""
+
+#: src/exceptions.py:40
+msgid "Data Error"
+msgstr ""
+
+#: src/exceptions.py:47
+msgid "Cannot get patients, status "
+msgstr ""
+
+#: src/exceptions.py:49
+msgid "Cannot add patient, status"
+msgstr ""
+
+#: src/exceptions.py:51
+msgid "Cannot update patient, status"
+msgstr ""
+
+#: src/exceptions.py:53
+msgid "Cannot delete patient, status"
+msgstr ""
+
+#: src/exceptions.py:58
+msgid "Cannot get medications, status"
+msgstr ""
+
+#: src/exceptions.py:60
+msgid "Cannot add medication, status"
+msgstr ""
+
+#: src/exceptions.py:62
+msgid "Cannot update medication, status"
+msgstr ""
+
+#: src/exceptions.py:64
+msgid "Cannot delete medication, status"
+msgstr ""
+
+#: src/exceptions.py:69
+msgid "Cannot get posologies, status"
+msgstr ""
+
+#: src/exceptions.py:71
+msgid "Cannot add posology, status"
+msgstr ""
+
+#: src/exceptions.py:73
+msgid "Cannot delete posology, status"
+msgstr ""
+
+#: src/exceptions.py:75
+msgid "Cannot get data, status"
+msgstr ""
+
+#: src/view.py:25 src/view.py:67
+msgid "Patients"
+msgstr ""
+
+#: src/view.py:70
+msgid "Search patients by code"
+msgstr ""
+
+#: src/view.py:145
+msgid "{} {}"
+msgstr ""
+
+#: src/view.py:147
+msgid "{}"
+msgstr ""
+
+#: src/view.py:176
+msgid "Medications"
+msgstr ""
+
+#: src/view.py:179 src/view.py:182
+msgid "Select a patient"
+msgstr ""
+
+#: src/view.py:199
+msgid "Selected patient: {}"
+msgstr ""
+
+#: src/view.py:212
+msgid "No medications available for this patient."
+msgstr ""
+
+#: src/view.py:217
+msgid "Add Medication"
+msgstr ""
+
+#: src/view.py:232
+msgid "Name"
+msgstr ""
+
+#: src/view.py:233 src/view.py:379 src/view.py:436
+msgid "Dosage"
+msgstr ""
+
+#: src/view.py:234 src/view.py:383 src/view.py:440
+msgid "Duration"
+msgstr ""
+
+#: src/view.py:235 src/view.py:387 src/view.py:444
+msgid "Start Date"
+msgstr ""
+
+#: src/view.py:312
+msgid "Posologies"
+msgstr ""
+
+#: src/view.py:322 src/view.py:499
+msgid "Hour"
+msgstr ""
+
+#: src/view.py:324 src/view.py:504
+msgid "Minute"
+msgstr ""
+
+#: src/view.py:340
+msgid "No posologies available"
+msgstr ""
+
+#: src/view.py:349
+msgid "Add Posologies"
+msgstr ""
+
+#: src/view.py:374 src/view.py:431
+msgid "Medication Name"
+msgstr ""
+
+#: src/view.py:383 src/view.py:440
+msgid "days"
+msgstr ""
+
+#: src/view.py:402 src/view.py:459 src/view.py:518
+msgid "Confirm"
+msgstr ""
+
+#: src/view.py:411 src/view.py:469 src/view.py:533
+msgid "Cancel"
+msgstr ""
+
+#: src/view.py:555
+msgid "Escape"
+msgstr ""
+
