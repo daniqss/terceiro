@@ -18,8 +18,6 @@ class Controller:
     
     def on_get_patients(self):
         patients = self.get_patients()
-        if patients == []:
-            self.view.show_dialog("Network Error", "No se han encontrado pacientes")
         return patients 
     
     @run_async
@@ -31,12 +29,8 @@ class Controller:
             if self.selected_patient == patient["id"]:
                 self.abbort_operation = False
                 self.view.update_medication_list_panel_patient(patient["id"], medications)
-        except NetworkErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Network Error", "Cannot get medications")
-        except DataErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Error", "Cannot get medications")
+        except Exception as e:
+            self.view.show_dialog(e.title_message(), e.body_message())
 
     @run_async
     def on_refresh_patients(self):
@@ -47,8 +41,7 @@ class Controller:
 
         if patients != []:
             self.view.update_patient_list(patients)
-        else: 
-            self.view.show_dialog("Network Error", "Cannot connect to the server")
+
 
     def on_add_medication(self, patient_id):
         name = ""
@@ -65,12 +58,8 @@ class Controller:
                 return
             self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
 
-        except NetworkErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Network Error", "Medication could not be added")
-        except DataErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Error", "Medication could not be added")
+        except Exception as e:
+            self.view.show_dialog(e.title_message(), e.body_message())
 
     @run_async
     def on_update_medication(self, patient_id, medication_id, name, dosage, duration, start_date):
@@ -80,12 +69,8 @@ class Controller:
                 return
             self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
             
-        except NetworkErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Network Error", "Cannot get medications")
-        except DataErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Error", "Cannot get medications")
+        except Exception as e:
+            self.view.show_dialog(e.title_message(), e.body_message())
 
     @run_async
     def on_cancel_medication(self, patient_id):
@@ -95,12 +80,8 @@ class Controller:
                 return
             self.view.update_medication_list_panel_patient(patient_id, medication)
 
-        except NetworkErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Network Error", "Cannot get medications")
-        except DataErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Error", "Cannot get medications")
+        except Exception as e:
+            self.view.show_dialog(e.title_message(), e.body_message())
     
     def on_edit_medication(self, patient_id, medication):
         id = medication["id"]
@@ -118,12 +99,8 @@ class Controller:
                 return
             self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
-        except NetworkErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Network Error", "Cannot get posologies")
-        except DataErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Error", "Cannot get posologies")
+        except Exception as e:
+            self.view.show_dialog(e.title_message(), e.body_message())
 
     @run_async
     def on_delete_medication(self, paciente_id, medication_id):
@@ -133,12 +110,8 @@ class Controller:
                 return
             self.view.update_medication_list_panel_patient(paciente_id, self.model.get_medications(paciente_id))
 
-        except NetworkErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Network Error", "Cannot delete medication")
-        except DataErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Error", "Cannot delete medication")
+        except Exception as e:
+            self.view.show_dialog(e.title_message(), e.body_message())
         
     def on_add_posology(self, button, container, patient_id, medication_id):
         self.view.create_posology_input_row(button, container, patient_id, medication_id)
@@ -155,18 +128,11 @@ class Controller:
                     return
                 self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
             
-            except NetworkErrorException as e:
-                print(f"Error: {e}")
-                self.view.show_dialog("Network Error", "Cannot get posologies")
-            except DataErrorException as e:
-                self.view.show_dialog("Error", "Cannot get posologies")
+            except Exception as e:
+                self.view.show_dialog(e.title_message(), e.body_message())
 
-        except NetworkErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Network Error", "Cannot get posologies")
-        except DataErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Error", "Cannot get posologies")
+        except Exception as e:
+            self.view.show_dialog(e.title_message(), e.body_message())
     
     @run_async
     def on_save_posology(self, button, container, patient_id, medication_id, hour, minute):
@@ -180,19 +146,11 @@ class Controller:
                     return
                 self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
                 
-            except NetworkErrorException as e:
-                print(f"Error: {e}")
-                self.view.show_dialog("Network Error", "Cannot get posologies")
-            except DataErrorException as e:
-                print(f"Error: {e}")
-                self.view.show_dialog("Error", "Cannot get posologies")
+            except Exception as e:
+                self.view.show_dialog(e.title_message(), e.body_message())
             
-        except NetworkErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Network Error", "Cannot add posology")
-        except DataErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Error", "Cannot add posology")
+        except Exception as e:
+            self.view.show_dialog(e.title_message(), e.body_message())
 
     @run_async
     def on_cancel_posology(self, button, container, patient_id, medication_id):
@@ -202,18 +160,14 @@ class Controller:
                 return
             self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
-        except NetworkErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Network Error", "Cannot get posologies")
-        except DataErrorException as e:
-            print(f"Error: {e}")
-            self.view.show_dialog("Error", "Cannot get posologies")
+        except Exception as e:
+            self.view.show_dialog(e.title_message(), e.body_message())
     
     def get_patients(self):
         try:
             return self.model.get_patients()
         except Exception as e:
-            print(f"Error: {e}")
+            self.view.show_dialog(e.title_message(), e.body_message())
             return []    
     
     @run_async
@@ -221,7 +175,7 @@ class Controller:
         try:
             return self.model.get_medications(patient_id)
         except Exception as e:
-            print(f"Error: {e}")
+            self.view.show_dialog(e.title_message(), e.body_message())
             return []
     
     @run_async
@@ -229,5 +183,5 @@ class Controller:
         try:
             return self.model.get_posologies(patient_id, medication_id)
         except Exception as e:
-            print(f"Error: {e}")
+            self.view.show_dialog(e.title_message(), e.body_message())
             return []
