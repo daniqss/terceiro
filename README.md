@@ -120,3 +120,10 @@ Y para que la aplicación pueda utilizar los nuevos locales, tenemos que compila
 ```bash
 for lang in locales/*.po; do msgfmt "$lang" -o "locales/$(basename $lang .po)/LC_MESSAGES/patients-acdc.mo"; done
 ```
+
+Para probar que funciona debemos comprobar q tenemos los locales que queramos utilizar instalados con `locale -a`.
+Si no añadimos nada en la ejecución de la aplicación, se utilizará el idioma por defecto del sistema. Para cambiarlo, añadimos variables de entorno.
+```bash
+LC_ALL=es_ES.UTF-8 LANG=es_ES.UTF-8 LANGUAGE=es_ES python3 -m src.main
+```
+En este ejemplo usamos español porque por defecto las variables de entorno están en inglés, y de esta forma comprobamos que funciona correctamente.
