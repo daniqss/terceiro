@@ -83,14 +83,6 @@ msgstr ""
 msgid "Search patients by code"
 msgstr ""
 
-#: src/view.py:145
-msgid "{} {}"
-msgstr ""
-
-#: src/view.py:147
-msgid "{}"
-msgstr ""
-
 #: src/view.py:176
 msgid "Medications"
 msgstr ""
@@ -100,7 +92,7 @@ msgid "Select a patient"
 msgstr ""
 
 #: src/view.py:199
-msgid "Selected patient: {}"
+msgid "Selected patient:"
 msgstr ""
 
 #: src/view.py:212

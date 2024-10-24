@@ -142,9 +142,9 @@ class View(Adw.Application):
         patient_data.set_margin_bottom(6)
         patient_data.set_hexpand(True)
         patient_name = Gtk.Label()
-        patient_name.set_markup("<big>{}</big>".format(_("{} {}").format(patient["name"], patient["surname"])))
+        patient_name.set_markup("<big>{}</big>".format(patient["name"], patient["surname"]))
         patient_code = Gtk.Label()
-        patient_code.set_markup("<small>{}</small>".format(_("{}").format(patient["code"])))
+        patient_code.set_markup("<small>{}</small>".format(patient["code"]))
         patient_code.set_halign(Gtk.Align.START)
         patient_code.set_margin_start(4)
         patient_data.append(patient_name)
@@ -198,7 +198,7 @@ class View(Adw.Application):
 
         self.label_select_patient = Gtk.Label(label=_("Selected patient: {}").format(patient_id))
         self.label_select_patient.set_halign(Gtk.Align.CENTER)
-        self.label_select_patient.set_markup('<span font="20">{}</span>'.format(_("Selected patient: {}".format(patient_id))))
+        self.label_select_patient.set_markup('<span font="20">{} {}</span>'.format(_("Selected patient:"), patient_id))
         self.right_box.append(self.label_select_patient)
         
         self.medication_scroll = Gtk.ScrolledWindow()
