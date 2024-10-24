@@ -15,7 +15,7 @@ class Model:
         url = f"{PATH}/patients"
         patients, status = request_data(url, "GET")
         if status != 200:
-            raise DataErrorException(DataType.PATIENT, OperationType.GET)
+            raise DataErrorException(status, DataType.PATIENT, OperationType.GET)
         return patients
     
     @block_execution
@@ -30,7 +30,7 @@ class Model:
         url = f"{PATH}/patients/{patient_id}"
         patient, status = request_data(url, "GET")
         if status != 200:
-            raise DataErrorException(DataType.PATIENT, OperationType.GET)
+            raise DataErrorException(status, DataType.PATIENT, OperationType.GET)
         return patient
     #endregion
     
@@ -41,7 +41,7 @@ class Model:
         medications, status = request_data(url, "GET")
 
         if status != 200:
-            raise DataErrorException(DataType.MEDICATION, OperationType.GET)
+            raise DataErrorException(status, DataType.MEDICATION, OperationType.GET)
         return medications
 
     @block_execution
@@ -52,7 +52,7 @@ class Model:
         )
         
         if status != 200:
-            raise DataErrorException(DataType.MEDICATION, OperationType.GET)
+            raise DataErrorException(status, DataType.MEDICATION, OperationType.GET)
         return medication
 
     @block_execution
@@ -63,7 +63,7 @@ class Model:
         )
 
         if status != 204:
-            raise DataErrorException(DataType.MEDICATION, OperationType.DELETE)
+            raise DataErrorException(status, DataType.MEDICATION, OperationType.DELETE)
         
     # Returns the lowest medication id avaliable for a patient
     @block_execution
@@ -87,7 +87,7 @@ class Model:
             }
         )
         if status != 201:
-            raise DataErrorException(DataType.MEDICATION, OperationType.POST)
+            raise DataErrorException(status, DataType.MEDICATION, OperationType.POST)
         return response
 
     @block_execution
@@ -113,7 +113,7 @@ class Model:
         )
 
         if status != 204:
-            raise DataErrorException(DataType.MEDICATION, OperationType.PATCH)
+            raise DataErrorException(status, DataType.MEDICATION, OperationType.PATCH)
         return response
     
     #endregion
@@ -127,7 +127,7 @@ class Model:
         )
         
         if status != 200:
-            raise DataErrorException(DataType.POSOLOGY, OperationType.GET)
+            raise DataErrorException(status, DataType.POSOLOGY, OperationType.GET)
         return posologies
 
     @block_execution
@@ -138,7 +138,7 @@ class Model:
         )
 
         if status != 204:
-            raise DataErrorException(DataType.POSOLOGY, OperationType.DELETE)
+            raise DataErrorException(status, DataType.POSOLOGY, OperationType.DELETE)
         return response
         
     
@@ -155,7 +155,7 @@ class Model:
         )
 
         if status != 201:
-            raise DataErrorException(DataType.POSOLOGY, OperationType.POST)
+            raise DataErrorException(status, DataType.POSOLOGY, OperationType.POST)
         return response
 
     @block_execution
@@ -172,7 +172,7 @@ class Model:
         )
 
         if status != 204:
-            raise DataErrorException(DataType.POSOLOGY, OperationType.PATCH)
+            raise DataErrorException(status, DataType.POSOLOGY, OperationType.PATCH)
         return response
 
     #endregion

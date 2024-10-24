@@ -31,7 +31,8 @@ class NetworkErrorException(RequestException):
         return _("Cannot connect to the server")
 
 class DataErrorException(Exception):
-    def __init__(self, data_type: DataType, operation_type: OperationType) -> str:
+    def __init__(self, status: int, data_type: DataType, operation_type: OperationType) -> str:
+        self.status = status
         self.data_type = data_type
         self.operation_type = operation_type
 
@@ -43,31 +44,33 @@ class DataErrorException(Exception):
             case DataType.PATIENT:
                 match self.operation_type:
                     case OperationType.GET:
-                        return _("Cannot get patients")
+                        return "{}{}".format(_("Cannot get patients, status "), self.status)
                     case OperationType.POST:
-                        return _("Cannot add patient")
+                        return "{}{}}".format(_("Cannot add patient, status"), self.status)
                     case OperationType.PATCH:
-                        return _("Cannot update patient")
+                        return "{}{}".format(_("Cannot update patient, status"), self.status)
                     case OperationType.DELETE:
-                        return _("Cannot delete patient")
+                        return "{}{}".format(_("Cannot delete patient, status"), self.status)
 
             case DataType.MEDICATION:
                 match self.operation_type:
                     case OperationType.GET:
-                        return _("Cannot get medications")
+                        return "{}{}".format(_("Cannot get medications, status"), self.status)
                     case OperationType.POST:
-                        return _("Cannot add medication")
+                        return "{}{}".format(_("Cannot add medication, status"), self.status)
                     case OperationType.PATCH:
-                        return _("Cannot update medication")
+                        return "{}{}".format(_("Cannot update medication, status"), self.status)
                     case OperationType.DELETE:
-                        return _("Cannot delete medication")
+                        return "{}{}".format(_("Cannot delete medication, status"), self.status)
+
             case DataType.POSOLOGY:
                 match self.operation_type:
                     case OperationType.GET:
-                        return _("Cannot get posologies")
+                        return "{}{}".format(_("Cannot get posologies, status"), self.status)
                     case OperationType.POST:
-                        return _("Cannot add posology")
+                        return "{}{}".format(_("Cannot add posology, status"), self.status)
                     case OperationType.DELETE:
-                        return _("Cannot delete posology")
-            case _:
-                return _("Cannot get data")
+                        return "{}{}".format(_("Cannot delete posology, status"), self.status)
+                    case _:
+                        return "{}{}".format(_("Cannot get data, status"), self.status)
+
