@@ -45,6 +45,7 @@ def request_data(url: str, method: str = "GET", data: Optional[dict] = None) -> 
     except Exception as e:
         raise DataErrorException(e)
 
+
 PORT: int = int(getenv("PORT", 8000))
 HOST: str = getenv("HOST", "localhost")
 APPLICATION_ID: str = "es.udc.fic.ipm.acdc.pacientes"

@@ -2,3 +2,4 @@ pygobject-stubs
 pygobject
 pycairo
 requests
+python-gettext

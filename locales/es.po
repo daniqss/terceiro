@@ -1,0 +1,166 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-10-24 19:25+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/exceptions.py:32
+msgid "Network Error"
+msgstr "Error de Red"
+
+#: src/exceptions.py:35
+msgid "Cannot connect to the server"
+msgstr "No se pudo conectarse al servidor"
+
+#: src/exceptions.py:44
+msgid "Data Error"
+msgstr "Error de datos"
+
+#: src/exceptions.py:51
+msgid "Cannot get patients, status "
+msgstr "No se pudo obtener los pacientes, estado "
+
+#: src/exceptions.py:53
+msgid "Cannot add patient, status"
+msgstr "No se pudo añadir al paciente, estado "
+
+#: src/exceptions.py:55
+msgid "Cannot update patient, status"
+msgstr "No se pudo actualizar el paciente, status "
+
+#: src/exceptions.py:57
+msgid "Cannot delete patient, status"
+msgstr "No se pudo eliminar al paciente, estado "
+
+#: src/exceptions.py:62
+msgid "Cannot get medications, status"
+msgstr "No se pudo obtener la medicación, estado "
+
+#: src/exceptions.py:64
+msgid "Cannot add medication, status"
+msgstr "No se pudo añadir la medicación, estado "
+
+#: src/exceptions.py:66
+msgid "Cannot update medication, status"
+msgstr "No se pudo actualizar la medicación, estado "
+
+#: src/exceptions.py:68
+msgid "Cannot delete medication, status"
+msgstr "No se pudo eliminar la medicación, estado "
+
+#: src/exceptions.py:73
+msgid "Cannot get posologies, status"
+msgstr "No se pudo obtener las posologías, estado"
+
+#: src/exceptions.py:75
+msgid "Cannot add posology, status"
+msgstr "No se pudo añadir la posología, estado"
+
+#: src/exceptions.py:77
+msgid "Cannot delete posology, status"
+msgstr "No se pudo eliminar la posología, estado"
+
+#: src/exceptions.py:79
+msgid "Cannot get data, status"
+msgstr "No se pudo obtener los datos, estado"
+
+#: src/view.py:30 src/view.py:72
+msgid "Patients"
+msgstr "Pacientes"
+
+#: src/view.py:75
+msgid "Search patients by code"
+msgstr "Buscar por código"
+
+#: src/view.py:181
+msgid "Medications"
+msgstr "Medicaciones"
+
+#: src/view.py:184 src/view.py:187
+msgid "Select a patient"
+msgstr "Selecciona un paciente"
+
+#: src/view.py:204
+msgid "Selected patient: {}"
+msgstr "Paciente seleccionado: {}"
+
+#: src/view.py:206
+msgid "Selected patient:"
+msgstr "Paciente seleccionado:"
+
+#: src/view.py:217
+msgid "No medications available for this patient."
+msgstr "No se le han seleccionado medicaciones a este paciente."
+
+#: src/view.py:222
+msgid "Add Medication"
+msgstr "Añadir Medicación"
+
+#: src/view.py:237
+msgid "Name"
+msgstr "Nombre"
+
+#: src/view.py:238 src/view.py:384 src/view.py:441
+msgid "Dosage"
+msgstr "Dosis"
+
+#: src/view.py:239 src/view.py:388 src/view.py:445
+msgid "Duration"
+msgstr "Duración"
+
+#: src/view.py:240 src/view.py:392 src/view.py:449
+msgid "Start Date"
+msgstr "Fecha de comienzo"
+
+#: src/view.py:317
+msgid "Posologies"
+msgstr "Posologías"
+
+#: src/view.py:327 src/view.py:504
+msgid "Hour"
+msgstr "Hora"
+
+#: src/view.py:329 src/view.py:509
+msgid "Minute"
+msgstr "Minutos"
+
+#: src/view.py:345
+msgid "No posologies available"
+msgstr "Posologías no disponibles"
+
+#: src/view.py:354
+msgid "Add Posologies"
+msgstr "Añadir posologías"
+
+#: src/view.py:379 src/view.py:436
+msgid "Medication Name"
+msgstr "Nombre de la medicación"
+
+#: src/view.py:388 src/view.py:445
+msgid "days"
+msgstr "Días"
+
+#: src/view.py:407 src/view.py:464 src/view.py:523
+msgid "Confirm"
+msgstr "Confirmar"
+
+#: src/view.py:416 src/view.py:474 src/view.py:538
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/view.py:560
+msgid "Escape"
+msgstr "Escape"

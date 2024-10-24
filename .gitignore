@@ -2,3 +2,4 @@ medications-backend
 __pycache__
 venv
 .idea
+*.mo

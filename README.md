@@ -104,3 +104,26 @@ deactivate
 
 Para comprobar que funciona miramos en http://localhost:8000/patients si devuelve JSON.
 En http://localhost:8000/docs tenemos los esquemas y los endpoints de la API
+
+### Utilizar los locales
+Cada vez que editemos los ficheros donde utilizamos los locales, los ficheros .po dejarán de funcionar correctamente. Para no tener que traducir de 
+nuevo(terrible💀), usamos
+```bash
+xgettext -o locales/patients-acdc.pot --from-code=UTF-8 src/*.py
+```
+Con este comando esta generando una nueva plantilla a partir del código fuente. Para actualizar los .po con la nueva plantilla, usamos
+```bash
+msgmerge --update --backup=off locales/*.po locales/patients-acdc.pot
+```
+
+Y para que la aplicación pueda utilizar los nuevos locales, tenemos que compilarlos con
+```bash
+for lang in locales/*.po; do msgfmt "$lang" -o "locales/$(basename $lang .po)/LC_MESSAGES/patients-acdc.mo"; done
+```
+
+Para probar que funciona debemos comprobar q tenemos los locales que queramos utilizar instalados con `locale -a`.
+Si no añadimos nada en la ejecución de la aplicación, se utilizará el idioma por defecto del sistema. Para cambiarlo, añadimos variables de entorno.
+```bash
+LC_ALL=es_ES.UTF-8 LANG=es_ES.UTF-8 LANGUAGE=es_ES python3 -m src.main
+```
+En este ejemplo usamos español porque por defecto las variables de entorno están en inglés, y de esta forma comprobamos que funciona correctamente.
