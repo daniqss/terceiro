@@ -16,71 +16,71 @@ msgstr ""
 
 
 #: src/exceptions.py:28
-msgid "Network Error"
+msgid "Error de Red"
 msgstr ""
 
 #: src/exceptions.py:31
-msgid "Cannot connect to the server"
+msgid "No se pudo conectarse al servidor"
 msgstr ""
 
 #: src/exceptions.py:40
-msgid "Data Error"
+msgid "Error de datos"
 msgstr ""
 
 #: src/exceptions.py:47
-msgid "Cannot get patients, status "
+msgid "No se pudo obtener los pacientes, estado "
 msgstr ""
 
 #: src/exceptions.py:49
-msgid "Cannot add patient, status"
+msgid "No se pudo añadir al paciente, estado "
 msgstr ""
 
 #: src/exceptions.py:51
-msgid "Cannot update patient, status"
+msgid "No se pudo actualizar el paciente, status "
 msgstr ""
 
 #: src/exceptions.py:53
-msgid "Cannot delete patient, status"
+msgid "No se pudo eliminar al paciente, estado "
 msgstr ""
 
 #: src/exceptions.py:58
-msgid "Cannot get medications, status"
+msgid "No se pudo obtener la medicación, estado "
 msgstr ""
 
 #: src/exceptions.py:60
-msgid "Cannot add medication, status"
+msgid "No se pudo añadir la medicación, estado "
 msgstr ""
 
 #: src/exceptions.py:62
-msgid "Cannot update medication, status"
+msgid "No se pudo actualizar la medicación, estado "
 msgstr ""
 
 #: src/exceptions.py:64
-msgid "Cannot delete medication, status"
+msgid "No se pudo eliminar la medicación, estado "
 msgstr ""
 
 #: src/exceptions.py:69
-msgid "Cannot get posologies, status"
+msgid "No se pudo obtener las posologías, estado"
 msgstr ""
 
 #: src/exceptions.py:71
-msgid "Cannot add posology, status"
+msgid "No se pudo añadir la posología, estado"
 msgstr ""
 
 #: src/exceptions.py:73
-msgid "Cannot delete posology, status"
+msgid "No se pudo eliminar la posología, estado"
 msgstr ""
 
 #: src/exceptions.py:75
-msgid "Cannot get data, status"
+msgid "No se pudo obtener los datos, estado"
 msgstr ""
 
 #: src/view.py:25 src/view.py:67
-msgid "Patients"
+msgid "Pacientes"
 msgstr ""
 
 #: src/view.py:70
-msgid "Search patients by code"
+msgid "Buscar por código"
 msgstr ""
 
 #: src/view.py:145
@@ -92,75 +92,75 @@ msgid "{}"
 msgstr ""
 
 #: src/view.py:176
-msgid "Medications"
+msgid "Medicaciones"
 msgstr ""
 
 #: src/view.py:179 src/view.py:182
-msgid "Select a patient"
+msgid "Selecciona un paciente"
 msgstr ""
 
 #: src/view.py:199
-msgid "Selected patient: {}"
+msgid "Paciente seleccionado: {}"
 msgstr ""
 
 #: src/view.py:212
-msgid "No medications available for this patient."
+msgid "No se le han seleccionado medicaciones a este paciente."
 msgstr ""
 
 #: src/view.py:217
-msgid "Add Medication"
+msgid "Añadir Medicatión"
 msgstr ""
 
 #: src/view.py:232
-msgid "Name"
+msgid "Nombre"
 msgstr ""
 
 #: src/view.py:233 src/view.py:379 src/view.py:436
-msgid "Dosage"
+msgid "Dosis"
 msgstr ""
 
 #: src/view.py:234 src/view.py:383 src/view.py:440
-msgid "Duration"
+msgid "Duración"
 msgstr ""
 
 #: src/view.py:235 src/view.py:387 src/view.py:444
-msgid "Start Date"
+msgid "Fecha de comienzo"
 msgstr ""
 
 #: src/view.py:312
-msgid "Posologies"
+msgid "Posologías"
 msgstr ""
 
 #: src/view.py:322 src/view.py:499
-msgid "Hour"
+msgid "Hora"
 msgstr ""
 
 #: src/view.py:324 src/view.py:504
-msgid "Minute"
+msgid "Minutos"
 msgstr ""
 
 #: src/view.py:340
-msgid "No posologies available"
+msgid "Posologías no disponibles"
 msgstr ""
 
 #: src/view.py:349
-msgid "Add Posologies"
+msgid "Añadir posologías"
 msgstr ""
 
 #: src/view.py:374 src/view.py:431
-msgid "Medication Name"
+msgid "Nombre de la medicación"
 msgstr ""
 
 #: src/view.py:383 src/view.py:440
-msgid "days"
+msgid "Días"
 msgstr ""
 
 #: src/view.py:402 src/view.py:459 src/view.py:518
-msgid "Confirm"
+msgid "Confirmar"
 msgstr ""
 
 #: src/view.py:411 src/view.py:469 src/view.py:533
-msgid "Cancel"
+msgid "Cancelar"
 msgstr ""
 
 #: src/view.py:555
