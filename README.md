@@ -104,3 +104,8 @@ deactivate
 
 Para comprobar que funciona miramos en http://localhost:8000/patients si devuelve JSON.
 En http://localhost:8000/docs tenemos los esquemas y los endpoints de la API
+
+### Compilar los locales
+```bash
+msgfmt locales/<nuevo_idioma>.po -o locales/<nuevo_idioma>/LC_MESSAGES/patients-acdc.mo
+```

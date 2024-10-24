@@ -6,9 +6,20 @@ from gi.repository import Adw, Gtk, Pango # type: ignore
 from src.buttons import Buttons
 
 import gettext
-gettext.bindtextdomain('ipm-2425-p_escritorio-ac-dc', 'locales')
-gettext.textdomain('ipm-2425-p_escritorio-ac-dc')
-_ = gettext.gettext
+import locale
+
+lang, encoding = locale.getdefaultlocale()
+try:
+    print(lang)
+    print(encoding)
+
+    translation = gettext.translation('patients-acdc', localedir='../locale', languages=[lang])
+
+    print(translation)
+except FileNotFoundError as e:
+    print(e)
+    translation = gettext.NullTranslations()
+_ = translation.gettext
 
 from src.utils import APPLICATION_ID
 
