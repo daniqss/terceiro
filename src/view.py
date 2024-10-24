@@ -142,7 +142,7 @@ class View(Adw.Application):
         patient_data.set_margin_bottom(6)
         patient_data.set_hexpand(True)
         patient_name = Gtk.Label()
-        patient_name.set_markup("<big>{}</big>".format(patient["name"], patient["surname"]))
+        patient_name.set_markup("<big>{} {}</big>".format(patient["name"], patient["surname"]))
         patient_code = Gtk.Label()
         patient_code.set_markup("<small>{}</small>".format(patient["code"]))
         patient_code.set_halign(Gtk.Align.START)
