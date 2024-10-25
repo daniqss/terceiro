@@ -131,11 +131,12 @@ make run
 Este comando ejecutará la aplicación en el idioma predeterminado de tu máquina. 
 
 > :warning: Si estas en macOS, es posible que necesites exportar las variables de entorno para los idiomas antes de ejecutar la aplicación. Por ejemplo si quieres que sea en inglés, puedes usar:
-> ```bash
+
+```bash
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LANGUAGE=en_US
-> ```
+```
 
 Si deseas especificar un idioma, puedes hacerlo utilizando la variable lang. Por ejemplo, para ejecutar la aplicación en español, puedes usar:
 
