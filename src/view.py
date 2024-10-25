@@ -236,7 +236,7 @@ class View(Adw.Application):
 
         label_name = self.create_medication_label("<b>{}:</b> {}".format(_("Name"), medication['name']))
         label_dosage = self.create_medication_label("<b>{}:</b> {} mg".format(_("Dosage"), medication['dosage']))
-        label_duration = self.create_medication_label("<b>{}:</b> {} days".format(_("Duration"), medication['treatment_duration']))
+        label_duration = self.create_medication_label("<b>{}:</b> {} {}".format(_("Duration"), medication['treatment_duration'] ,_("days")))
         label_start_date = self.create_medication_label("<b>{}:</b> {}".format(_("Start Date"), medication['start_date']))
 
         row.append(label_name)
