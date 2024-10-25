@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-25 14:26+0200\n"
+"POT-Creation-Date: 2024-10-25 13:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,10 +121,6 @@ msgstr ""
 msgid "Duration"
 msgstr ""
 
-#: src/view.py:239 src/view.py:388 src/view.py:445
-msgid "days"
-msgstr ""
-
 #: src/view.py:240 src/view.py:392 src/view.py:449
 msgid "Start Date"
 msgstr ""
@@ -151,6 +147,10 @@ msgstr ""
 
 #: src/view.py:379 src/view.py:436
 msgid "Medication Name"
+msgstr ""
+
+#: src/view.py:388 src/view.py:445
+msgid "days"
 msgstr ""
 
 #: src/view.py:407 src/view.py:464 src/view.py:523
