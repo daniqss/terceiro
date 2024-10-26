@@ -582,5 +582,28 @@ class View(Adw.Application):
         dialog.set_child(view)
         dialog.present(self.window)
 
+    def show_confirmation_dialog(self, title: str, message: str):
+        dialog = Adw.AlertDialog(heading=title, body=message)
+
+        trigger = Gtk.ShortcutTrigger.parse_string("Escape")
+        close_action = Gtk.CallbackAction().new(lambda d, _: d.close())
+        shortcut = Gtk.Shortcut().new(trigger, close_action)
+        dialog.add_shortcut(shortcut)
+
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("accept", _("Delete"))
+
+        # Configurar la apariencia de los botones
+        dialog.set_response_appearance("accept", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_response("cancel")
+        dialog.set_close_response("cancel")
+
+        # we use a dictionary be able to modify the value inside the lambdas
+        result = {'value': True}
+        dialog.connect("response", lambda _, response: result.update({'value': response == "accept"}))
+
+        dialog.present(self.window)
+        return result['value']
+
     def update_patients(self, patients):
         self.patients = patients
