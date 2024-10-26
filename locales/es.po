@@ -20,15 +20,15 @@ msgstr ""
 #: src/controller.py:128 src/controller.py:158
 #, fuzzy
 msgid "Confirm deletion"
-msgstr "Confirmar"
+msgstr "Confirmar eliminación"
 
 #: src/controller.py:129
 msgid "Are you sure you want to delete de medication?"
-msgstr ""
+msgstr "Estas seguro que quieres eliminar la medicación?"
 
 #: src/controller.py:159
 msgid "Are you sure you want to delete the posology?"
-msgstr ""
+msgstr "Estas seguro que quieres eliminar la posología?"
 
 #: src/exceptions.py:32
 msgid "Network Error"
