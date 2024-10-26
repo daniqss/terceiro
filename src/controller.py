@@ -135,23 +135,30 @@ class Controller:
     def on_add_posology(self, button, container, patient_id, medication_id):
         self.view.create_posology_input_row(button, container, patient_id, medication_id)
 
-    @run_async
     def on_delete_posology(self, button, container, patient_id, medication_id, posology_id):
-        try:
-            self.model.delete_posology(patient_id, medication_id, posology_id)
-            if self.abbort_operation:
-                return
+        @run_async
+        def on_confirmation(): 
             try:
-                posologies = self.model.get_posologies(patient_id, medication_id)
+                self.model.delete_posology(patient_id, medication_id, posology_id)
                 if self.abbort_operation:
                     return
-                self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
-            
+                try:
+                    posologies = self.model.get_posologies(patient_id, medication_id)
+                    if self.abbort_operation:
+                        return
+                    self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
+                
+                except Exception as e:
+                    self.view.show_dialog(e.title_message(), e.body_message())
+
             except Exception as e:
                 self.view.show_dialog(e.title_message(), e.body_message())
-
-        except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+        
+        self.view.show_confirmation_dialog(
+            _("Confirm deletion"),
+            _("Are you sure you want to delete the posology?"),
+            on_confirmation
+        )
     
     @run_async
     def on_save_posology(self, button, container, patient_id, medication_id, hour, minute):
