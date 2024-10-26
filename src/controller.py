@@ -102,16 +102,21 @@ class Controller:
         except Exception as e:
             self.view.show_dialog(e.title_message(), e.body_message())
 
-    @run_async
     def on_delete_medication(self, paciente_id, medication_id):
-        try:
-            self.model.delete_medication(paciente_id, medication_id)
-            if self.abbort_operation:
-                return
-            self.view.update_medication_list_panel_patient(paciente_id, self.model.get_medications(paciente_id))
+        @run_async
+        def on_confirmation():
+            try:
+                self.model.delete_medication(paciente_id, medication_id)
+                if self.abbort_operation:
+                    return
+                self.view.update_medication_list_panel_patient(paciente_id, self.model.get_medications(paciente_id))
 
-        except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            except Exception as e:
+                self.view.show_dialog(e.title_message(), e.body_message())
+
+        self.view.show_confirmation_dialog("hola", "caracola", on_confirmation)
+
+
         
     def on_add_posology(self, button, container, patient_id, medication_id):
         self.view.create_posology_input_row(button, container, patient_id, medication_id)
