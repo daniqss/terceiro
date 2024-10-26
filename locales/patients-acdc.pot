@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-26 16:53+0200\n"
+"POT-Creation-Date: 2024-10-26 16:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/controller.py:128 src/controller.py:158
+#: src/controller.py:127 src/controller.py:157
 msgid "Confirm deletion"
 msgstr ""
 
-#: src/controller.py:129
+#: src/controller.py:128
 msgid "Are you sure you want to delete de medication?"
 msgstr ""
 
-#: src/controller.py:159
+#: src/controller.py:158
 msgid "Are you sure you want to delete the posology?"
 msgstr ""
 
@@ -133,11 +133,11 @@ msgstr ""
 msgid "Duration"
 msgstr ""
 
-#: src/view.py:239 src/view.py:388 src/view.py:445
+#: src/view.py:240 src/view.py:389 src/view.py:446
 msgid "days"
 msgstr ""
 
-#: src/view.py:240 src/view.py:392 src/view.py:449
+#: src/view.py:241 src/view.py:393 src/view.py:450
 msgid "Start Date"
 msgstr ""
 
@@ -165,7 +165,7 @@ msgstr ""
 msgid "Medication Name"
 msgstr ""
 
-#: src/view.py:407 src/view.py:464 src/view.py:523
+#: src/view.py:408 src/view.py:465 src/view.py:524
 msgid "Confirm"
 msgstr ""
 
