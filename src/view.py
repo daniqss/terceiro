@@ -1,3 +1,4 @@
+from threading import Event
 import gi
 
 gi.require_version("Gtk", "4.0")
@@ -15,7 +16,7 @@ except FileNotFoundError as e:
     translation = gettext.NullTranslations()
 _ = translation.gettext
 
-from src.utils import APPLICATION_ID
+from src.utils import APPLICATION_ID, run_async
 
 class View(Adw.Application):
     def __init__(self, handler, *args, **kwargs):
@@ -580,6 +581,31 @@ class View(Adw.Application):
         )
         
         dialog.set_child(view)
+        dialog.present(self.window)
+
+    def show_confirmation_dialog(self, title: str, message: str, callback: callable):
+        dialog = Adw.AlertDialog(
+            heading=title,
+            body=message
+        )
+
+        escape_trigger = Gtk.ShortcutTrigger.parse_string(_("Escape"));
+        close_action = Gtk.CallbackAction().new(lambda dialog, _: dialog.close())
+        shortcut = Gtk.Shortcut().new(escape_trigger, close_action)
+        dialog.add_shortcut(shortcut)
+
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("accept", _("Delete"))
+        
+        dialog.set_response_appearance("accept", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_response("cancel")
+        dialog.set_close_response("cancel")
+        
+        def on_response(_, response):
+            if response == "accept":
+                callback()
+        
+        dialog.connect("response", on_response)
         dialog.present(self.window)
 
     def update_patients(self, patients):
