@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-26 18:07+0200\n"
+"POT-Creation-Date: 2024-10-26 18:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,17 +18,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/controller.py:115 src/controller.py:145
-#, fuzzy
 msgid "Confirm deletion"
 msgstr "Confirmar eliminación"
 
 #: src/controller.py:116
 msgid "Are you sure you want to delete de medication?"
-msgstr "Estas seguro que quieres eliminar la medicación?"
+msgstr "Estás seguro que quieres eliminar la medicación?"
 
 #: src/controller.py:146
 msgid "Are you sure you want to delete the posology?"
-msgstr "Estas seguro que quieres eliminar la posología?"
+msgstr "Estás seguro que quieres eliminar la posología?"
 
 #: src/exceptions.py:24
 msgid "Network Error"
@@ -136,7 +135,7 @@ msgstr "Duración"
 
 #: src/view.py:235 src/view.py:384 src/view.py:441
 msgid "days"
-msgstr "Días"
+msgstr "días"
 
 #: src/view.py:236 src/view.py:388 src/view.py:445
 msgid "Start Date"
@@ -174,10 +173,10 @@ msgstr "Confirmar"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/view.py:556 src/view.py:587
+#: src/view.py:556
 msgid "Escape"
-msgstr "Escape"
+msgstr "Atrás"
 
 #: src/view.py:593
 msgid "Delete"
-msgstr ""
+msgstr "Eliminar"

@@ -584,7 +584,7 @@ class View(Adw.Application):
             body=message
         )
 
-        escape_trigger = Gtk.ShortcutTrigger.parse_string(_("Escape"));
+        escape_trigger = Gtk.ShortcutTrigger.parse_string("Escape");
         close_action = Gtk.CallbackAction().new(lambda dialog, _: dialog.close())
         shortcut = Gtk.Shortcut().new(escape_trigger, close_action)
         dialog.add_shortcut(shortcut)
