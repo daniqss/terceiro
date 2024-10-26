@@ -3,18 +3,10 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version('Adw', '1')
-from gi.repository import Adw, Gtk, Pango # type: ignore
+from gi.repository import Adw, Gtk, GLib, Pango # type: ignore
 from src.buttons import Buttons
-import gettext
-import locale
+from src.translations import _
 
-lang, encoding = locale.getdefaultlocale()
-try:
-    translation = gettext.translation('patients-acdc', localedir='locales', languages=[lang])
-except FileNotFoundError as e:
-    print(e)
-    translation = gettext.NullTranslations()
-_ = translation.gettext
 
 from src.utils import APPLICATION_ID, run_async
 
@@ -49,6 +41,9 @@ class View(Adw.Application):
         self.right_box = right_box
 
         self.window.show()
+
+    def run_on_main(self, func: callable):
+        GLib.idle_add(func)
 
     def create_main_window(self):
         return Adw.ApplicationWindow(application=self)

@@ -1,20 +1,8 @@
 from typing import List
-import gettext
-import locale
-
-from src.exceptions import DataErrorException
-from src.exceptions import NetworkErrorException
 from src.utils import run_async
 from src.model import Model
 from src.view import View
-
-lang, encoding = locale.getdefaultlocale()
-try:
-    translation = gettext.translation('patients-acdc', localedir='locales', languages=[lang])
-except FileNotFoundError as e:
-    print(e)
-    translation = gettext.NullTranslations()
-_ = translation.gettext
+from src.translations import _
 
 class Controller:
     def __init__(self):
@@ -45,11 +33,11 @@ class Controller:
     @run_async
     def on_refresh_patients(self):
         patients = self.get_patients()
-        GLib.idle_add(self.view.update_patients, patients)
+        self.view.run_on_main(lambda: self.view.update_patients(patients))
         if self.abbort_operation:
             return
         if patients != []:
-            GLib.idle_add(self.view.update_patient_list, patients)
+            self.view.run_on_main(lambda: self.view.update_patient_list(patients))
 
 
     def on_add_medication(self, patient_id):

@@ -1,15 +1,7 @@
 from requests.exceptions import RequestException
 from enum import Enum
 import gettext
-import locale
-
-lang, encoding = locale.getdefaultlocale()
-try:
-    translation = gettext.translation('patients-acdc', localedir='locales', languages=[lang])
-except FileNotFoundError as e:
-    print(e)
-    translation = gettext.NullTranslations()
-_ = translation.gettext
+from src.translations import _
 
 class DataType(Enum):
     PATIENT = "patient"
