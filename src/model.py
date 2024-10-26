@@ -159,20 +159,18 @@ class Model:
         return response
 
     @block_execution
-    def update_posology(self, patient_id: int, medication_id: int, posology_id:int, minute:int, hour:int):
+    def update_posology(self, patient_id: int, medication_id: int, posology_id: int, hour: int, minute: int) -> dict:
         response, status = request_data(
             f"{PATH}/patients/{patient_id}/medications/{medication_id}/posologies/{posology_id}", 
             "PATCH",
             {
-                "id": posology_id,
                 "hour": hour,
-                "minute": minute,             
-                "medication_id": medication_id
+                "minute": minute,
+                "medication_id": 0          
             }
         )
 
         if status != 204:
             raise DataErrorException(status, DataType.POSOLOGY, OperationType.PATCH)
         return response
-
     #endregion

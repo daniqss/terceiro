@@ -45,12 +45,11 @@ class Controller:
     @run_async
     def on_refresh_patients(self):
         patients = self.get_patients()
-        self.view.update_patients(patients)
+        GLib.idle_add(self.view.update_patients, patients)
         if self.abbort_operation:
             return
-
         if patients != []:
-            self.view.update_patient_list(patients)
+            GLib.idle_add(self.view.update_patient_list, patients)
 
 
     def on_add_medication(self, patient_id):

@@ -105,25 +105,41 @@ deactivate
 Para comprobar que funciona miramos en http://localhost:8000/patients si devuelve JSON.
 En http://localhost:8000/docs tenemos los esquemas y los endpoints de la API
 
-### Utilizar los locales
-Cada vez que editemos los ficheros donde utilizamos los locales, los ficheros .po dejarán de funcionar correctamente. Para no tener que traducir de 
-nuevo(terrible💀), usamos
+### Setup and Usage
+
+Para inicializar el entorno de la aplicación, puedes ejecutar el siguiente comando:
+
 ```bash
-xgettext -o locales/patients-acdc.pot --from-code=UTF-8 src/*.py
-```
-Con este comando esta generando una nueva plantilla a partir del código fuente. Para actualizar los .po con la nueva plantilla, usamos
-```bash
-msgmerge --update --backup=off locales/*.po locales/patients-acdc.pot
+make setup
 ```
 
-Y para que la aplicación pueda utilizar los nuevos locales, tenemos que compilarlos con
+Esto configurará el entorno necesario para la aplicación.
+
+Para compilar los archivos de idiomas, utiliza el siguiente comando:
+
 ```bash
-for lang in locales/*.po; do msgfmt "$lang" -o "locales/$(basename $lang .po)/LC_MESSAGES/patients-acdc.mo"; done
+make compile
 ```
 
-Para probar que funciona debemos comprobar q tenemos los locales que queramos utilizar instalados con `locale -a`.
-Si no añadimos nada en la ejecución de la aplicación, se utilizará el idioma por defecto del sistema. Para cambiarlo, añadimos variables de entorno.
+Esto generará los archivos de traducción necesarios a partir de los archivos fuente.
+
+Para iniciar la aplicación, puedes usar el siguiente comando:
 ```bash
-LC_ALL=es_ES.UTF-8 LANG=es_ES.UTF-8 LANGUAGE=es_ES python3 -m src.main
+make run
 ```
-En este ejemplo usamos español porque por defecto las variables de entorno están en inglés, y de esta forma comprobamos que funciona correctamente.
+
+Este comando ejecutará la aplicación en el idioma predeterminado de tu máquina. 
+
+> :warning: Si estas en macOS, es posible que necesites exportar las variables de entorno para los idiomas antes de ejecutar la aplicación. Por ejemplo si quieres que sea en inglés, puedes usar:
+
+```bash
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US
+```
+
+Si deseas especificar un idioma, puedes hacerlo utilizando la variable lang. Por ejemplo, para ejecutar la aplicación en español, puedes usar:
+
+```bash
+make run lang=es_ES
+```
