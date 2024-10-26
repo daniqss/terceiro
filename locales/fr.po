@@ -19,164 +19,165 @@ msgstr ""
 
 #: src/controller.py:115 src/controller.py:145
 msgid "Confirm deletion"
-msgstr "Confirmar eliminación"
+msgstr "Confirmer la suppression"
 
 #: src/controller.py:116
 msgid "Are you sure you want to delete de medication?"
-msgstr "Estás seguro que quieres eliminar la medicación?"
+msgstr "Êtes-vous sûr de vouloir supprimer le médicament?"
 
 #: src/controller.py:146
 msgid "Are you sure you want to delete the posology?"
-msgstr "Estás seguro que quieres eliminar la posología?"
+msgstr "Êtes-vous sûr de vouloir supprimer la posologie?"
 
 #: src/exceptions.py:24
 msgid "Network Error"
-msgstr "Error de Red"
+msgstr "Erreur réseau"
 
 #: src/exceptions.py:27
 msgid "Cannot connect to the server"
-msgstr "No se pudo conectarse al servidor"
+msgstr "Impossible de se connecter au serveur"
 
 #: src/exceptions.py:36
 msgid "Data Error"
-msgstr "Error de datos"
+msgstr "Erreur de données"
 
 #: src/exceptions.py:43
 msgid "Cannot get patients, status "
-msgstr "No se pudo obtener los pacientes, estado "
+msgstr "Impossible d'obtenir les patients, statut "
 
 #: src/exceptions.py:45
 msgid "Cannot add patient, status"
-msgstr "No se pudo añadir al paciente, estado "
+msgstr "Impossible d'ajouter le patient, statut "
 
 #: src/exceptions.py:47
 msgid "Cannot update patient, status"
-msgstr "No se pudo actualizar el paciente, status "
+msgstr "Impossible de mettre à jour le patient, statut "
 
 #: src/exceptions.py:49
 msgid "Cannot delete patient, status"
-msgstr "No se pudo eliminar al paciente, estado "
+msgstr "Impossible de supprimer le patient, statut "
 
 #: src/exceptions.py:54
 msgid "Cannot get medications, status"
-msgstr "No se pudo obtener la medicación, estado "
+msgstr "Impossible d'obtenir les médicaments, statut "
 
 #: src/exceptions.py:56
 msgid "Cannot add medication, status"
-msgstr "No se pudo añadir la medicación, estado "
+msgstr "Impossible d'ajouter le médicament, statut "
 
 #: src/exceptions.py:58
 msgid "Cannot update medication, status"
-msgstr "No se pudo actualizar la medicación, estado "
+msgstr "Impossible de mettre à jour le médicament, statut "
 
 #: src/exceptions.py:60
 msgid "Cannot delete medication, status"
-msgstr "No se pudo eliminar la medicación, estado "
+msgstr "Impossible de supprimer le médicament, statut "
 
 #: src/exceptions.py:65
 msgid "Cannot get posologies, status"
-msgstr "No se pudo obtener las posologías, estado"
+msgstr "Impossible d'obtenir les posologies, statut"
 
 #: src/exceptions.py:67
 msgid "Cannot add posology, status"
-msgstr "No se pudo añadir la posología, estado"
+msgstr "Impossible d'ajouter la posologie, statut"
 
 #: src/exceptions.py:69
 msgid "Cannot delete posology, status"
-msgstr "No se pudo eliminar la posología, estado"
+msgstr "Impossible de supprimer la posologie, statut"
 
 #: src/exceptions.py:71
 msgid "Cannot get data, status"
-msgstr "No se pudo obtener los datos, estado"
+msgstr "Impossible d'obtenir les données, statut"
 
 #: src/view.py:23 src/view.py:68
 msgid "Patients"
-msgstr "Pacientes"
+msgstr "Patients"
 
 #: src/view.py:71
 msgid "Search patients by code"
-msgstr "Buscar por código"
+msgstr "Rechercher par code"
 
 #: src/view.py:177
 msgid "Medications"
-msgstr "Medicaciones"
+msgstr "Médicaments"
 
 #: src/view.py:180 src/view.py:183
 msgid "Select a patient"
-msgstr "Selecciona un paciente"
+msgstr "Sélectionner un patient"
 
 #: src/view.py:200
 msgid "Selected patient: {}"
-msgstr "Paciente seleccionado: {}"
+msgstr "Patient sélectionné : {}"
 
 #: src/view.py:202
 msgid "Selected patient:"
-msgstr "Paciente seleccionado:"
+msgstr "Patient sélectionné :"
 
 #: src/view.py:213
 msgid "No medications available for this patient."
-msgstr "No se le han seleccionado medicaciones a este paciente."
+msgstr "Aucun médicament disponible pour ce patient."
 
 #: src/view.py:218
 msgid "Add Medication"
-msgstr "Añadir Medicación"
+msgstr "Ajouter un médicament"
 
 #: src/view.py:233
 msgid "Name"
-msgstr "Nombre"
+msgstr "Nom"
 
 #: src/view.py:234 src/view.py:380 src/view.py:437
 msgid "Dosage"
-msgstr "Dosis"
+msgstr "Dosage"
 
 #: src/view.py:235 src/view.py:384 src/view.py:441
 msgid "Duration"
-msgstr "Duración"
+msgstr "Durée"
 
 #: src/view.py:235 src/view.py:384 src/view.py:441
 msgid "days"
-msgstr "días"
+msgstr "jours"
 
 #: src/view.py:236 src/view.py:388 src/view.py:445
 msgid "Start Date"
-msgstr "Fecha de comienzo"
+msgstr "Date de début"
 
 #: src/view.py:313
 msgid "Posologies"
-msgstr "Posologías"
+msgstr "Posologies"
 
 #: src/view.py:323 src/view.py:500
 msgid "Hour"
-msgstr "Hora"
+msgstr "Heure"
 
 #: src/view.py:325 src/view.py:505
 msgid "Minute"
-msgstr "Minutos"
+msgstr "Minute"
 
 #: src/view.py:341
 msgid "No posologies available"
-msgstr "Posologías no disponibles"
+msgstr "Aucune posologie disponible"
 
 #: src/view.py:350
 msgid "Add Posologies"
-msgstr "Añadir posologías"
+msgstr "Ajouter des posologies"
 
 #: src/view.py:375 src/view.py:432
 msgid "Medication Name"
-msgstr "Nombre de la medicación"
+msgstr "Nom du médicament"
 
 #: src/view.py:403 src/view.py:460 src/view.py:519
 msgid "Confirm"
-msgstr "Confirmar"
+msgstr "Confirmer"
 
 #: src/view.py:412 src/view.py:470 src/view.py:534 src/view.py:592
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Annuler"
 
 #: src/view.py:556
 msgid "Escape"
-msgstr ""
+msgstr "Retour"
 
 #: src/view.py:593
 msgid "Delete"
-msgstr "Eliminar"
+msgstr "Supprimer"
+
