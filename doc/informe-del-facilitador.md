@@ -80,3 +80,20 @@
    - **Descripción**: Añadir el manejo de errores.
    - **Responsable**: Analista, Facilitador.
    - **Estado**: Completado.
+
+## Registro de tareas llevadas a cabo durante la semana 3
+
+1. **Arreglar errores**
+   - **Descripción**: Corregir errores en el código de la semana anterior.
+   - **Responsable**: Analista, Curador.
+   - **Estado**: Completado.
+
+2. **Añadir múltiples idiomas**
+   - **Descripción**: Implementar soporte para varios idiomas en la aplicación.
+   - **Responsable**: Facilitador, Analista.
+   - **Estado**: Completado.
+
+3. **Añadir un Makefile**
+   - **Descripción**: Crear un Makefile y documentar su uso para simplificar tareas comunes en el proyecto.
+   - **Responsable**: Facilitador.
+   - **Estado**: Completado.
