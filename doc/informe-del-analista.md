@@ -118,3 +118,52 @@
   h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
   titulación?<br>
   Relaciónase cos contidos doutras asignaturas sobre concurrencia e software tolerante a fallos.
+
+
+## Evaluación final de la semana 3
+
+   - Yago Garea Cidre
+    - 4
+    - Como facilitador organizou o traballo a facer e realizou os traballos encomendados relativos á internacionalización e ao proceso de compilación.
+  - Javi Manotas Ruiz
+    - 4
+    - Como curador solucionou diferentes erros e problemas que posibilitaron que o resto puidesemos facer o traballo restante.
+    - 4
+    - Como analista seguín realizando a tarefa do análise. En relación co código comecei a internacionalización e engadín novas características solicitadas.
+
+## Retrospectiva de la semana 2
+
+  a) ¿Qué ha sido lo mejor de la práctica?<br>
+  O traballo co equipo.
+  
+  b) ¿Qué fue lo peor?<br>
+  Nada en particular.
+
+  c) ¿Cuál fue el mejor momento de esta semana durante el trabajo del
+     equipo?<br>
+  Rematar finalmente o traballo realizado durante catro semanas. 
+
+  d) ¿Cuál ha sido el peor?<br>
+  Atopar errores de entregas pasadas que ralentizaron as novas tarefas
+
+  e) ¿Qué has aprendido?<br>
+  Como internacionalizar e localizar un software
+
+  f) ¿Qué necesitáis conservar -como equipo- para las próximas semanas?<br>
+  A eficacia na resolución dos problemas que imos atopando durante o traballo.
+
+  g) ¿Qué tenéis que mejorar -como equipo- para las próximas semanas?<br>
+  Ter rematado completamente o traballo con máis marxe antes da data límite de entrega
+
+  h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
+  titulación?<br>
+  Os contidos da entrega de esta semana non creo que teñan relación directa con ningún outro contido da titulación
+
+
+
+
+
+
+
+
+
