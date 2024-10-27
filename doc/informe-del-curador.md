@@ -35,3 +35,14 @@ Para ellos hemos empleado la [documentación oficial](https://python-gtk-3-tutor
 
 ## Otros recursos empleados en la semana 2
  - A lo largo de esta semana hemos vuelto a utilizar diversos recursos empleados en la semana pasada como visual studio code for the web y conventional commits.
+
+
+## Objetivos de aprendizaje de la semana 3
+
+ - El principal objetivo de esta semana es aprender a implementar de una manera óptima distintas traducciones para nuestra aplicación, incluyendo el como poder cambiar entre estas fácilmente empleando variables de entorno.
+ - También hemos tenido que familiarizarnos con como podiamos facilitar a personas que vayan a utilizar nuestro código su compilación y ejecución. Para ello hemos repasado como funciona un Makefile y tras ver que este no llegaba a satisfacer nuestras necesidades por completo hemos invertigado sobre los scripts.
+ - Finalmente hemos aprendido a mejorar la aplicación a partir de un feedback (en este caso el que nos proporcionó la profesora acerca de nuestros mensajes de error en la interfaz)
+
+
+## Otros recursos empleados en la semana 3
+ - Se ha vuelto a acceder a diversos recursos utilizados en entregas anteriores.
