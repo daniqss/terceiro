@@ -43,6 +43,7 @@ classDiagram
         +create_medication_input_row(patient_id: int, name: str, dosage: str, duration: str, start_date: str)
         +create_posology_input_row(button, container, patient_id: int, medication_id: int)
         +update_medication(patient_id: int, name: str, dosage: int, duration: int, start_date: str)
+        +show_confirmation_dialog(title: str, message: str, callback: callable):
     }
 
     class Adw_Application {
@@ -121,6 +122,8 @@ sequenceDiagram
     Controller ->> View: update_medication_list_panel_patient(patient_id, updated_medications)
 
     User ->> Controller: on_delete_medication(patient_id, medication_id)
+    Controller ->> View: show_confirmation_dialog(title, message, callback)
+    User ->> View: confirm
     Controller ->> Model: delete_medication(patient_id, medication_id)
     Model -->> Controller: confirmation
     Controller ->> Model: get_medications(patient_id)
@@ -139,6 +142,8 @@ sequenceDiagram
     Controller ->> View: update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
     User ->> Controller: on_delete_posology(button, container, patient_id, medication_id, posology_id)
+    Controller ->> View: show_confirmation_dialog(title, message, callback)
+    User ->> View: confirm
     Controller ->> Model: delete_posology(patient_id, medication_id, posology_id)
     Model -->> Controller: confirmation
     Controller ->> Model: get_posologies(patient_id, medication_id)
