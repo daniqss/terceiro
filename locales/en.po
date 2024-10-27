@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-26 18:23+0200\n"
+"POT-Creation-Date: 2024-10-27 21:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/controller.py:115 src/controller.py:145
+#: src/controller.py:120 src/controller.py:167
 msgid "Confirm deletion"
 msgstr ""
 
-#: src/controller.py:116
+#: src/controller.py:121
 msgid "Are you sure you want to delete de medication?"
 msgstr ""
 
-#: src/controller.py:146
+#: src/controller.py:168
 msgid "Are you sure you want to delete the posology?"
 msgstr ""
 
@@ -89,94 +89,99 @@ msgstr ""
 msgid "Cannot get data, status"
 msgstr ""
 
-#: src/view.py:23 src/view.py:68
+#: src/view.py:25 src/view.py:70
 msgid "Patients"
 msgstr ""
 
-#: src/view.py:71
+#: src/view.py:73
 msgid "Search patients by code"
 msgstr ""
 
-#: src/view.py:177
+#: src/view.py:179
 msgid "Medications"
 msgstr ""
 
-#: src/view.py:180 src/view.py:183
+#: src/view.py:182 src/view.py:185
 msgid "Select a patient"
 msgstr ""
 
-#: src/view.py:200
+#: src/view.py:202
 msgid "Selected patient: {}"
 msgstr ""
 
-#: src/view.py:202
+#: src/view.py:204
 msgid "Selected patient:"
 msgstr ""
 
-#: src/view.py:213
+#: src/view.py:215
 msgid "No medications available for this patient."
 msgstr ""
 
-#: src/view.py:218
+#: src/view.py:220
 msgid "Add Medication"
 msgstr ""
 
-#: src/view.py:233
+#: src/view.py:240 src/view.py:402 src/view.py:424 src/view.py:459
+msgid "Date Format"
+msgstr "%Y-%m-%d"
+
+#: src/view.py:242
 msgid "Name"
 msgstr ""
 
-#: src/view.py:234 src/view.py:380 src/view.py:437
+#: src/view.py:243 src/view.py:393 src/view.py:452
 msgid "Dosage"
 msgstr ""
 
-#: src/view.py:235 src/view.py:384 src/view.py:441
+#: src/view.py:244 src/view.py:397 src/view.py:456
 msgid "Duration"
 msgstr ""
 
-#: src/view.py:235 src/view.py:384 src/view.py:441
+#: src/view.py:244 src/view.py:397 src/view.py:456
 msgid "days"
 msgstr ""
 
-#: src/view.py:236 src/view.py:388 src/view.py:445
+#: src/view.py:245 src/view.py:402 src/view.py:464
 msgid "Start Date"
 msgstr ""
 
-#: src/view.py:313
+#: src/view.py:323
 msgid "Posologies"
 msgstr ""
 
-#: src/view.py:323 src/view.py:500
+#: src/view.py:333 src/view.py:520 src/view.py:591
 msgid "Hour"
 msgstr ""
 
-#: src/view.py:325 src/view.py:505
+#: src/view.py:335 src/view.py:525 src/view.py:596
 msgid "Minute"
 msgstr ""
 
-#: src/view.py:341
+#: src/view.py:353
 msgid "No posologies available"
 msgstr ""
 
-#: src/view.py:350
+#: src/view.py:362
 msgid "Add Posologies"
 msgstr ""
 
-#: src/view.py:375 src/view.py:432
+#: src/view.py:388 src/view.py:447
 msgid "Medication Name"
 msgstr ""
 
-#: src/view.py:403 src/view.py:460 src/view.py:519
+#: src/view.py:418 src/view.py:480 src/view.py:539 src/view.py:610
 msgid "Confirm"
 msgstr ""
 
-#: src/view.py:412 src/view.py:470 src/view.py:534 src/view.py:592
+#: src/view.py:427 src/view.py:490 src/view.py:554 src/view.py:625
+#: src/view.py:678
 msgid "Cancel"
 msgstr ""
 
-#: src/view.py:556
+#: src/view.py:642
 msgid "Escape"
 msgstr ""
 
-#: src/view.py:593
+#: src/view.py:679
 msgid "Delete"
 msgstr ""

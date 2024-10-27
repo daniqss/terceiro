@@ -6,6 +6,8 @@ gi.require_version('Adw', '1')
 from gi.repository import Adw, Gtk, GLib, Pango # type: ignore
 from src.buttons import Buttons
 from src.translations import _
+from datetime import datetime
+import gettext
 
 
 from src.utils import APPLICATION_ID, run_async
@@ -221,6 +223,12 @@ class View(Adw.Application):
 
         self.right_box.append(self.add_medication_box)
 
+    def format_date(self, date, actual_date_format, new_date_format):
+        if date == "":
+            return ""
+        else:
+            date_obj = datetime.strptime(date, actual_date_format)
+            return date_obj.strftime(new_date_format)
 
     def create_medication_row(self, patient_id, medication):
         container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
@@ -230,10 +238,14 @@ class View(Adw.Application):
         row.set_margin_start(10)
         row.set_margin_end(10)
 
+        DateFormat = _("Date Format")
+        formatted_date = self.format_date(medication['start_date'], "%Y-%m-%d", DateFormat)
+
         label_name = self.create_medication_label("<b>{}:</b> {}".format(_("Name"), medication['name']))
         label_dosage = self.create_medication_label("<b>{}:</b> {} mg".format(_("Dosage"), medication['dosage']))
-        label_duration = self.create_medication_label("<b>{}:</b> {} {}".format(_("Duration"), medication['treatment_duration'] ,_("days")))
-        label_start_date = self.create_medication_label("<b>{}:</b> {}".format(_("Start Date"), medication['start_date']))
+        label_duration = self.create_medication_label("<b>{}:</b> {} {}".format(_("Duration"), medication['treatment_duration'], _("days")))
+        label_start_date = self.create_medication_label("<b>{}:</b> {}".format(_("Start Date"), formatted_date))
+
 
         row.append(label_name)
         row.append(label_dosage)
@@ -330,8 +342,10 @@ class View(Adw.Application):
 
                 buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
                 buttons.set_halign(Gtk.Align.START)
-
+                
+                button_update = self.buttons.editButton(handler=lambda _, posology_id=posology['id']: self.handler.on_edit_posology(button, container, patient_id, medication_id, posology))
                 button_delete = self.buttons.deleteButton(handler=lambda _, posology_id=posology['id']: self.handler.on_delete_posology(button, container, patient_id, medication_id, posology_id))
+                buttons.append(button_update)
                 buttons.append(button_delete)
                 posology_row.append(buttons)
 
@@ -362,6 +376,7 @@ class View(Adw.Application):
         if hasattr(self, 'medication_list_box') and self.medication_list_box in self.right_box:
             self.right_box.remove(self.medication_list_box)
 
+
     def create_medication_input_row(self, patient_id, name, dosage, duration, start_date):
         self.remove_existing_input()
 
@@ -381,11 +396,13 @@ class View(Adw.Application):
         entry_dosage.set_text(dosage)
 
         entry_duration = Adw.EntryRow()
-        entry_duration.set_title("{} ()".format(_("Duration"), _("days")))
+        entry_duration.set_title("{} ({})".format(_("Duration"), _("days")))
         entry_duration.set_text(duration)
 
+        DateFormat = _("Date Format")
+
         entry_start_date = Adw.EntryRow()
-        entry_start_date.set_title("{} (YYYY-MM-DD)".format(_("Start Date")))
+        entry_start_date.set_title("{} ({})".format(_("Start Date"), DateFormat))
         entry_start_date.set_text(start_date)
 
         container.append(entry_name)
@@ -400,13 +417,14 @@ class View(Adw.Application):
         buttons.set_margin_top(6)
         buttons.set_margin_bottom(6)
 
+
         button_save = Gtk.Button(label=_("Confirm"))
         button_save.connect("clicked", lambda _: self.handler.on_save_medication(
             patient_id,
             entry_name.get_text(),
             entry_dosage.get_text(),
             entry_duration.get_text(),
-            entry_start_date.get_text()
+            self.format_date(entry_start_date.get_text(), DateFormat, "%Y-%m-%d")
         ))
 
         button_cancel = Gtk.Button(label=_("Cancel"))
@@ -438,12 +456,16 @@ class View(Adw.Application):
         entry_dosage.set_text(dosage)
 
         entry_duration = Adw.EntryRow()
-        entry_duration.set_title("{} ()".format(_("Duration"), _("days")))
+        entry_duration.set_title("{} ({})".format(_("Duration"), _("days")))
         entry_duration.set_text(duration)
 
+        DateFormat = _("Date Format")
+        
+        formatted_date = self.format_date(start_date, "%Y-%m-%d", DateFormat)
+
         entry_start_date = Adw.EntryRow()
-        entry_start_date.set_title("{} (YYYY-MM-DD)".format(_("Start Date")))
-        entry_start_date.set_text(start_date)
+        entry_start_date.set_title("{} ({})".format(_("Start Date"), DateFormat))
+        entry_start_date.set_text(formatted_date)
 
         container.append(entry_name)
         container.append(entry_dosage)
@@ -457,6 +479,7 @@ class View(Adw.Application):
         buttons.set_margin_top(6)
         buttons.set_margin_bottom(6)
 
+
         button_save = Gtk.Button(label=_("Confirm"))
         button_save.connect("clicked", lambda _: self.handler.on_update_medication(
             patient_id,
@@ -464,7 +487,7 @@ class View(Adw.Application):
             entry_name.get_text(),
             entry_dosage.get_text(),
             entry_duration.get_text(),
-            entry_start_date.get_text()
+            self.format_date(entry_start_date.get_text(), DateFormat,  "%Y-%m-%d")
         ))
 
         button_cancel = Gtk.Button(label=_("Cancel"))
@@ -477,7 +500,7 @@ class View(Adw.Application):
         self.input_row = container
         self.add_medication_box.append(container)
 
-    def create_posology_input_row(self, button, container, patient_id, medication_id):
+    def create_posology_input_row(self, button, container, patient_id, medication_id, hour, minute):
         if hasattr(self, 'input_row') and self.input_row is not None and self.input_row in container:
             container.remove(self.input_row)
             self.input_row = None
@@ -498,12 +521,12 @@ class View(Adw.Application):
 
         entry_hour = Adw.EntryRow()
         entry_hour.set_title(_("Hour"))
-        entry_hour.set_text("")
+        entry_hour.set_text(hour)
         entry_hour.show()
 
         entry_minute = Adw.EntryRow()
         entry_minute.set_title(_("Minute"))
-        entry_minute.set_text("")
+        entry_minute.set_text(minute)
         entry_minute.show()
 
         self.add_posologie_box.append(entry_hour)
@@ -547,6 +570,72 @@ class View(Adw.Application):
         if hasattr(self, 'add_button') and self.add_button is not None:
             self.add_medication_box.remove(self.add_button)
         self.update_medication_input_row(patient_id, medication_id, name, dosage, duration, start_date)
+
+    def update_posology_input_row(self, button, container, patient_id, medication_id, posology, hour, minute):
+        if hasattr(self, 'input_row') and self.input_row is not None and self.input_row in container:
+            container.remove(self.input_row)
+            self.input_row = None
+
+        if hasattr(self, 'label_select_patient') and self.label_select_patient in container:
+            container.remove(self.label_select_patient)
+            self.label_select_patient = None
+
+        if hasattr(self, 'add_posologie_box') and self.add_posologie_box in container:
+            container.remove(self.add_posologie_box)
+            self.add_posologie_box = None
+
+        self.add_posologie_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.add_posologie_box.set_margin_top(10)
+        self.add_posologie_box.set_margin_bottom(10)
+        self.add_posologie_box.set_margin_start(10)
+        self.add_posologie_box.set_margin_end(10)
+
+        entry_hour = Adw.EntryRow()
+        entry_hour.set_title(_("Hour"))
+        entry_hour.set_text(str(hour))
+        entry_hour.show()
+
+        entry_minute = Adw.EntryRow()
+        entry_minute.set_title(_("Minute"))
+        entry_minute.set_text(str(minute))
+        entry_minute.show()
+
+        self.add_posologie_box.append(entry_hour)
+        self.add_posologie_box.append(entry_minute)
+
+        buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        buttons.set_halign(Gtk.Align.END)
+        buttons.set_margin_start(6)
+        buttons.set_margin_end(6)
+        buttons.set_margin_top(6)
+        buttons.set_margin_bottom(6)
+
+        button_save = Gtk.Button(label=_("Confirm"))
+        button_save.connect(
+            "clicked",
+            lambda _: self.handler.on_confirm_update_posology(
+                button, 
+                container,
+                patient_id, 
+                medication_id,
+                posology['id'],
+                int(entry_hour.get_text()), 
+                int(entry_minute.get_text())
+            )
+        )
+        button_save.show()
+
+        button_cancel = Gtk.Button(label=_("Cancel"))
+        button_cancel.connect("clicked", lambda _: self.handler.on_cancel_posology(button, container, patient_id, medication_id))
+        button_cancel.show()
+
+        buttons.append(button_save)
+        buttons.append(button_cancel)
+        self.add_posologie_box.append(buttons)
+
+        self.input_row = self.add_posologie_box
+        container.append(self.add_posologie_box)
+
 
 
     def show_dialog(self, title: str, message: str):

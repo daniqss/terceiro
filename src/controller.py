@@ -88,6 +88,11 @@ class Controller:
         start_date = str(medication["start_date"])
         self.view.update_medication(patient_id, id, name, dosage, duration, start_date)
 
+    def on_edit_posology(self, button, container, patient_id, medication_id, posology):
+        hour = posology["hour"]
+        minute = posology["minute"]
+        self.view.update_posology_input_row(button, container, patient_id, medication_id, posology, hour, minute)
+
     @run_async
     def on_expand_medication(self, button, container, patient_id, medication_id):
         try:
@@ -116,12 +121,29 @@ class Controller:
             _("Are you sure you want to delete de medication?"), 
             on_confirmation
         )
-
-
         
     def on_add_posology(self, button, container, patient_id, medication_id):
-        self.view.create_posology_input_row(button, container, patient_id, medication_id)
+        hour = ""
+        minute = ""
+        self.view.create_posology_input_row(button, container, patient_id, medication_id, hour, minute)
 
+    def on_confirm_update_posology(self, button, container, patient_id, medication_id, posology_id, hour, minute):
+        try:
+            self.model.update_posology(patient_id, medication_id, posology_id, minute, hour)
+            if self.abbort_operation:
+                return
+            try:
+                posologies = self.model.get_posologies(patient_id, medication_id)
+                if self.abbort_operation:
+                    return
+                self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
+                
+            except Exception as e:
+                self.view.show_dialog(e.title_message(), e.body_message())
+        
+        except Exception as e:
+            self.view.show_dialog(e.title_message(), e.body_message())
+                
     def on_delete_posology(self, button, container, patient_id, medication_id, posology_id):
         @run_async
         def on_confirmation(): 
