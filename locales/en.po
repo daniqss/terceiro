@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-27 21:27+0100\n"
+"POT-Creation-Date: 2024-10-27 23:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -121,67 +121,67 @@ msgstr ""
 msgid "Add Medication"
 msgstr ""
 
-#: src/view.py:240 src/view.py:402 src/view.py:424 src/view.py:459
+#: src/view.py:241 src/view.py:402 src/view.py:462
 msgid "Date Format"
 msgstr "%Y-%m-%d"
 
-#: src/view.py:242
+#: src/view.py:244
 msgid "Name"
 msgstr ""
 
-#: src/view.py:243 src/view.py:393 src/view.py:452
+#: src/view.py:245 src/view.py:395 src/view.py:455
 msgid "Dosage"
 msgstr ""
 
-#: src/view.py:244 src/view.py:397 src/view.py:456
+#: src/view.py:246 src/view.py:399 src/view.py:459
 msgid "Duration"
 msgstr ""
 
-#: src/view.py:244 src/view.py:397 src/view.py:456
+#: src/view.py:246 src/view.py:399 src/view.py:459
 msgid "days"
 msgstr ""
 
-#: src/view.py:245 src/view.py:402 src/view.py:464
+#: src/view.py:247 src/view.py:405 src/view.py:467
 msgid "Start Date"
 msgstr ""
 
-#: src/view.py:323
+#: src/view.py:325
 msgid "Posologies"
 msgstr ""
 
-#: src/view.py:333 src/view.py:520 src/view.py:591
+#: src/view.py:335 src/view.py:523 src/view.py:594
 msgid "Hour"
 msgstr ""
 
-#: src/view.py:335 src/view.py:525 src/view.py:596
+#: src/view.py:337 src/view.py:528 src/view.py:599
 msgid "Minute"
 msgstr ""
 
-#: src/view.py:353
+#: src/view.py:355
 msgid "No posologies available"
 msgstr ""
 
-#: src/view.py:362
+#: src/view.py:364
 msgid "Add Posologies"
 msgstr ""
 
-#: src/view.py:388 src/view.py:447
+#: src/view.py:390 src/view.py:450
 msgid "Medication Name"
 msgstr ""
 
-#: src/view.py:418 src/view.py:480 src/view.py:539 src/view.py:610
+#: src/view.py:421 src/view.py:483 src/view.py:542 src/view.py:613
 msgid "Confirm"
 msgstr ""
 
-#: src/view.py:427 src/view.py:490 src/view.py:554 src/view.py:625
-#: src/view.py:678
+#: src/view.py:430 src/view.py:493 src/view.py:557 src/view.py:628
+#: src/view.py:681
 msgid "Cancel"
 msgstr ""
 
-#: src/view.py:642
+#: src/view.py:645
 msgid "Escape"
 msgstr ""
 
-#: src/view.py:679
+#: src/view.py:682
 msgid "Delete"
 msgstr ""
