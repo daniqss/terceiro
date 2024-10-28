@@ -19,16 +19,21 @@ class View(Adw.Application):
         self.selected_patient = None
         self.handler = handler
         self.patients_index_relations = []
+        self.patients = []
+        self.window = None
+        self.left_box = None
+        self.right_box = None
 
     def do_activate(self):
-        self.window = self.create_main_window()
+        self.window = Adw.ApplicationWindow(application=self)
         self.window.set_title("{} - ACDC".format(_("Patients")))
         self.window.set_default_size(1300, 1200)
-        main_box = self.create_main_layout(self.window)
-        
+        main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.window.set_content(main_box)
+
         # Create header and split panel
-        header_bar = self.create_header_bar()
-        paned = self.create_split_panel()
+        header_bar = Adw.HeaderBar()
+        paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL, position=300)
 
         main_box.append(header_bar)
         main_box.append(paned)
@@ -38,31 +43,13 @@ class View(Adw.Application):
         paned.set_start_child(self.left_box)
 
         # Right panel: Medication list
-        right_box = self.create_empty_medication_list_panel()
-        paned.set_end_child(right_box)
-        self.right_box = right_box
+        self.right_box = self.create_empty_medication_list_panel()
+        paned.set_end_child(self.right_box)
 
         self.window.show()
 
     def run_on_main(self, func: callable):
         GLib.idle_add(func)
-
-    def create_main_window(self):
-        return Adw.ApplicationWindow(application=self)
-
-    def create_main_layout(self, window):
-        main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        window.set_content(main_box)
-        return main_box
-
-    def create_header_bar(self):
-        header_bar = Adw.HeaderBar()
-        return header_bar
-
-    def create_split_panel(self) -> Gtk.Paned:
-        paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
-        paned.set_position(300)
-        return paned
 
     def update_patient_list_panel(self) -> Gtk.Box:
         self.left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, margin_start=8, margin_end=8, margin_top=0, margin_bottom=8)
@@ -639,32 +626,21 @@ class View(Adw.Application):
 
 
     def show_dialog(self, title: str, message: str):
-        dialog = Adw.AlertDialog()
-        dialog.set_size_request(300, 300)
+        dialog = Adw.AlertDialog(
+            heading=title,
+            body=message
+        )
 
-        trigger = Gtk.ShortcutTrigger.parse_string(_("Escape"));
+        escape_trigger = Gtk.ShortcutTrigger.parse_string("Escape");
         close_action = Gtk.CallbackAction().new(lambda dialog, _: dialog.close())
-        shortcut = Gtk.Shortcut().new(trigger, close_action)
+        shortcut = Gtk.Shortcut().new(escape_trigger, close_action)
         dialog.add_shortcut(shortcut)
 
-        view = Adw.ToolbarView()
-
-        top = Adw.HeaderBar()
-        top.set_title_widget(Adw.WindowTitle(title=title))
-        view.add_top_bar(top)
-
-        view.set_content(
-            Gtk.Label(
-                label=message,
-                css_classes=["title-3"],
-                margin_bottom=12,
-                margin_top=12,
-                margin_start=12,
-                margin_end=12,
-            ),
-        )
+        dialog.add_response("accept", _("Accept"))
         
-        dialog.set_child(view)
+        dialog.set_response_appearance("accept", Adw.ResponseAppearance.SUGGESTED)
+        
+        dialog.connect("response", lambda _, __: dialog.close())
         dialog.present(self.window)
 
     def show_confirmation_dialog(self, title: str, message: str, callback: callable):

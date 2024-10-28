@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-27 23:30+0100\n"
+"POT-Creation-Date: 2024-10-28 18:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -174,14 +174,14 @@ msgid "Confirm"
 msgstr "Confirmar"
 
 #: src/view.py:430 src/view.py:493 src/view.py:557 src/view.py:628
-#: src/view.py:681
+#: src/view.py:670
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/view.py:645
-msgid "Escape"
+#: src/view.py:652
+msgid "Accept"
 msgstr ""
 
-#: src/view.py:682
+#: src/view.py:671
 msgid "Delete"
 msgstr "Eliminar"
