@@ -626,10 +626,7 @@ class View(Adw.Application):
 
 
     def show_dialog(self, title: str, message: str):
-        dialog = Adw.AlertDialog(
-            heading=title,
-            body=message
-        )
+        dialog = Adw.AlertDialog(heading=title, body=message)
 
         escape_trigger = Gtk.ShortcutTrigger.parse_string("Escape");
         close_action = Gtk.CallbackAction().new(lambda dialog, _: dialog.close())
@@ -644,10 +641,7 @@ class View(Adw.Application):
         dialog.present(self.window)
 
     def show_confirmation_dialog(self, title: str, message: str, callback: callable):
-        dialog = Adw.AlertDialog(
-            heading=title,
-            body=message
-        )
+        dialog = Adw.AlertDialog(heading=title, body=message)
 
         escape_trigger = Gtk.ShortcutTrigger.parse_string("Escape");
         close_action = Gtk.CallbackAction().new(lambda dialog, _: dialog.close())
