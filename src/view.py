@@ -161,7 +161,7 @@ class View(Adw.Application):
         return row
 
     def create_empty_medication_list_panel(self):
-        right_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        right_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20, margin_start=8, margin_end=8, margin_top=0, margin_bottom=8)
 
         label_medications = Gtk.Label(label=_("Medications"))
         right_box.append(label_medications)
