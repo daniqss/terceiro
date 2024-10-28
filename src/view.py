@@ -140,23 +140,7 @@ class View(Adw.Application):
         patient_data.append(patient_name)
         patient_data.append(patient_code)
 
-        # update and delete buttons at the right
-        buttons = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        buttons.set_halign(Gtk.Align.START)
-        buttons.set_margin_start(6)
-        buttons.set_margin_end(6)
-        buttons.set_margin_top(6)
-        buttons.set_margin_bottom(6)
-        
-        buttons.set_halign(Gtk.Align.END)
-        # if is requested in a future iteration, we can add the update and delete patients buttons
-        # button_update = self.buttons.editButton(handler=lambda _: self.handler.update_patient(patient))
-        # button_delete = self.buttons.deleteButton(handler=lambda _: self.handler.delete_patient(patient))
-        # buttons.append(button_update)
-        # buttons.append(button_delete)
-
         row.append(patient_data)
-        row.append(buttons)
         row.set_header = patient["id"]
         return row
 
