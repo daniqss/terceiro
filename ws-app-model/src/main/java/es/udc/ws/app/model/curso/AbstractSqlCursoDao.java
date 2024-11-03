@@ -1,4 +1,4 @@
 package es.udc.ws.app.model.curso;
 
-public class AbstractSqlCursoDao {
+public abstract class AbstractSqlCursoDao implements SqlCursoDao {
 }

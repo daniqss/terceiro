@@ -16,7 +16,6 @@ public class SqlCursoDaoFactory {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     /*
