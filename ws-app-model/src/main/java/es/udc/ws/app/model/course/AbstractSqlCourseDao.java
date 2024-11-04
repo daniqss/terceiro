@@ -1,4 +1,4 @@
-package es.udc.ws.app.model.curso;
+package es.udc.ws.app.model.course;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
-public abstract class AbstractSqlCursoDao implements SqlCursoDao{
-    protected AbstractSqlCursoDao() {}
+public abstract class AbstractSqlCourseDao implements SqlCourseDao {
+    protected AbstractSqlCourseDao() {}
 
     @Override
-    public Curso update(Connection connection, Curso course) {
+    public Course update(Connection connection, Course course) {
         String queryString = "UPDATE curso" + "SET name = ?, city = ?, startDate = ?, price = ?, vacantSpots = ?" + "WHERE courseId = ?";
         try (PreparedStatement ps = connection.prepareStatement(queryString)){
             int i = 1;
@@ -22,7 +22,7 @@ public abstract class AbstractSqlCursoDao implements SqlCursoDao{
             ps.setLong(i++, course.getCourseId());
             int updatedRows = ps.executeUpdate();
             if(updatedRows == 0){
-                throw new InstanceNotFoundException(course, Curso.class.getName());
+                throw new InstanceNotFoundException(course, Course.class.getName());
             }
             return findById(connection, course.getCourseId());
         } catch (SQLException | InstanceNotFoundException e) {
@@ -31,14 +31,14 @@ public abstract class AbstractSqlCursoDao implements SqlCursoDao{
     }
 
     @Override
-    public Curso findById(Connection connection, Long courseId){
+    public Course findById(Connection connection, Long courseId){
         String queryString = "SELECT name, city, startDate, price, vacantSpots FROM Curso WHERE courseId = ?";
         try(PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
             int i = 1;
             preparedStatement.setLong(i++, courseId.longValue());
             ResultSet resultSet = preparedStatement.executeQuery();
             if(!resultSet.next()) {
-                throw new InstanceNotFoundException(courseId, Curso.class.getName());
+                throw new InstanceNotFoundException(courseId, Course.class.getName());
             }
             i = 1;
             String name = resultSet.getString(i++);;
@@ -48,7 +48,7 @@ public abstract class AbstractSqlCursoDao implements SqlCursoDao{
             BigDecimal price = resultSet.getBigDecimal(i++);;
             int vacantSpots = resultSet.getInt(i++);;
             /* Return movie. */
-            return new Curso(courseId, name, city, startDate, price, vacantSpots);
+            return new Course(courseId, name, city, startDate, price, vacantSpots);
         } catch (SQLException | InstanceNotFoundException e) {
             throw new RuntimeException(e);
         }

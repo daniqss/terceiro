@@ -1,18 +1,18 @@
-package es.udc.ws.app.model.curso;
+package es.udc.ws.app.model.course;
 
 import es.udc.ws.util.configuration.ConfigurationParametersManager;
 
-public class SqlCursoDaoFactory {
+public class SqlCourseDaoFactory {
     private final static String CLASS_NAME_PARAMETER = "SqlCursoDaoFactory.className";
-    private static SqlCursoDao instaciaDao = null;
+    private static SqlCourseDao instaciaDao = null;
 
-    private SqlCursoDaoFactory() { }
+    private SqlCourseDaoFactory() { }
 
-    private static SqlCursoDao getInstance() {
+    private static SqlCourseDao getInstance() {
         try {
             String daoClassName = ConfigurationParametersManager.getParameter(CLASS_NAME_PARAMETER);
             Class daoClass = Class.forName(daoClassName);
-            return (SqlCursoDao) daoClass.getDeclaredConstructor().newInstance();
+            return (SqlCourseDao) daoClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -22,7 +22,7 @@ public class SqlCursoDaoFactory {
      synchronized keyword means that only one thread is allowed
      at a particular time to complete a given task entirely
      */
-    public synchronized static SqlCursoDao getDao() {
+    public synchronized static SqlCourseDao getDao() {
         if (instaciaDao == null) instaciaDao = getInstance();
         return instaciaDao;
     }

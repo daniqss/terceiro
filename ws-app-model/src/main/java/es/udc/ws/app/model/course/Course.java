@@ -1,10 +1,10 @@
-package es.udc.ws.app.model.curso;
+package es.udc.ws.app.model.course;
 
 import java.util.Objects;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class Curso {
+public class Course {
     private final Long courseId;
     private String name;
     private String city;
@@ -12,13 +12,13 @@ public class Curso {
     private BigDecimal price;
     private int vacantSpots;
 
-    public Curso(Long cursoId, String nombre, String ciudad, LocalDateTime fechaInicio, BigDecimal precio, int plazas) {
-        this.courseId = cursoId;
-        this.city = ciudad;
-        this.name = nombre;
-        this.startDate = fechaInicio;
-        this.price = precio;
-        this.vacantSpots = plazas;
+    public Course(Long courseId, String name, String city, LocalDateTime startDate, BigDecimal price, int vacantSpots) {
+        this.courseId = courseId;
+        this.city = city;
+        this.name = name;
+        this.startDate = startDate;
+        this.price = price;
+        this.vacantSpots = vacantSpots;
     }
 
     public Long getCourseId() {
@@ -45,8 +45,8 @@ public class Curso {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime fechaHoraInicio) {
-        this.startDate = fechaHoraInicio;
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
     }
 
     public BigDecimal getPrice() {
@@ -69,7 +69,7 @@ public class Curso {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != this.getClass()) return false;
-        Curso course = (Curso) obj;
+        Course course = (Course) obj;
         return
                 courseId.equals(course.getCourseId())
                 && name.equals(course.getName())
