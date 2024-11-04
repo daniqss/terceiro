@@ -33,7 +33,7 @@ public class Jdbc3CcSqlCourseDao extends AbstractSqlCourseDao {
             }
             Long courseId = resultSet.getLong(1);
 
-            return new Course(courseId,course.getName(), course.getCity(), course.getStartDate(),
+            return new Course(courseId, course.getName(), course.getCity(), course.getStartDate(),
                     course.getPrice(), course.getVacantSpots());
 
         } catch (SQLException e) {
