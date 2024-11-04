@@ -12,7 +12,7 @@ public class Jdbc3CcSqlCourseDao extends AbstractSqlCourseDao {
     @Override
     public Course create(Connection connection, Course course) {
         String queryString = "INSERT INTO Course"
-                + " (name, city, startDate, price, maxVacantSpots, vacantSpots)"
+                + " (name, city, startDate, price, maxSpots, vacantSpots)"
                 + " VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(
@@ -23,7 +23,7 @@ public class Jdbc3CcSqlCourseDao extends AbstractSqlCourseDao {
             preparedStatement.setString(i++, course.getCity());
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(course.getStartDate()));
             preparedStatement.setBigDecimal(i++, course.getPrice());
-            preparedStatement.setInt(i++, course.getMaxVacantSpots());
+            preparedStatement.setInt(i++, course.getMaxSpots());
             preparedStatement.setInt(i, course.getVacantSpots());
 
             preparedStatement.executeUpdate();
@@ -35,7 +35,7 @@ public class Jdbc3CcSqlCourseDao extends AbstractSqlCourseDao {
             Long courseId = resultSet.getLong(1);
 
             return new Course(courseId, course.getName(), course.getCity(), course.getStartDate(),
-                    course.getPrice(), course.getMaxVacantSpots(), course.getVacantSpots());
+                    course.getPrice(), course.getMaxSpots(), course.getVacantSpots());
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
