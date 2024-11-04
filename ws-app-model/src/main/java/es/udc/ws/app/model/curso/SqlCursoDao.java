@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SqlCursoDao {
-    public Curso crear(Connection conexion, Curso curso) throws InputValidationException;
-    public Curso borrar(Connection conexion, Long cursoId) throws InputValidationException;
-    public Curso actualizar(Connection conexion, Curso curso) throws InputValidationException;
-    public Curso buscarPorId(Connection conexion, Curso curso) throws InputValidationException;
-    public List<Curso> buscarPorCiudadYFecha(
-            Connection conexion,
-            String ciudad,
-            LocalDateTime fecha
+    public Curso create(Connection connection, Curso course) throws InputValidationException;
+    public Curso remove(Connection connection, Long courseId) throws InputValidationException;
+    public Curso update(Connection connection, Curso course) throws InputValidationException;
+    public Curso findById(Connection connection, Long courseId) throws InputValidationException;
+    public List<Curso> findByKeyword(
+            Connection connection,
+            String city,
+            LocalDateTime date
     ) throws InputValidationException;
 }

@@ -5,81 +5,82 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Curso {
-    private final Long cursoId;
-    private String nombre;
-    private String ciudad;
-    private LocalDateTime fechaHoraInicio;
-    private BigDecimal precio;
-    private int plazas;
+    private final Long courseId;
+    private String name;
+    private String city;
+    private LocalDateTime startDate;
+    private BigDecimal price;
+    private int vacantSpots;
 
-    public Curso(Long cursoId, String nombre, LocalDateTime fechaHoraInicio, BigDecimal precio, int plazas) {
-        this.cursoId = cursoId;
-        this.nombre = nombre;
-        this.fechaHoraInicio = fechaHoraInicio;
-        this.precio = precio;
-        this.plazas = plazas;
+    public Curso(Long cursoId, String nombre, String ciudad, LocalDateTime fechaInicio, BigDecimal precio, int plazas) {
+        this.courseId = cursoId;
+        this.city = ciudad;
+        this.name = nombre;
+        this.startDate = fechaInicio;
+        this.price = precio;
+        this.vacantSpots = plazas;
     }
 
-    public Long getCursoId() {
-        return cursoId;
+    public Long getCourseId() {
+        return courseId;
     }
 
-    public String getCiudad() {
-        return ciudad;
+    public String getCity() {
+        return city;
     }
 
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    public String getNombre() {
-        return this.nombre;
+    public String getName() {
+        return this.name;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public LocalDateTime getFechaHoraInicio() {
-        return fechaHoraInicio;
+    public LocalDateTime getStartDate() {
+        return startDate;
     }
 
-    public void setFechaHoraInicio(LocalDateTime fechaHoraInicio) {
-        this.fechaHoraInicio = fechaHoraInicio;
+    public void setStartDate(LocalDateTime fechaHoraInicio) {
+        this.startDate = fechaHoraInicio;
     }
 
-    public BigDecimal getPrecio() {
-        return precio;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setPrecio(BigDecimal precio) {
-        this.precio = precio;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
-    public int getPlazas() {
-        return plazas;
+    public int getVacantSpots() {
+        return vacantSpots;
     }
 
-    public void setPlazas(int plazas) {
-        this.plazas = plazas;
+    public void setVacantSpots(int vacantSpots) {
+        this.vacantSpots = vacantSpots;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != this.getClass()) return false;
-        Curso curso = (Curso) obj;
+        Curso course = (Curso) obj;
         return
-                cursoId.equals(curso.getCursoId())
-                && nombre.equals(curso.getNombre())
-                && ciudad.equals(curso.getCiudad())
-                && fechaHoraInicio.equals(curso.getFechaHoraInicio())
-                && precio.equals(curso.getPrecio())
-                && plazas != curso.getPlazas();
+                courseId.equals(course.getCourseId())
+                && name.equals(course.getName())
+                && city.equals(course.getCity())
+                && startDate.equals(course.getStartDate())
+                && price.equals(course.getPrice())
+                && vacantSpots != course.getVacantSpots();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cursoId, nombre, ciudad, fechaHoraInicio, precio, plazas);
+        return Objects.hash(courseId, name, city, startDate, price, vacantSpots);
     }
 }
