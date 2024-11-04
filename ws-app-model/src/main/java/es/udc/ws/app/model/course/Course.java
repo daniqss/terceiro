@@ -11,15 +11,15 @@ public class Course {
     private LocalDateTime startDate;
     private BigDecimal price;
     private int vacantSpots;
-    private int maxVacantSpots;
+    private int maxSpots;
 
-    public Course(Long courseId, String name, String city, LocalDateTime startDate, BigDecimal price, int maxVacantSpots, int vacantSpots) {
+    public Course(Long courseId, String name, String city, LocalDateTime startDate, BigDecimal price, int maxSpots, int vacantSpots) {
         this.courseId = courseId;
         this.city = city;
         this.name = name;
         this.startDate = startDate;
         this.price = price;
-        this.maxVacantSpots = maxVacantSpots;
+        this.maxSpots = maxSpots;
         this.vacantSpots = vacantSpots;
     }
 
@@ -55,8 +55,8 @@ public class Course {
         this.price = price;
     }
 
-    public int getMaxVacantSpots() { return this.maxVacantSpots; }
-    public void setMaxVacantSpots(int maxVacantSpots) { this.maxVacantSpots = maxVacantSpots; }
+    public int getMaxSpots() { return this.maxSpots; }
+    public void setMaxSpots(int maxSpots) { this.maxSpots = maxSpots; }
 
     public int getVacantSpots() { return vacantSpots; }
     public void setVacantSpots(int vacantSpots) { this.vacantSpots = vacantSpots; }
