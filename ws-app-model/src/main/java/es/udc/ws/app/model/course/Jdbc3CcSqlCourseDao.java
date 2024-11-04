@@ -12,8 +12,8 @@ public class Jdbc3CcSqlCourseDao extends AbstractSqlCourseDao {
     @Override
     public Course create(Connection connection, Course course) {
         String queryString = "INSERT INTO Course"
-                + " (name, city, startDate, price, vacantSpots)"
-                + " VALUES (?, ?, ?, ?, ?)";
+                + " (name, city, startDate, price, maxVacantSpots, vacantSpots)"
+                + " VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 queryString, Statement.RETURN_GENERATED_KEYS)
@@ -23,18 +23,19 @@ public class Jdbc3CcSqlCourseDao extends AbstractSqlCourseDao {
             preparedStatement.setString(i++, course.getCity());
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(course.getStartDate()));
             preparedStatement.setBigDecimal(i++, course.getPrice());
+            preparedStatement.setInt(i++, course.getMaxVacantSpots());
             preparedStatement.setInt(i, course.getVacantSpots());
 
             preparedStatement.executeUpdate();
 
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (!resultSet.next()) {
-                throw new SQLException("El driver JDBC no devolvió la clave generada");
+                throw new SQLException("");
             }
             Long courseId = resultSet.getLong(1);
 
             return new Course(courseId, course.getName(), course.getCity(), course.getStartDate(),
-                    course.getPrice(), course.getVacantSpots());
+                    course.getPrice(), course.getMaxVacantSpots(), course.getVacantSpots());
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

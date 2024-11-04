@@ -13,14 +13,14 @@ public class Course {
     private int vacantSpots;
     private int maxVacantSpots;
 
-    public Course(Long courseId, String name, String city, LocalDateTime startDate, BigDecimal price, int maxVacantSpots) {
+    public Course(Long courseId, String name, String city, LocalDateTime startDate, BigDecimal price, int maxVacantSpots, int vacantSpots) {
         this.courseId = courseId;
         this.city = city;
         this.name = name;
         this.startDate = startDate;
         this.price = price;
         this.maxVacantSpots = maxVacantSpots;
-        this.vacantSpots = 0;
+        this.vacantSpots = vacantSpots;
     }
 
     public Long getCourseId() {
