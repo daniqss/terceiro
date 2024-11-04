@@ -11,14 +11,16 @@ public class Course {
     private LocalDateTime startDate;
     private BigDecimal price;
     private int vacantSpots;
+    private int maxVacantSpots;
 
-    public Course(Long courseId, String name, String city, LocalDateTime startDate, BigDecimal price, int vacantSpots) {
+    public Course(Long courseId, String name, String city, LocalDateTime startDate, BigDecimal price, int maxVacantSpots) {
         this.courseId = courseId;
         this.city = city;
         this.name = name;
         this.startDate = startDate;
         this.price = price;
-        this.vacantSpots = vacantSpots;
+        this.maxVacantSpots = maxVacantSpots;
+        this.vacantSpots = 0;
     }
 
     public Long getCourseId() {
@@ -28,7 +30,6 @@ public class Course {
     public String getCity() {
         return city;
     }
-
     public void setCity(String city) {
         this.city = city;
     }
@@ -36,7 +37,6 @@ public class Course {
     public String getName() {
         return this.name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -44,7 +44,6 @@ public class Course {
     public LocalDateTime getStartDate() {
         return startDate;
     }
-
     public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
@@ -52,18 +51,16 @@ public class Course {
     public BigDecimal getPrice() {
         return price;
     }
-
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public int getVacantSpots() {
-        return vacantSpots;
-    }
+    public int getMaxVacantSpots() { return this.maxVacantSpots; }
+    public void setMaxVacantSpots(int maxVacantSpots) { this.maxVacantSpots = maxVacantSpots; }
 
-    public void setVacantSpots(int vacantSpots) {
-        this.vacantSpots = vacantSpots;
-    }
+    public int getVacantSpots() { return vacantSpots; }
+    public void setVacantSpots(int vacantSpots) { this.vacantSpots = vacantSpots; }
+
 
     @Override
     public boolean equals(Object obj) {
