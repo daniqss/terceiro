@@ -12,7 +12,7 @@ public class Jdbc3CcSqlCourseDao extends AbstractSqlCourseDao {
     @Override
     public Course create(Connection connection, Course course) {
         String queryString = "INSERT INTO Course"
-                + " (name, city, startDate, price, maxVacantSpots, vacantSpots)"
+                + " (name, city, startDate, price, maxSpots, vacantSpots)"
                 + " VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(
