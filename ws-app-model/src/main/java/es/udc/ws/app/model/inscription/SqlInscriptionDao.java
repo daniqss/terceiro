@@ -13,7 +13,8 @@ public interface SqlInscriptionDao {
     public Inscription update(Connection connection, Inscription inscription) throws InputValidationException;
     public Inscription findById(Connection connection, Long inscriptionId) throws InputValidationException;
     public List<Inscription> findByKeyword() throws InputValidationException;
-}
 
+    //Inscription update(Connection connection, Inscription inscription);
 
+    //Inscription update(Connection connection, Inscription inscription);
 }
