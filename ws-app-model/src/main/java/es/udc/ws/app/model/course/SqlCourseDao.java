@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface SqlCourseDao {
     public Course create(Connection connection, Course course) throws InputValidationException;
-    public Course remove(Connection connection, Long courseId) throws InputValidationException;
+    public void remove(Connection connection, Long courseId) throws InputValidationException;
     public Course update(Connection connection, Course course) throws InputValidationException;
     public Course findById(Connection connection, Long courseId) throws InputValidationException;
     public List<Course> findByKeyword(
