@@ -8,15 +8,26 @@ public class Course {
     private final Long courseId;
     private String name;
     private String city;
+    private LocalDateTime registrationDate;
     private LocalDateTime startDate;
-    private BigDecimal price;
+    private float price;
     private int vacantSpots;
     private int maxSpots;
 
-    public Course(Long courseId, String name, String city, LocalDateTime startDate, BigDecimal price, int maxSpots, int vacantSpots) {
+    public Course(
+            Long courseId,
+            String name,
+            String city,
+            LocalDateTime registrationDate,
+            LocalDateTime startDate,
+            float price,
+            int maxSpots,
+            int vacantSpots
+    ) {
         this.courseId = courseId;
         this.city = city;
         this.name = name;
+        this.registrationDate = registrationDate;
         this.startDate = startDate;
         this.price = price;
         this.maxSpots = maxSpots;
@@ -41,6 +52,9 @@ public class Course {
         this.name = name;
     }
 
+    public LocalDateTime getRegistrationDate() { return registrationDate; }
+    public void setRegistrationDate(LocalDateTime registrationDate) { this.registrationDate = registrationDate; }
+
     public LocalDateTime getStartDate() {
         return startDate;
     }
@@ -48,10 +62,10 @@ public class Course {
         this.startDate = startDate;
     }
 
-    public BigDecimal getPrice() {
+    public float getPrice() {
         return price;
     }
-    public void setPrice(BigDecimal price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 
@@ -71,9 +85,11 @@ public class Course {
                 courseId.equals(course.getCourseId())
                 && name.equals(course.getName())
                 && city.equals(course.getCity())
+                && registrationDate.equals(course.getRegistrationDate())
                 && startDate.equals(course.getStartDate())
-                && price.equals(course.getPrice())
-                && vacantSpots != course.getVacantSpots();
+                && price == course.getPrice()
+                && maxSpots == course.getMaxSpots()
+                && vacantSpots == course.getVacantSpots();
     }
 
     @Override
