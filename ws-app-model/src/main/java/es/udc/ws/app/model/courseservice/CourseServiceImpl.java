@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static es.udc.ws.app.model.util.ModelConstants.APP_DATA_SOURCE;
@@ -33,12 +34,16 @@ public class CourseServiceImpl implements CourseService {
         PropertyValidator.validateMandatoryString("name", course.getName());
         PropertyValidator.validateDouble("price", course.getPrice(), 0, MAX_PRICE);
         PropertyValidator.validateNotNegativeLong("maxSpots", course.getMaxSpots());
+
+        if (ChronoUnit.DAYS.between(course.getCreationDate(), course.getStartDate()) >= 15) {
+            throw new InputValidationException("New courses must be at created at least 15 days before the start date");
+        }
     }
 
     @Override
     public Course addCourse(Course course) throws InputValidationException {
+        course.setCreationDate(LocalDateTime.now());
         validateCourse(course);
-        course.setRegistrationDate(LocalDateTime.now());
 
         try (Connection connection = dataSource.getConnection()) {
             try {
@@ -64,5 +69,5 @@ public class CourseServiceImpl implements CourseService {
             throw new RuntimeException(e);
         }
     }
-    
+
 }
