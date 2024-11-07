@@ -7,7 +7,7 @@ public class Course {
     private Long courseId;
     private String name;
     private String city;
-    private LocalDateTime registrationDate;
+    private LocalDateTime creationDate;
     private LocalDateTime startDate;
     private float price;
     private int vacantSpots;
@@ -17,20 +17,20 @@ public class Course {
             Long courseId,
             String name,
             String city,
-            LocalDateTime registrationDate,
+            LocalDateTime creationDate,
             LocalDateTime startDate,
             float price,
             int maxSpots,
             int vacantSpots
     ) {
-        this(name, city, registrationDate, startDate, price, maxSpots);
+        this(name, city, creationDate, startDate, price, maxSpots);
         this.courseId = courseId;
         this.vacantSpots = vacantSpots;
     }
 
-    public Course(String city, String name, LocalDateTime registrationDate, LocalDateTime startDate, float price, int maxSpots) {
+    public Course(String city, String name, LocalDateTime creationDate, LocalDateTime startDate, float price, int maxSpots) {
         this(name, city, startDate, price, maxSpots);
-        this.registrationDate = (registrationDate != null) ? registrationDate : LocalDateTime.now();
+        this.creationDate = (creationDate != null) ? creationDate.withNano(0) : null;
     }
 
     public Course(String name, String city, LocalDateTime startDate, float price, int maxSpots) {
@@ -61,12 +61,12 @@ public class Course {
         this.name = name;
     }
 
-    public LocalDateTime getRegistrationDate() {
-        return registrationDate;
+    public LocalDateTime getCreationDate() {
+        return creationDate;
     }
 
-    public void setRegistrationDate(LocalDateTime registrationDate) {
-        this.registrationDate = registrationDate;
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
     public LocalDateTime getStartDate() {
@@ -111,7 +111,7 @@ public class Course {
                 courseId.equals(course.getCourseId())
                         && name.equals(course.getName())
                         && city.equals(course.getCity())
-                        && registrationDate.equals(course.getRegistrationDate())
+                        && creationDate.equals(course.getCreationDate())
                         && startDate.equals(course.getStartDate())
                         && price == course.getPrice()
                         && maxSpots == course.getMaxSpots()

@@ -3,6 +3,7 @@ package es.udc.ws.app.model.course;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,13 +14,14 @@ public abstract class AbstractSqlCourseDao implements SqlCourseDao {
 
     @Override
     public Course update(Connection connection, Course course) {
-        String queryString = "UPDATE course" + "SET name = ?, city = ?, startDate = ?, price = ?, maxSpots = ?, vacantSpots = ?" + "WHERE courseId = ?";
+        String queryString = "UPDATE course" + "SET name = ?, city = ?, creationDate = ?, startDate = ?, price = ?, maxSpots = ?, vacantSpots = ?" + "WHERE courseId = ?";
         try (PreparedStatement ps = connection.prepareStatement(queryString)){
             int i = 1;
             ps.setString(i++, course.getName());
             ps.setString(i++, course.getCity());
+            ps.setTimestamp(i++, Timestamp.valueOf(course.getCreationDate()));
             ps.setTimestamp(i++, Timestamp.valueOf(course.getStartDate()));
-            ps.setBigDecimal(i++, course.getPrice());
+            ps.setFloat(i++, course.getPrice());
             ps.setInt(i++, course.getMaxSpots());
             ps.setInt(i++,course.getVacantSpots());
             ps.setLong(i, course.getCourseId());
@@ -51,7 +53,7 @@ public abstract class AbstractSqlCourseDao implements SqlCourseDao {
 
     @Override
     public Course findById(Connection connection, Long courseId){
-        String queryString = "SELECT name, city, startDate, price, maxSpots, vacantSpots  FROM Course WHERE courseId = ?";
+        String queryString = "SELECT name, city, creationDate, startDate, price, maxSpots, vacantSpots  FROM Course WHERE courseId = ?";
         try(PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
             int i = 1;
             preparedStatement.setLong(i++, courseId.longValue());
@@ -62,13 +64,15 @@ public abstract class AbstractSqlCourseDao implements SqlCourseDao {
             i = 1;
             String name = resultSet.getString(i++);
             String city = resultSet.getString(i++);
+            Timestamp creationDateAsTimestamp = resultSet.getTimestamp(i++);
+            LocalDateTime creationDate = creationDateAsTimestamp.toLocalDateTime();
             Timestamp startDateAsTimestamp = resultSet.getTimestamp(i++);
             LocalDateTime startDate = startDateAsTimestamp.toLocalDateTime();
-            BigDecimal price = resultSet.getBigDecimal(i++);
+            float price = resultSet.getFloat(i++);
             int maxSpots = resultSet.getInt(i++);
             int vacantSpots = resultSet.getInt(i);
             /* Return movie. */
-            return new Course(courseId, name, city, startDate, price, maxSpots, vacantSpots);
+            return new Course(courseId, name, city, creationDate, startDate, price, maxSpots, vacantSpots);
         } catch (SQLException | InstanceNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -91,12 +95,13 @@ public abstract class AbstractSqlCourseDao implements SqlCourseDao {
                     Long courseId = resultSet.getLong("courseId");
                     String name = resultSet.getString("name");
                     String resultCity = resultSet.getString("city");
+                    LocalDateTime creationDate = resultSet.getObject("creationDate", LocalDateTime.class);
                     LocalDateTime startDate = resultSet.getObject("startDate", LocalDateTime.class);
-                    BigDecimal price = resultSet.getBigDecimal("price");
+                    float price = resultSet.getFloat("price");
                     int maxSpots = resultSet.getInt("maxSpots");
                     int vacantSpots = resultSet.getInt("vacantSpots");
 
-                    Course course = new Course(courseId, name, resultCity, startDate, price, maxSpots, vacantSpots);
+                    Course course = new Course(courseId, name, resultCity, creationDate, startDate, price, maxSpots, vacantSpots);
                     courses.add(course);
                 }
             }
