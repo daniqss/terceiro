@@ -41,7 +41,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course addCourse(Course course) throws InputValidationException {
+    public Course addCourse(Course course) throws InputValidationException, RuntimeException {
         course.setCreationDate(LocalDateTime.now());
         validateCourse(course);
 
@@ -66,6 +66,14 @@ public class CourseServiceImpl implements CourseService {
                 throw e;
             }
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Course> findCourses(String city, LocalDateTime startDate) throws RuntimeException {
+        try (Connection connection = dataSource.getConnection()) {
+            return courseDao.findByKeyword(connection, city, startDate);
+        } catch (RuntimeException | SQLException e) {
             throw new RuntimeException(e);
         }
     }
