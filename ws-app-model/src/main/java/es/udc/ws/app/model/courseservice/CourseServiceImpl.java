@@ -78,4 +78,20 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
+    public Course findCourse(Long courseId) {
+        return null;
+    }
+
+    public Long addInscription(Long courseId, String userEmail, String bankCardNumber) {
+        return null;
+    }
+
+    public Inscription cancelInscription(Long inscriptionId, String userEmail) {
+        return null;
+    }
+
+    public List<Inscription> findInscriptions(String userEmail) {
+        return null;
+    }
+
 }
