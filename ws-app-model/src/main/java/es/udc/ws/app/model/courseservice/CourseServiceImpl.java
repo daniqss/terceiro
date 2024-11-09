@@ -1,6 +1,8 @@
 package es.udc.ws.app.model.courseservice;
 
+import es.udc.ws.app.model.inscription.SqlInscriptionDao;
 import es.udc.ws.util.exceptions.InputValidationException;
+import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.validation.PropertyValidator;
 
 import es.udc.ws.app.model.course.Course;
@@ -16,6 +18,8 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static es.udc.ws.app.model.util.ModelConstants.APP_DATA_SOURCE;
 import static es.udc.ws.app.model.util.ModelConstants.MAX_PRICE;
@@ -23,6 +27,7 @@ import static es.udc.ws.app.model.util.ModelConstants.MAX_PRICE;
 public class CourseServiceImpl implements CourseService {
     private final DataSource dataSource;
     private SqlCourseDao courseDao = null;
+    private SqlInscriptionDao inscriptionDao = null;
 
     public CourseServiceImpl() {
         dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
@@ -39,6 +44,27 @@ public class CourseServiceImpl implements CourseService {
             throw new InputValidationException("New courses must be at created at least 15 days before the start date");
         }
     }
+
+    private static boolean validateEmail(String email) throws InputValidationException {
+        String patron = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Pattern pattern = Pattern.compile(patron);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+    private void validateInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException {
+        if (!validateEmail(userEmail)) {
+            throw new InputValidationException("El email proporcionado no es válido.");
+        }
+        PropertyValidator.validateCreditCard(bankCardNumber);
+        LocalDateTime courseStartDate = findCourse(courseId).getStartDate();
+        if (LocalDateTime.now().isAfter(courseStartDate)) {
+            throw new InputValidationException("El curso al que se quiere inscribir ya ha comenzado");
+        }
+        if (findCourse(courseId).getVacantSpots()==0){
+            throw new InputValidationException("No quedan vacantes en el curso");
+        }
+    }
+
 
     @Override
     public Course addCourse(Course course) throws InputValidationException, RuntimeException {
@@ -78,12 +104,73 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    public Course findCourse(Long courseId) {
-        return null;
+    @Override
+        public Course findCourse(Long courseId) {
+        try (Connection connection = dataSource.getConnection()) {
+            return courseDao.findById(connection, courseId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public Long addInscription(Long courseId, String userEmail, String bankCardNumber) {
-        return null;
+    public Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InstanceNotFoundException, InputValidationException{
+        validateInscription(courseId, userEmail, bankCardNumber);
+
+        try (Connection connection = dataSource.getConnection()) {
+            try {
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+                Course course = courseDao.findById(connection, courseId);
+                int vacantSpots = course.getVacantSpots();
+
+                Inscription inscription = inscriptionDao.create(connection, new Inscription(courseId, LocalDateTime.now(), userEmail));
+
+                course.setVacantSpots(vacantSpots-1);
+                Course g = courseDao.update(connection, course);
+                connection.commit();
+
+                return inscription.getInscriptionId();
+
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (RuntimeException | Error e) {
+                connection.rollback();
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException {
+        inscription.setInscriptionDate(LocalDateTime.now());
+        validateInscription(inscription);
+
+        try (Connection connection = dataSource.getConnection()) {
+            try {
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                Inscription createdInscription = inscriptionDao.create(connection, inscription);
+
+                // if the inscription is created without throwing an exception
+                // we can commit the changes
+                connection.commit();
+
+                return createdInscription;
+
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            } catch (InputValidationException | Error e) {
+                connection.rollback();
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Inscription cancelInscription(Long inscriptionId, String userEmail) {
