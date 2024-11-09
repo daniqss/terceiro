@@ -158,15 +158,7 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testUpdateCourse() {
-    }
-
-    @Test
-    public void testUpdateInvalidCourse() {
-    }
-
-    @Test
-    public void testUpdateNonExistentCourse() {
+    public void testFindCourseByInvalidCity() {
     }
 
     @Test
