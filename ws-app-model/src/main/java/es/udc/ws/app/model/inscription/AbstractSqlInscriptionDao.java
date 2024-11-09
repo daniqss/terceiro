@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 
 public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
     protected AbstractSqlInscriptionDao(){}
@@ -32,5 +33,31 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
         } catch (SQLException | InstanceNotFoundException e) {
             throw new RuntimeException("Error updating inscription with id: " + inscription.getInscriptionId(), e);
         }
+    }
+
+    public void remove(Connection connection, long inscriptionId) throws RuntimeException {
+        String queryString = "DELETE FROM Inscription WHERE inscriptionId = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
+            preparedStatement.setLong(1, inscriptionId);
+            int removedRows = preparedStatement.executeUpdate();
+
+            if (removedRows == 0) {
+                throw new InstanceNotFoundException(inscriptionId, Inscription.class.getName());
+            }
+        } catch (SQLException | InstanceNotFoundException e) {
+            throw new RuntimeException("Error removing inscription with id: " + inscriptionId, e);
+        }
+    }
+
+    public List<Inscription> findByUserEmail(Connection connection, String userEmail) throws RuntimeException {
+
+
+        return null;
+    }
+
+    public Inscription findById(Connection connection, Long inscriptionId) throws RuntimeException {
+
+        return null;
     }
 }

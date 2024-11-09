@@ -1,5 +1,4 @@
 package es.udc.ws.app.model.inscription;
-import es.udc.ws.app.model.course.Course;
 
 import java.sql.*;
 
