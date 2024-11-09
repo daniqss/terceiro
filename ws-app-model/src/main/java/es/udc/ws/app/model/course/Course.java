@@ -13,26 +13,6 @@ public class Course {
     private int vacantSpots;
     private int maxSpots;
 
-    public Course(
-            Long courseId,
-            String name,
-            String city,
-            LocalDateTime creationDate,
-            LocalDateTime startDate,
-            float price,
-            int maxSpots,
-            int vacantSpots
-    ) {
-        this(name, city, creationDate, startDate, price, maxSpots);
-        this.courseId = courseId;
-        this.vacantSpots = vacantSpots;
-    }
-
-    public Course(String city, String name, LocalDateTime creationDate, LocalDateTime startDate, float price, int maxSpots) {
-        this(name, city, startDate, price, maxSpots);
-        this.creationDate = (creationDate != null) ? creationDate.withNano(0) : null;
-    }
-
     public Course(String name, String city, LocalDateTime startDate, float price, int maxSpots) {
         this.name = name;
         this.city = city;
@@ -41,8 +21,23 @@ public class Course {
         this.maxSpots = maxSpots;
     }
 
+    public Course(Long courseId, String name, String city, LocalDateTime startDate, float price, int maxSpots, int vacantSpots) {
+        this(name, city, startDate, price, maxSpots);
+        this.courseId = courseId;
+        this.vacantSpots = vacantSpots;
+    }
+
+    public Course(Long courseId, String name, String city, LocalDateTime creationDate, LocalDateTime startDate, float price, int maxSpots, int vacantSpots) {
+        this(courseId, name, city, startDate, price, maxSpots, vacantSpots);
+        this.creationDate = (creationDate != null) ? creationDate.withNano(0) : null;
+    }
+
     public Long getCourseId() {
         return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 
     public String getCity() {

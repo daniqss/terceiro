@@ -16,8 +16,8 @@ public class Jdbc3CcSqlCourseDao extends AbstractSqlCourseDao {
                 + " VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(
-                queryString, Statement.RETURN_GENERATED_KEYS)
-        ) {
+                queryString, Statement.RETURN_GENERATED_KEYS
+        )) {
             int i = 1;
             preparedStatement.setString(i++, course.getName());
             preparedStatement.setString(i++, course.getCity());
@@ -25,7 +25,7 @@ public class Jdbc3CcSqlCourseDao extends AbstractSqlCourseDao {
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(course.getStartDate()));
             preparedStatement.setFloat(i++, course.getPrice());
             preparedStatement.setInt(i++, course.getMaxSpots());
-            preparedStatement.setInt(i, course.getVacantSpots());
+            preparedStatement.setInt(i, course.getMaxSpots());
 
             preparedStatement.executeUpdate();
 
