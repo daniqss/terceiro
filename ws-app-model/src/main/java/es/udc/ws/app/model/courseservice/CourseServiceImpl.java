@@ -65,7 +65,6 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-
     @Override
     public Course addCourse(Course course) throws InputValidationException, RuntimeException {
         course.setCreationDate(LocalDateTime.now());
@@ -113,6 +112,7 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
+    @Override
     public Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InstanceNotFoundException, InputValidationException{
         validateInscription(courseId, userEmail, bankCardNumber);
 
@@ -135,36 +135,6 @@ public class CourseServiceImpl implements CourseService {
                 connection.rollback();
                 throw new RuntimeException(e);
             } catch (RuntimeException | Error e) {
-                connection.rollback();
-                throw e;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException {
-        inscription.setInscriptionDate(LocalDateTime.now());
-        validateInscription(inscription);
-
-        try (Connection connection = dataSource.getConnection()) {
-            try {
-                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-                connection.setAutoCommit(false);
-
-                Inscription createdInscription = inscriptionDao.create(connection, inscription);
-
-                // if the inscription is created without throwing an exception
-                // we can commit the changes
-                connection.commit();
-
-                return createdInscription;
-
-            } catch (SQLException e) {
-                connection.rollback();
-                throw new RuntimeException(e);
-            } catch (InputValidationException | Error e) {
                 connection.rollback();
                 throw e;
             }
