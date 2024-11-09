@@ -4,7 +4,7 @@ import es.udc.ws.app.model.course.Course;
 
 import java.sql.*;
 
-public class Jdbc3CcSqlInscriptionDao implements SqlInscriptionDao {
+public class Jdbc3CcSqlInscriptionDao extends AbstractSqlInscriptionDao {
 
     @Override
     public Inscription create(Connection connection, Inscription inscription) {
