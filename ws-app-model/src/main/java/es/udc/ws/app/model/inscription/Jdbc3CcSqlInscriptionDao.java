@@ -7,7 +7,7 @@ import java.sql.*;
 public class Jdbc3CcSqlInscriptionDao implements SqlInscriptionDao {
 
     @Override
-    public Inscription inscription(Connection connection, Inscription inscription) {
+    public Inscription create(Connection connection, Inscription inscription) {
         String queryString = "INSERT INTO Inscription"
                 + " (inscriptionDate, userEmail)"
                 + " VALUES (?, ?)";
