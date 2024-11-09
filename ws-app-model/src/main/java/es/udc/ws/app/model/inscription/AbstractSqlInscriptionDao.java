@@ -13,7 +13,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
     }
 
     @Override
-    public Inscription update(Connection connection, Inscription inscription) {
+    public Inscription update(Connection connection, Inscription inscription) throws InstanceNotFoundException, RuntimeException {
         String queryString = "UPDATE Inscription SET courseId =?, inscriptionDate =?, cancelationDate =?, userEmail = ? WHERE inscriptionId = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
@@ -31,12 +31,12 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
             }
 
             return findById(connection, inscription.getInscriptionId());
-        } catch (SQLException | InstanceNotFoundException e) {
+        } catch (SQLException e) {
             throw new RuntimeException("Error updating inscription with id: " + inscription.getInscriptionId(), e);
         }
     }
 
-    public void remove(Connection connection, long inscriptionId) throws RuntimeException {
+    public void remove(Connection connection, long inscriptionId) throws InstanceNotFoundException, RuntimeException {
         String queryString = "DELETE FROM Inscription WHERE inscriptionId = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
@@ -46,12 +46,12 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
             if (removedRows == 0) {
                 throw new InstanceNotFoundException(inscriptionId, Inscription.class.getName());
             }
-        } catch (SQLException | InstanceNotFoundException e) {
+        } catch (SQLException e) {
             throw new RuntimeException("Error removing inscription with id: " + inscriptionId, e);
         }
     }
 
-    public List<Inscription> findByUserEmail(Connection connection, String userEmail) {
+    public List<Inscription> findByUserEmail(Connection connection, String userEmail) throws RuntimeException {
         String queryString = "SELECT inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail " +
                 "FROM Inscription " +
                 "WHERE LOWER(userEmail) = LOWER(?) " +
@@ -78,7 +78,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
         }
     }
 
-    public Inscription findById(Connection connection, Long inscriptionId) throws RuntimeException {
+    public Inscription findById(Connection connection, Long inscriptionId) throws InstanceNotFoundException, RuntimeException {
 
         return null;
     }
