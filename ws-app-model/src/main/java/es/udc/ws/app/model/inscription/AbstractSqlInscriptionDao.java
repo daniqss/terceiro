@@ -12,11 +12,13 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
 
     @Override
     public Inscription update(Connection connection, Inscription inscription){
-        String queryString = "UPDATE Inscription SET inscriptionDate = ?, userEmail = ? WHERE inscriptionId = ?";
+        String queryString = "UPDATE Inscription SET courseId =?, inscriptionDate =?, cancelationDate =?, userEmail = ? WHERE inscriptionId = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
             int i = 1;
+            preparedStatement.setLong(i++, inscription.getCourseId());
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(inscription.getInscriptionDate()));
+            preparedStatement.setTimestamp(i++, Timestamp.valueOf(inscription.getCancelationDate()));
             preparedStatement.setString(i++, inscription.getUserEmail());
             preparedStatement.setLong(i++, inscription.getInscriptionId());
 
