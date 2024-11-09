@@ -16,13 +16,13 @@ public class Jdbc3CcSqlInscriptionDao extends AbstractSqlInscriptionDao {
             int i = 1;
             preparedStatement.setLong(++i, inscription.getCourseId());
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(inscription.getInscriptionDate()));
-            preparedStatement.setString(i++, inscription.getUserEmail());
+            preparedStatement.setString(i, inscription.getUserEmail());
 
             preparedStatement.executeUpdate();
 
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (!resultSet.next()) {
-                throw new SQLException("El driver JDBC no devolvió la clave generada");
+                throw new SQLException("JDBC driver did not return generated key");
             }
             Long inscriptionId = resultSet.getLong(1);
 
