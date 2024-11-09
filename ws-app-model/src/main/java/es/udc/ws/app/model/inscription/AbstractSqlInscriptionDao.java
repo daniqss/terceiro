@@ -20,7 +20,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao{
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(inscription.getInscriptionDate()));
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(inscription.getCancelationDate()));
             preparedStatement.setString(i++, inscription.getUserEmail());
-            preparedStatement.setLong(i++, inscription.getInscriptionId());
+            preparedStatement.setLong(i, inscription.getInscriptionId());
 
             int updatedRows = preparedStatement.executeUpdate();
 

@@ -86,9 +86,6 @@ public class CourseServiceImpl implements CourseService {
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (InputValidationException | Error e) {
-                connection.rollback();
-                throw e;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -113,7 +110,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InstanceNotFoundException, InputValidationException{
+    public Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException {
         validateInscription(courseId, userEmail, bankCardNumber);
 
         try (Connection connection = dataSource.getConnection()) {

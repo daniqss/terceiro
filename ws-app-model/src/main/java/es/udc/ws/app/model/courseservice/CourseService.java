@@ -35,7 +35,7 @@ public interface CourseService {
     bank card number to make the payment. If successful, the registration is stored, recording the date and time at
     which it was made, and the identifier assigned to it is returned.
     */
-    Long addInscription(Long courseId, String userEmail, String bankCardNumber);
+    Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException;
 
     /*
     A user can cancel a registration as long as the cancellation period is still open (i.e., there are more than 7 days
