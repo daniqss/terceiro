@@ -3,7 +3,7 @@ package es.udc.ws.app.model.course;
 import es.udc.ws.util.configuration.ConfigurationParametersManager;
 
 public class SqlCourseDaoFactory {
-    private final static String CLASS_NAME_PARAMETER = "SqlCursoDaoFactory.className";
+    private final static String CLASS_NAME_PARAMETER = "SqlCourseDaoFactory.className";
     private static SqlCourseDao instaciaDao = null;
 
     private SqlCourseDaoFactory() { }
