@@ -1,6 +1,5 @@
 package es.udc.ws.app.test.model.appservice;
 
-import com.fasterxml.jackson.databind.jsontype.impl.AsDeductionTypeDeserializer;
 import es.udc.ws.app.model.course.Course;
 import es.udc.ws.app.model.course.SqlCourseDao;
 import es.udc.ws.app.model.course.SqlCourseDaoFactory;
@@ -22,9 +21,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 import static es.udc.ws.app.model.util.ModelConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -457,11 +454,11 @@ public class AppServiceTest {
     @Test
     public void testCourseAlreadyStartedException() {
         assertThrows(CourseAlreadyStartedException.class, () -> {
-            Course course = createCourseDao(getValidCourse2(), INVALID_COURSE_START_DATE_TO_INSC);
+            Course c = getValidCourse();
+            c.setStartDate(INVALID_COURSE_START_DATE_TO_INSC);
+            Course course = createCourseDao(c, LocalDateTime.now());
             try {
                 Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                System.out.println(course.getStartDate());
-                System.out.println(findInscription(inscriptionId).getInscriptionDate());
                 removeInscription(inscriptionId);
             } finally {
                 if (course != null) removeCourse(course.getCourseId());

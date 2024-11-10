@@ -63,7 +63,7 @@ public class CourseServiceImpl implements CourseService {
         }
         PropertyValidator.validateCreditCard(bankCardNumber);
         LocalDateTime courseStartDate = findCourse(courseId).getStartDate();
-        if (inscriptionDate.isAfter(courseStartDate)) {
+        if (!(ChronoUnit.DAYS.between(inscriptionDate, courseStartDate) > 0)) {
             throw new CourseAlreadyStartedException(courseId, findCourse(courseId).getStartDate());
         }
         if (findCourse(courseId).getVacantSpots() == 0) {
