@@ -1,6 +1,7 @@
 package es.udc.ws.app.model.courseservice;
 
 import es.udc.ws.app.model.inscription.SqlInscriptionDao;
+import es.udc.ws.app.model.inscription.SqlInscriptionDaoFactory;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.validation.PropertyValidator;
@@ -32,6 +33,14 @@ public class CourseServiceImpl implements CourseService {
     public CourseServiceImpl() {
         dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
         courseDao = SqlCourseDaoFactory.getDao();
+        inscriptionDao = SqlInscriptionDaoFactory.getDao();
+    }
+
+    private static boolean validateEmail(String email) throws InputValidationException {
+        String patron = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Pattern pattern = Pattern.compile(patron);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
     private void validateCourse(Course course) throws InputValidationException {
@@ -45,23 +54,17 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    private static boolean validateEmail(String email) throws InputValidationException {
-        String patron = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        Pattern pattern = Pattern.compile(patron);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-    private void validateInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException {
+    private void validateInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException {
         if (!validateEmail(userEmail)) {
-            throw new InputValidationException("El email proporcionado no es válido.");
+            throw new InputValidationException("Non valid email");
         }
         PropertyValidator.validateCreditCard(bankCardNumber);
         LocalDateTime courseStartDate = findCourse(courseId).getStartDate();
         if (LocalDateTime.now().isAfter(courseStartDate)) {
-            throw new InputValidationException("El curso al que se quiere inscribir ya ha comenzado");
+            throw new InputValidationException("The course where you want to enter has already started");
         }
-        if (findCourse(courseId).getVacantSpots()==0){
-            throw new InputValidationException("No quedan vacantes en el curso");
+        if (findCourse(courseId).getVacantSpots() == 0) {
+            throw new InputValidationException("No vacants in the course");
         }
     }
 
@@ -101,7 +104,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-        public Course findCourse(Long courseId) {
+    public Course findCourse(Long courseId) throws RuntimeException, InstanceNotFoundException {
         try (Connection connection = dataSource.getConnection()) {
             return courseDao.findById(connection, courseId);
         } catch (SQLException e) {
@@ -110,7 +113,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException {
+    public Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException {
         validateInscription(courseId, userEmail, bankCardNumber);
 
         try (Connection connection = dataSource.getConnection()) {
@@ -122,12 +125,11 @@ public class CourseServiceImpl implements CourseService {
 
                 Inscription inscription = inscriptionDao.create(connection, new Inscription(courseId, LocalDateTime.now(), userEmail));
 
-                course.setVacantSpots(vacantSpots-1);
-                Course g = courseDao.update(connection, course);
+                course.setVacantSpots(vacantSpots - 1);
+                courseDao.update(connection, course);
                 connection.commit();
 
                 return inscription.getInscriptionId();
-
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
@@ -140,12 +142,9 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    public Inscription cancelInscription(Long inscriptionId, String userEmail) {
-        return null;
-    }
+    public void cancelInscription(Long inscriptionId, String userEmail) throws RuntimeException, InstanceNotFoundException, InputValidationException {}
 
     public List<Inscription> findInscriptions(String userEmail) {
         return null;
     }
-
 }

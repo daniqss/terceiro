@@ -3,6 +3,7 @@ package es.udc.ws.app.model.courseservice;
 import es.udc.ws.app.model.course.Course;
 import es.udc.ws.app.model.inscription.Inscription;
 import es.udc.ws.util.exceptions.InputValidationException;
+import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
 import java.util.List;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public interface CourseService {
     the price and the maximum number of places. In addition, the date and time at which the course was registered will
     be saved. The start date of the course must be at least 15 days after the time of registration.
     */
-    Course addCourse(Course course) throws InputValidationException;
+    Course addCourse(Course course) throws InputValidationException, InstanceNotFoundException;
 
     /*
     It will be possible to search for courses that are held in a city from a date. Only courses that are held in that
@@ -21,13 +22,13 @@ public interface CourseService {
     The information returned for the courses will include, in addition to the rest of the data, the number of places
     available at that time.
     */
-    List<Course> findCourses(String city, LocalDateTime date);
+    List<Course> findCourses(String city, LocalDateTime date) throws RuntimeException;
 
     /*
     It will be possible to search for courses by their identifier. As in the previous point, the information returned
     for the course will include, in addition to the rest of the data, the number of places available at that time.
      */
-    Course findCourse(Long courseId);
+    Course findCourse(Long courseId) throws InputValidationException, InstanceNotFoundException;
 
     /*
     A user may register for a course as long as the registration period is still open (i.e. the course has not yet started).
@@ -35,7 +36,7 @@ public interface CourseService {
     bank card number to make the payment. If successful, the registration is stored, recording the date and time at
     which it was made, and the identifier assigned to it is returned.
     */
-    Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException;
+    Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException ;
 
     /*
     A user can cancel a registration as long as the cancellation period is still open (i.e., there are more than 7 days
@@ -44,7 +45,7 @@ public interface CourseService {
     (a user can only cancel his/her registrations). If successful, the date and time at which the registration was
     cancelled will be recorded.
     */
-    Inscription cancelInscription(Long inscriptionId, String userEmail);
+    void cancelInscription(Long inscriptionId, String userEmail) throws RuntimeException, InstanceNotFoundException, InputValidationException;
 
     /*
     It will be possible to retrieve all the registrations that a user has made over time, sorted by the date the
