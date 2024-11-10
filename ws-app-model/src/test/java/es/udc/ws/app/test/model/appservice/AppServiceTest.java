@@ -6,9 +6,7 @@ import es.udc.ws.app.model.course.SqlCourseDao;
 import es.udc.ws.app.model.course.SqlCourseDaoFactory;
 import es.udc.ws.app.model.courseservice.CourseService;
 import es.udc.ws.app.model.courseservice.CourseServiceFactory;
-import es.udc.ws.app.model.courseservice.exceptions.CourseAlreadyStartedException;
-import es.udc.ws.app.model.courseservice.exceptions.CourseFullException;
-import es.udc.ws.app.model.courseservice.exceptions.CourseStartTooSoonException;
+import es.udc.ws.app.model.courseservice.exceptions.*;
 import es.udc.ws.app.model.inscription.Inscription;
 import es.udc.ws.app.model.inscription.SqlInscriptionDao;
 import es.udc.ws.app.model.inscription.SqlInscriptionDaoFactory;
@@ -518,28 +516,118 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testFindInscriptions() {
+    public void testFindInscriptions() throws InstanceNotFoundException, CourseAlreadyStartedException, InputValidationException, CourseFullException, CourseStartTooSoonException {
+        Course course = courseService.addCourse(getValidCourse());
+        Inscription inscription1 = null;
+        Inscription inscription2 = null;
+        Inscription inscription3 = null;
+
+        try {
+            Long addedinscriptionId1 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+            Long addedinscriptionId2 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+            Long addedinscriptionId3 = courseService.addInscription(course.getCourseId(), VALID_EMAIL2, VALID_CREDIT_CARD);
+            List<Inscription> inscriptionList1 = courseService.findInscriptions(VALID_EMAIL);
+            List<Inscription> inscriptionList2 = courseService.findInscriptions(VALID_EMAIL2);
+
+            assertEquals(2, inscriptionList1.size());
+            assertEquals(1, inscriptionList2.size());
+            inscription1 = inscriptionList1.getFirst();
+            inscription2 = inscriptionList1.getLast();
+            inscription3 = inscriptionList2.getFirst();
+
+            assertNotEquals(inscription1.getInscriptionId(), inscription2.getInscriptionId());
+            assertEquals(inscription1.getUserEmail(), inscription2.getUserEmail());
+
+            assertEquals(inscription1.getCreditCard(), inscription2.getCreditCard());
+            assertEquals(inscription1.getCreditCard(), inscription3.getCreditCard());
+
+        } finally {
+            if (inscription1 != null) {
+                removeInscription(inscription1.getInscriptionId());
+            }
+            if (inscription2 != null) {
+                removeInscription(inscription2.getInscriptionId());
+            }
+            if (inscription3 != null) {
+                removeInscription(inscription3.getInscriptionId());
+            }
+            if (course != null) {
+                removeCourse(course.getCourseId());
+            }
+
+        }
     }
 
     @Test
     public void testFindNonExistentInscriptions() {
+        assertEquals(0, courseService.findInscriptions(VALID_EMAIL).size());
     }
 
     @Test
-    public void testCancelInscription() {
+    public void testCancelInscription() throws InstanceNotFoundException, InputValidationException, CourseAlreadyStartedException, CourseFullException {
+        Course course = createCourse(getValidCourse());
+        Inscription inscription = null;
+
+        try {
+            Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+            inscription = findInscription(inscriptionId);
+
+            courseService.cancelInscription(inscriptionId, VALID_EMAIL);
+            Inscription inscriptionAfterCancel = findInscription(inscriptionId);
+
+            assertNotNull(inscriptionAfterCancel.getCancelationDate());
+        } catch (InscriptionAlreadyCancelledException | CancelTooCloseToCourseStartException | IncorrectUserException e) {
+            throw new RuntimeException(e);
+        } finally {
+            removeCourse(course.getCourseId());
+            if (inscription != null) {
+                removeInscription(inscription.getInscriptionId());
+            }
+        }
     }
 
     @Test
-    public void testCancelTooCloseToCourseStartException() {
+    public void testCancelTooCloseToCourseStartException() throws InstanceNotFoundException, InputValidationException {
+        Course course = createCourseDao(getValidCourse(),INVALID_CANCELLATION_DATE);
+        try {
+            assertThrows(CancelTooCloseToCourseStartException.class, () -> {
+                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                courseService.cancelInscription(inscriptionId, VALID_EMAIL);
+                removeInscription(inscriptionId);
+            });
+        } finally {
+            if (course!=null) removeCourse(course.getCourseId());
+        }
     }
 
     @Test
-    public void testIncorrectUserException() {
+    public void testIncorrectUserException() throws InstanceNotFoundException {
+        Course course = createCourse(getValidCourse());
+        try {
+            assertThrows(IncorrectUserException.class, () -> {
+                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                courseService.cancelInscription(inscriptionId, VALID_EMAIL2);
+                removeInscription(inscriptionId);
+            });
+        } finally {
+            if (course!=null) removeCourse(course.getCourseId());
+        }
     }
 
     @Test
-    public void testInscriptionAlreadyCancelledException() {
-    }
+    public void testInscriptionAlreadyCancelledException() throws InstanceNotFoundException {
+        Course course = createCourse(getValidCourse());
+        try {
+            assertThrows(InscriptionAlreadyCancelledException.class, () -> {
+                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                courseService.cancelInscription(inscriptionId, VALID_EMAIL);
+                courseService.cancelInscription(inscriptionId, VALID_EMAIL);
+                removeInscription(inscriptionId);
+            });
+        } finally {
+            if (course!=null) removeCourse(course.getCourseId());
+        }
+    };
 
 }
 
