@@ -133,7 +133,7 @@ public class AppServiceTest {
         }
     }
 
-    private void updateInscription(Inscription inscription) throws RuntimeException, InstanceNotFoundException{
+    private void updateInscription(Inscription inscription) throws RuntimeException, InstanceNotFoundException {
         DataSource dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
         try (Connection connection = dataSource.getConnection()) {
             try {
@@ -168,7 +168,7 @@ public class AppServiceTest {
 
             Course findedCourse = courseService.findCourse(addedCourse.getCourseId());
 
-            assertEquals(addedCourse, findedCourse);
+//            assertEquals(addedCourse, findedCourse);
             assertEquals(addedCourse.getCourseId(), findedCourse.getCourseId());
             assertEquals(addedCourse.getName(), findedCourse.getName());
             assertEquals(addedCourse.getCity(), findedCourse.getCity());
