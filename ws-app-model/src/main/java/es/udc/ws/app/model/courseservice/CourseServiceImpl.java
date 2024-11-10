@@ -1,8 +1,6 @@
 package es.udc.ws.app.model.courseservice;
 
-import es.udc.ws.app.model.courseservice.exceptions.CourseAlreadyStartedException;
-import es.udc.ws.app.model.courseservice.exceptions.CourseFullException;
-import es.udc.ws.app.model.courseservice.exceptions.CourseStartTooSoonException;
+import es.udc.ws.app.model.courseservice.exceptions.*;
 import es.udc.ws.app.model.inscription.SqlInscriptionDao;
 import es.udc.ws.app.model.inscription.SqlInscriptionDaoFactory;
 import es.udc.ws.util.exceptions.InputValidationException;
@@ -151,26 +149,33 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    public void cancelInscription(Long inscriptionId, String userEmail) throws RuntimeException, InstanceNotFoundException, InputValidationException{
+    public void cancelInscription(Long inscriptionId, String userEmail) throws RuntimeException, InstanceNotFoundException, InputValidationException, IncorrectUserException, InscriptionAlreadyCancelledException, CancelTooCloseToCourseStartException {
         try (Connection connection = dataSource.getConnection()) {
             try {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
 
+
                 Inscription inscription = inscriptionDao.findById(connection, inscriptionId);
+
                 if (inscription == null) {
                     throw new InstanceNotFoundException("Inscription not found", inscriptionId.getClass().toString());
                 }
 
+                if(inscription.getCancelationDate()!=null) {
+                    throw new InscriptionAlreadyCancelledException(inscriptionId, userEmail, inscription.getCancelationDate());
+                }
+
+
                 if (!inscription.getUserEmail().equals(userEmail)) {
-                    throw new InputValidationException("User email does not match the inscription");
+                    throw new IncorrectUserException(inscriptionId, userEmail);
                 }
 
                 // Check if the cancellation is within the allowed time frame
                 // Assuming we need to check this against the course start date
                 Course course = courseDao.findById(connection, inscription.getCourseId());
                 if (course.getStartDate().minusDays(7).isBefore(LocalDateTime.now())) {
-                    throw new InputValidationException("Cancellation period has ended");
+                    throw new CancelTooCloseToCourseStartException(inscriptionId, inscription.getCourseId(), course.getStartDate(), LocalDateTime.now());
                 }
 
                 inscriptionDao.remove(connection, inscriptionId);
@@ -180,6 +185,8 @@ public class CourseServiceImpl implements CourseService {
                 connection.commit();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
+            } catch (InstanceNotFoundException e) {
+                throw e;
             }
             finally {
                 connection.rollback();

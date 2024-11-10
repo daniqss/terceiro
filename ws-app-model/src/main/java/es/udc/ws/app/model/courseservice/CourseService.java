@@ -1,9 +1,7 @@
 package es.udc.ws.app.model.courseservice;
 
 import es.udc.ws.app.model.course.Course;
-import es.udc.ws.app.model.courseservice.exceptions.CourseAlreadyStartedException;
-import es.udc.ws.app.model.courseservice.exceptions.CourseFullException;
-import es.udc.ws.app.model.courseservice.exceptions.CourseStartTooSoonException;
+import es.udc.ws.app.model.courseservice.exceptions.*;
 import es.udc.ws.app.model.inscription.Inscription;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
@@ -48,7 +46,7 @@ public interface CourseService {
     (a user can only cancel his/her registrations). If successful, the date and time at which the registration was
     cancelled will be recorded.
     */
-    void cancelInscription(Long inscriptionId, String userEmail) throws RuntimeException, InstanceNotFoundException, InputValidationException;
+    void cancelInscription(Long inscriptionId, String userEmail) throws RuntimeException, InstanceNotFoundException, InputValidationException, IncorrectUserException, InscriptionAlreadyCancelledException, CancelTooCloseToCourseStartException;
 
     /*
     It will be possible to retrieve all the registrations that a user has made over time, sorted by the date the
