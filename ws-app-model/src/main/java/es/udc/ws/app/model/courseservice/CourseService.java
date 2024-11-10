@@ -22,7 +22,7 @@ public interface CourseService {
     The information returned for the courses will include, in addition to the rest of the data, the number of places
     available at that time.
     */
-    List<Course> findCourses(String city, LocalDateTime date) throws RuntimeException;
+    List<Course> findCourses(String city, LocalDateTime date) throws RuntimeException, InputValidationException;
 
     /*
     It will be possible to search for courses by their identifier. As in the previous point, the information returned

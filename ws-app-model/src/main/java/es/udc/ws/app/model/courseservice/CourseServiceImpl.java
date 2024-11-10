@@ -102,7 +102,9 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    public List<Course> findCourses(String city, LocalDateTime startDate) throws RuntimeException {
+    public List<Course> findCourses(String city, LocalDateTime startDate) throws RuntimeException, InputValidationException {
+        PropertyValidator.validateMandatoryString("city", city);
+
         try (Connection connection = dataSource.getConnection()) {
             return courseDao.findByKeyword(connection, city, startDate);
         } catch (RuntimeException | SQLException e) {

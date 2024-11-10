@@ -281,7 +281,7 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testFindCourses() throws InstanceNotFoundException {
+    public void testFindCourses() throws InstanceNotFoundException, InputValidationException {
         Course addedCourse1 = null;
         Course addedCourse2 = null;
         Course addedCourse3 = null;
@@ -311,6 +311,7 @@ public class AppServiceTest {
 
     @Test
     public void testFindCoursesByInvalidCity() {
+        assertThrows(InputValidationException.class, () -> courseService.findCourses("", LocalDateTime.now()));
     }
 
     @Test
