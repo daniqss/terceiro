@@ -263,7 +263,7 @@ public class AppServiceTest {
                 )
         ));
     }
-    
+
     @Test
     public void testAddInvalidCourse() {
         assertThrows(InputValidationException.class, () -> courseService.addCourse(
