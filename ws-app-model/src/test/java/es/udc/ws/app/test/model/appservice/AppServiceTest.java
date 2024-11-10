@@ -458,7 +458,7 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testAddInvalidInscription() throws InstanceNotFoundException {
+    public void testAddInvalidInscription() {
         assertThrows(InputValidationException.class, () -> {
             Long inscriptionId = courseService.addInscription(MIN_ID - 2, VALID_EMAIL, VALID_CREDIT_CARD);
             removeInscription(inscriptionId);
