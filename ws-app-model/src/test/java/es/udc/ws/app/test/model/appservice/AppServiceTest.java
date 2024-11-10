@@ -35,10 +35,10 @@ public class AppServiceTest {
     private final String VALID_EMAIL = "correo@gmail.com";
     private final String VALID_EMAIL2 = "a@gmail.com";
     private final String INVALID_EMAIL = "";
-    private final LocalDateTime VALID_COURSE_START_DATE = LocalDateTime.now().plusDays(15);
+    private final LocalDateTime VALID_COURSE_START_DATE = LocalDateTime.now().plusDays(16);
     private final LocalDateTime INVALID_COURSE_START_DATE = LocalDateTime.now().plusDays(14);
     private final LocalDateTime INVALID_COURSE_START_DATE_TO_INSC = LocalDateTime.now();
-    private final LocalDateTime VALID_CANCELLATION_DATE = LocalDateTime.now().plusDays(7);
+    private final LocalDateTime VALID_CANCELLATION_DATE = LocalDateTime.now().plusDays(8);
     private final LocalDateTime INVALID_CANCELLATION_DATE = LocalDateTime.now().plusDays(6);
     private final Long NON_EXISTENT_COURSE_ID = -1L;
 
@@ -561,25 +561,20 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testCancelInscription() throws InstanceNotFoundException, InputValidationException, CourseAlreadyStartedException, CourseFullException {
+    public void testCancelInscription() throws InstanceNotFoundException, InputValidationException, CourseAlreadyStartedException, CourseFullException, InscriptionAlreadyCancelledException, CancelTooCloseToCourseStartException, IncorrectUserException {
         Course course = createCourse(getValidCourse());
-        Inscription inscription = null;
 
         try {
             Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-            inscription = findInscription(inscriptionId);
+            Inscription inscription = findInscription(inscriptionId);
 
             courseService.cancelInscription(inscriptionId, VALID_EMAIL);
             Inscription inscriptionAfterCancel = findInscription(inscriptionId);
 
             assertNotNull(inscriptionAfterCancel.getCancelationDate());
-        } catch (InscriptionAlreadyCancelledException | CancelTooCloseToCourseStartException | IncorrectUserException e) {
-            throw new RuntimeException(e);
+            removeInscription(inscription.getInscriptionId());
         } finally {
             removeCourse(course.getCourseId());
-            if (inscription != null) {
-                removeInscription(inscription.getInscriptionId());
-            }
         }
     }
 
