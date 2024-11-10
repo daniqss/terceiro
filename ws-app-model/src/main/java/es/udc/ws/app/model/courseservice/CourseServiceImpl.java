@@ -61,6 +61,9 @@ public class CourseServiceImpl implements CourseService {
         if (!validateEmail(userEmail)) {
             throw new InputValidationException("Non valid email");
         }
+        if (courseId==null){
+            throw new InputValidationException("Course id is null");
+        }
         PropertyValidator.validateCreditCard(bankCardNumber);
         LocalDateTime courseStartDate = findCourse(courseId).getStartDate();
         if (LocalDateTime.now().isAfter(courseStartDate)) {
