@@ -115,6 +115,6 @@ public class Course {
 
     @Override
     public int hashCode() {
-        return Objects.hash(courseId, name, city, startDate, price, vacantSpots);
+        return Objects.hash(courseId, name, city, creationDate, startDate, price, maxSpots, vacantSpots);
     }
 }

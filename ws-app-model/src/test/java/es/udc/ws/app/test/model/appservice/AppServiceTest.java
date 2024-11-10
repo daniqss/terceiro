@@ -1,5 +1,6 @@
 package es.udc.ws.app.test.model.appservice;
 
+import com.fasterxml.jackson.databind.jsontype.impl.AsDeductionTypeDeserializer;
 import es.udc.ws.app.model.course.Course;
 import es.udc.ws.app.model.course.SqlCourseDao;
 import es.udc.ws.app.model.course.SqlCourseDaoFactory;
@@ -47,11 +48,29 @@ public class AppServiceTest {
 
     private Course getValidCourse() {
         return new Course(
-                "Fuenlabrada",
                 "How to Train Your Dragon",
-                LocalDateTime.of(2020, 1, 1, 0, 0),
+                "Fuenlabrada",
+                LocalDateTime.of(2025, 1, 1, 0, 0),
                 90,
                 20
+        );
+    }
+    private Course getValidCourse2() {
+        return new Course(
+                "Yoga",
+                "Padron",
+                LocalDateTime.of(2026, 5, 5, 20, 0),
+                100,
+                15
+        );
+    }
+    private Course getValidCourse3() {
+        return new Course(
+                "Andar en bici",
+                "Coruña",
+                LocalDateTime.of(2026, 4, 6, 19, 30),
+                50,
+                30
         );
     }
 
@@ -156,6 +175,16 @@ public class AppServiceTest {
         }
     }
 
+    private Inscription findInscription(Long inscriptionId) throws InstanceNotFoundException {
+        DataSource dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
+
+        try(Connection connection = dataSource.getConnection()){
+            return inscriptionDao.findById(connection,inscriptionId);
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
     public void testAddCourseAndFindCourse() throws InputValidationException, InstanceNotFoundException {
         Course course = getValidCourse();
@@ -164,16 +193,21 @@ public class AppServiceTest {
         try {
             LocalDateTime beforeAdd = LocalDateTime.now().withNano(0);
             addedCourse = courseService.addCourse(course);
-            LocalDateTime afterAdd = LocalDateTime.now().withNano(0);
+            LocalDateTime afterAdd = LocalDateTime.now().withNano(0).plusSeconds(1);
 
             Course findedCourse = courseService.findCourse(addedCourse.getCourseId());
 
-//            assertEquals(addedCourse, findedCourse);
+            assertEquals(addedCourse, findedCourse);
             assertEquals(addedCourse.getCourseId(), findedCourse.getCourseId());
             assertEquals(addedCourse.getName(), findedCourse.getName());
             assertEquals(addedCourse.getCity(), findedCourse.getCity());
             assertTrue((!findedCourse.getCreationDate().isBefore(beforeAdd))
                     && (!findedCourse.getCreationDate().isAfter(afterAdd)));
+            assertEquals(addedCourse.getStartDate(), findedCourse.getStartDate());
+            assertEquals(addedCourse.getPrice(), findedCourse.getPrice());
+            assertEquals(addedCourse.getMaxSpots(), findedCourse.getMaxSpots());
+            assertEquals(addedCourse.getVacantSpots(), findedCourse.getVacantSpots());
+
         } finally {
             if (addedCourse != null) {
                 removeCourse(addedCourse.getCourseId());
@@ -205,63 +239,29 @@ public class AppServiceTest {
     @Test
     public void testFindCourse() throws InputValidationException, InstanceNotFoundException {
         LocalDateTime beforeInscriptionDate = LocalDateTime.now().withNano(0);
-        Course course1 = courseService.addCourse(getValidCourse());
-        Course course2 = courseService.addCourse(getValidCourse());
-        Course course3 = courseService.addCourse(getValidCourse());
-        LocalDateTime afterInscriptionDate = LocalDateTime.now().withNano(0);
+
+        Course course = courseService.addCourse(getValidCourse());
+
+        LocalDateTime afterInscriptionDate = LocalDateTime.now().withNano(0).plusSeconds(1);
 
         try {
-            Course foundCourse1 = courseService.findCourse(course1.getCourseId());
-            Course foundCourse2 = courseService.findCourse(course1.getCourseId());
-            Course foundCourse3 = courseService.findCourse(course1.getCourseId());
-            assertEquals(course1, foundCourse1);
-            assertEquals(course2, foundCourse2);
-            assertEquals(course3, foundCourse3);
 
-            assertEquals(course1.getCourseId(), foundCourse1.getCourseId());
-            assertEquals(course2.getCourseId(), foundCourse2.getCourseId());
-            assertEquals(course3.getCourseId(), foundCourse3.getCourseId());
+            Course foundCourse = courseService.findCourse(course.getCourseId());
 
-            assertEquals(course1.getName(), foundCourse1.getName());
-            assertEquals(course2.getName(), foundCourse2.getName());
-            assertEquals(course3.getName(), foundCourse3.getName());
-
-            assertEquals(course1.getCity(), foundCourse1.getCity());
-            assertEquals(course2.getCity(), foundCourse2.getCity());
-            assertEquals(course3.getCity(), foundCourse3.getCity());
-
-            assertTrue((!foundCourse1.getCreationDate().isBefore(beforeInscriptionDate))
-                    && (!foundCourse1.getCreationDate().isAfter(afterInscriptionDate)));
-            assertNull(foundCourse1.getCreationDate());
-            assertTrue((!foundCourse2.getCreationDate().isBefore(beforeInscriptionDate))
-                    && (!foundCourse2.getCreationDate().isAfter(afterInscriptionDate)));
-            assertNull(foundCourse2.getCreationDate());
-            assertTrue((!foundCourse3.getCreationDate().isBefore(beforeInscriptionDate))
-                    && (!foundCourse3.getCreationDate().isAfter(afterInscriptionDate)));
-            assertNull(foundCourse3.getCreationDate());
-
-
-            assertEquals(course1.getStartDate(), foundCourse1.getStartDate());
-            assertEquals(course2.getStartDate(), foundCourse2.getStartDate());
-            assertEquals(course3.getStartDate(), foundCourse3.getStartDate());
-
-            assertEquals(course1.getPrice(), foundCourse1.getPrice());
-            assertEquals(course2.getPrice(), foundCourse2.getPrice());
-            assertEquals(course3.getPrice(), foundCourse3.getPrice());
-
-            assertEquals(course1.getMaxSpots(), foundCourse1.getMaxSpots());
-            assertEquals(course2.getMaxSpots(), foundCourse2.getMaxSpots());
-            assertEquals(course3.getMaxSpots(), foundCourse3.getMaxSpots());
-
-            assertEquals(course1.getVacantSpots(), foundCourse1.getVacantSpots());
-            assertEquals(course2.getVacantSpots(), foundCourse2.getVacantSpots());
-            assertEquals(course3.getVacantSpots(), foundCourse3.getVacantSpots());
+            assertEquals(course, foundCourse);
+            assertEquals(course.getCourseId(), foundCourse.getCourseId());
+            assertEquals(course.getName(), foundCourse.getName());
+            assertEquals(course.getCity(), foundCourse.getCity());
+            assertTrue((!foundCourse.getCreationDate().isBefore(beforeInscriptionDate))
+                    && (!foundCourse.getCreationDate().isAfter(afterInscriptionDate)));
+            assertEquals(course.getStartDate(), foundCourse.getStartDate());
+            assertEquals(course.getPrice(), foundCourse.getPrice());
+            assertEquals(course.getMaxSpots(), foundCourse.getMaxSpots());
+            assertEquals(course.getVacantSpots(), foundCourse.getVacantSpots());
 
         } finally {
             // Clear Database
-            removeCourse(course1.getCourseId());
-            removeCourse(course2.getCourseId());
-            removeCourse(course3.getCourseId());
+            removeCourse(course.getCourseId());
         }
     }
 

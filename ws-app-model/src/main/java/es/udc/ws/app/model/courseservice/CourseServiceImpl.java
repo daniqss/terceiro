@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -49,7 +50,7 @@ public class CourseServiceImpl implements CourseService {
         PropertyValidator.validateDouble("price", course.getPrice(), 0, MAX_PRICE);
         PropertyValidator.validateNotNegativeLong("maxSpots", course.getMaxSpots());
 
-        if (ChronoUnit.DAYS.between(course.getCreationDate(), course.getStartDate()) >= 15) {
+        if (ChronoUnit.DAYS.between(LocalDateTime.now(), course.getStartDate()) < 15) {
             throw new InputValidationException("New courses must be at created at least 15 days before the start date");
         }
     }
@@ -70,8 +71,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course addCourse(Course course) throws InputValidationException, RuntimeException {
-        course.setCreationDate(LocalDateTime.now());
         validateCourse(course);
+        course.setCreationDate(LocalDateTime.now());
 
         try (Connection connection = dataSource.getConnection()) {
             try {
