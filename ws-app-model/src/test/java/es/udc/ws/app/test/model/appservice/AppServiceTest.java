@@ -38,6 +38,7 @@ public class AppServiceTest {
     private final String VALID_CREDIT_CARD = "5555557558554444";
     private final String INVALID_CREDIT_CARD = "";
     private final String VALID_EMAIL = "correo@gmail.com";
+    private final String VALID_EMAIL2 = "a@gmail.com";
     private final String INVALID_EMAIL = "";
     private final LocalDateTime VALID_COURSE_START_DATE = LocalDateTime.now().plusDays(15);
     private final LocalDateTime INVALID_COURSE_START_DATE = LocalDateTime.now().plusDays(14);
@@ -517,11 +518,11 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testFindInscription() {
+    public void testFindInscriptions() {
     }
 
     @Test
-    public void testFindNonExistentInscription() {
+    public void testFindNonExistentInscriptions() {
     }
 
     @Test
