@@ -10,8 +10,6 @@ import es.udc.ws.app.model.course.Course;
 import es.udc.ws.app.model.course.SqlCourseDao;
 import es.udc.ws.app.model.course.SqlCourseDaoFactory;
 import es.udc.ws.app.model.inscription.Inscription;
-import es.udc.ws.app.model.inscription.SqlInscriptionDao;
-import es.udc.ws.app.model.inscription.SqlInscriptionDaoFactory;
 import es.udc.ws.util.sql.DataSourceLocator;
 
 import javax.sql.DataSource;
@@ -52,6 +50,9 @@ public class CourseServiceImpl implements CourseService {
         PropertyValidator.validateDouble("price", course.getPrice(), 0, MAX_PRICE);
         PropertyValidator.validateNotNegativeLong("maxSpots", course.getMaxSpots());
 
+        if (course.getStartDate().isBefore(course.getCreationDate())) {
+            throw new InputValidationException("Start date must be after the creation date");
+        }
         if (ChronoUnit.DAYS.between(course.getCreationDate(), course.getStartDate()) < 15) {
             throw new InputValidationException("New courses must be at created at least 15 days before the start date");
         }
