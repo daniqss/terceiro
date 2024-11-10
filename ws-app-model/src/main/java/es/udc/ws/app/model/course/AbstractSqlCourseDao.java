@@ -13,7 +13,7 @@ public abstract class AbstractSqlCourseDao implements SqlCourseDao {
 
     @Override
     public Course update(Connection connection, Course course) throws InstanceNotFoundException, RuntimeException {
-        String queryString = "UPDATE course SET name = ?, city = ?, creationDate = ?, startDate = ?, price = ?, maxSpots = ?, vacantSpots = ? WHERE courseId = ?";
+        String queryString = "UPDATE Course SET name = ?, city = ?, creationDate = ?, startDate = ?, price = ?, maxSpots = ?, vacantSpots = ? WHERE courseId = ?";
         try (PreparedStatement ps = connection.prepareStatement(queryString)) {
             int i = 1;
             ps.setString(i++, course.getName());

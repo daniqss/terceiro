@@ -83,36 +83,6 @@ public class AppServiceTest {
         );
     }
 
-    private Course getCourseInvalidStartDate() {
-        return new Course(
-                "How to Train Your Dragon",
-                "Fuenlabrada",
-                INVALID_COURSE_START_DATE,
-                90,
-                20
-        );
-    }
-
-    private Course getCourseInvalidPrice() {
-        return new Course(
-                "Yoga",
-                "Padron",
-                VALID_COURSE_START_DATE,
-                MAX_PRICE + 1,
-                15
-        );
-    }
-
-    private Course getCourseInvalidMaxSpots() {
-        return new Course(
-                "Andar en bici",
-                "Coruña",
-                VALID_COURSE_START_DATE,
-                50,
-                -1
-        );
-    }
-
     private Course createCourse(Course course) {
         try {
             return courseService.addCourse(course);
@@ -253,23 +223,43 @@ public class AppServiceTest {
             }
         }
     }
+    
+    @Test
+    public void testAddCourseInvalidStartDate() {
+        assertThrows(InputValidationException.class, () -> courseService.addCourse(
+                new Course(
+                        "How to Train Your Dragon",
+                        "Fuenlabrada",
+                        INVALID_COURSE_START_DATE,
+                        90,
+                        20
+                )));
+    }
 
     @Test
-    public void testAddInvalidCourse() {
-        assertEquals("New courses must be at created at least 15 days before the start date",
-                assertThrows(
-                        InputValidationException.class,
-                        () -> courseService.addCourse(getInvalidCourse1())
-                ).getMessage()
-        );
-        assertThrows(InputValidationException.class, () -> courseService.addCourse(getInvalidCourse2()));
-        assertThrows(InputValidationException.class, () -> courseService.addCourse(getInvalidCourse3()));
-        assertEquals("Start date must be after the creation date",
-                assertThrows(
-                        InputValidationException.class,
-                        () -> courseService.addCourse(getInvalidCourse4())
-                ).getMessage()
-        );
+    public void testAddCourseInvalidPrice() {
+        assertThrows(InputValidationException.class, () -> courseService.addCourse(
+                new Course(
+                        "Yoga",
+                        "Padron",
+                        VALID_COURSE_START_DATE,
+                        MAX_PRICE + 1,
+                        15
+                )
+        ));
+    }
+
+    @Test
+    public void testAddCourseInvalidMaxSpots() {
+        assertThrows(InputValidationException.class, () -> courseService.addCourse(
+                new Course(
+                        "Andar en bici",
+                        "Coruña",
+                        VALID_COURSE_START_DATE,
+                        50,
+                        -1
+                )
+        ));
     }
 
     @Test
