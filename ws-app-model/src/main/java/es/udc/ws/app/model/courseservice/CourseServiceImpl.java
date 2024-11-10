@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import static es.udc.ws.app.model.util.ModelConstants.APP_DATA_SOURCE;
 import static es.udc.ws.app.model.util.ModelConstants.MAX_PRICE;
+import static es.udc.ws.app.model.util.ModelConstants.MAX_ID;
 
 public class CourseServiceImpl implements CourseService {
     private final DataSource dataSource;
@@ -65,11 +66,13 @@ public class CourseServiceImpl implements CourseService {
         if (courseId==null){
             throw new InputValidationException("Course id is null");
         }
+        PropertyValidator.validateLong("courseId",courseId,0, MAX_ID);
         PropertyValidator.validateCreditCard(bankCardNumber);
         LocalDateTime courseStartDate = findCourse(courseId).getStartDate();
         if (LocalDateTime.now().isAfter(courseStartDate)) {
             throw new InputValidationException("The course where you want to enter has already started");
         }
+
         if (findCourse(courseId).getVacantSpots() == 0) {
             throw new InputValidationException("No vacants in the course");
         }
