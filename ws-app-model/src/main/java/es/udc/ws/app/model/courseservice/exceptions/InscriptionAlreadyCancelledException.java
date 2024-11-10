@@ -3,23 +3,23 @@ import java.time.LocalDateTime;
 
 public class InscriptionAlreadyCancelledException extends Exception {
 
-    private Long idInscription;
+    private Long inscriptionId;
     private String userEmail;
     private LocalDateTime cancelationDate;
 
-    public InscriptionAlreadyCancelledException(Long idInscription, String userEmail , LocalDateTime cancelationDate) {
-        super("Inscripcion con id=\"" + idInscription + "\" del usuario \"" + userEmail + "\" ya ha sido cancelada en la fecha \"" + cancelationDate + "\")");
-        this.idInscription = idInscription;
+    public InscriptionAlreadyCancelledException(Long inscriptionId, String userEmail , LocalDateTime cancelationDate) {
+        super("Inscripcion con id=\"" + inscriptionId + "\" del usuario \"" + userEmail + "\" ya ha sido cancelada en la fecha \"" + cancelationDate + "\")");
+        this.inscriptionId = inscriptionId;
         this.userEmail = userEmail;
         this.cancelationDate = cancelationDate;
     }
 
-    public Long getidInscription() {
-        return idInscription;
+    public Long getInscriptionId() {
+        return inscriptionId;
     }
 
-    public void setidInscription(Long idInscription) {
-        this.idInscription = idInscription;
+    public void setInScriptionId(Long inscriptionId) {
+        this.inscriptionId = inscriptionId;
     }
 
     public LocalDateTime getCancelationDate() {

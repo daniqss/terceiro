@@ -3,22 +3,22 @@ package es.udc.ws.app.model.courseservice.exceptions;
 import java.time.LocalDateTime;
 
 public class CourseAlreadyStartedException extends Exception {
-    private Long idCourse;
+    private Long courseId;
     private LocalDateTime startDate;
 
-    public CourseAlreadyStartedException(Long idCourse, LocalDateTime startDate) {
-        super("No se puede procesar la inscripción para el curso con id=\"" + idCourse
+    public CourseAlreadyStartedException(Long courseId, LocalDateTime startDate) {
+        super("No se puede procesar la inscripción para el curso con id=\"" + courseId
                 + "\" porque el curso ya comenzó en la fecha: " + startDate);
-        this.idCourse = idCourse;
+        this.courseId = courseId;
         this.startDate = startDate;
     }
 
-    public Long getIdCourse() {
-        return idCourse;
+    public Long getCourseId() {
+        return courseId;
     }
 
-    public void setIdCourse(Long idCourse) {
-        this.idCourse = idCourse;
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 
     public LocalDateTime getStartDate() {
