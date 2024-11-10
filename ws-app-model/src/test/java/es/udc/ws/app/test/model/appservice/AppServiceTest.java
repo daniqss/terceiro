@@ -68,7 +68,7 @@ public class AppServiceTest {
         return new Course(
                 "Yoga",
                 "Padron",
-                INVALID_COURSE_START_DATE_TO_INSC,
+                VALID_COURSE_START_DATE,
                 100,
                 15
         );
