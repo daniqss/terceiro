@@ -24,3 +24,53 @@ classDiagram
 	<<package>> Gtk
 ```
 -->
+
+## Diseño estático
+```mermaid
+classDiagram
+    class MedicationInterface {
+        +showMedications() List
+        +showMedicationDetails(medicationId: int) void
+        +confirmIntake(posologyId: int) void
+    }
+
+    class MedicationProvider {
+        -medications: List
+        +getMedications() List
+        +getPosologies(medicationId: int) List
+        +getIntakes(medicationId: int) List
+        +logIntake(posologyId: int) void
+    }
+
+    class Medication {
+        +id: int
+        +name: String
+        +dosage: float
+        +startDate: Date
+        +treatmentDuration: int
+        +patientId: int
+    }
+
+    class Posology {
+        +id: int
+        +hour: int
+        +minute: int
+        +medication_id: int
+    }
+
+    class Intake {
+        +id: int
+        +date: String
+        +medication_id: int
+    }
+
+    class ReminderService {
+        +sendReminder(medication: Medication, posology: Posology) bool
+    }
+
+    MedicationInterface --> MedicationProvider : interacts
+    MedicationProvider --o Medication : provides
+    MedicationProvider --o Posology : manages
+    MedicationProvider --o Intake : logs
+    MedicationProvider --> ReminderService : uses
+```
