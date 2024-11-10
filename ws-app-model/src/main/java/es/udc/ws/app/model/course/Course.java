@@ -57,7 +57,7 @@ public class Course {
     }
 
     public LocalDateTime getCreationDate() {
-        return creationDate;
+        return creationDate.withNano(0);
     }
 
     public void setCreationDate(LocalDateTime creationDate) {
@@ -65,7 +65,7 @@ public class Course {
     }
 
     public LocalDateTime getStartDate() {
-        return startDate;
+        return startDate.withNano(0);
     }
 
     public void setStartDate(LocalDateTime startDate) {
@@ -100,7 +100,7 @@ public class Course {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null || getClass() != this.getClass()) return false;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
         Course course = (Course) obj;
         return
                 courseId.equals(course.getCourseId())
