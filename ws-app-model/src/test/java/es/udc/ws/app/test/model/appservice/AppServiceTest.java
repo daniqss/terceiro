@@ -19,8 +19,12 @@ import javax.sql.DataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 import static es.udc.ws.app.model.util.ModelConstants.APP_DATA_SOURCE;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AppServiceTest {
     private static CourseService courseService = null;
@@ -35,6 +39,12 @@ public class AppServiceTest {
         courseDao = SqlCourseDaoFactory.getDao();
         inscriptionDao = SqlInscriptionDaoFactory.getDao();
     }
+
+    private final String VALID_CREDIT_CARD = "5555557558554444";
+    private final String INVALID_CREDIT_CARD = "";
+    private final String VALID_EMAIL = "correo@gmail.com";
+    private final String INVALID_EMAIL = "";
+    private final Long NON_EXISTENT_COURSE_ID = -1L;
 
     private Course getValidCourse() {
         return null;
@@ -150,19 +160,11 @@ public class AppServiceTest {
     }
 
     @Test
+    public void testCourseOutOfVacants() {
+    }
+
+    @Test
     public void testAddInvalidCourse() {
-    }
-
-    @Test
-    public void testFindNonExistentCourse() {
-    }
-
-    @Test
-    public void testFindCourseByInvalidCity() {
-    }
-
-    @Test
-    public void testFindCourse() {
     }
 
     @Test
@@ -170,24 +172,157 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testCourseOutOfVacants() {
+    public void testFindCoursesByInvalidCity() {
     }
 
     @Test
-    public void testAddInscriptionAndFindInscription() {
+    public void testFindNonExistentCourse() {
+        assertThrows(InstanceNotFoundException.class, () ->  courseService.findCourse(NON_EXISTENT_COURSE_ID));
     }
 
     @Test
-    public void testAddInscriptionOnIllegalDate() {
+    public void testFindCourse() throws InputValidationException {
+        LocalDateTime beforeInscriptionDate = LocalDateTime.now().withNano(0);
+        Course course1 = courseService.addCourse(getValidCourse());
+        Course course2 = courseService.addCourse(getValidCourse());
+        Course course3 = courseService.addCourse(getValidCourse());
+        LocalDateTime afterInscriptionDate = LocalDateTime.now().withNano(0);
+
+        try {
+            Course foundCourse1 = courseService.findCourse(course1.getCourseId());
+            Course foundCourse2 = courseService.findCourse(course1.getCourseId());
+            Course foundCourse3 = courseService.findCourse(course1.getCourseId());
+            assertEquals(course1, foundCourse1);
+            assertEquals(course2, foundCourse2);
+            assertEquals(course3, foundCourse3);
+
+            assertEquals(course1.getCourseId(), foundCourse1.getCourseId());
+            assertEquals(course2.getCourseId(), foundCourse2.getCourseId());
+            assertEquals(course3.getCourseId(), foundCourse3.getCourseId());
+
+            assertEquals(course1.getName(), foundCourse1.getName());
+            assertEquals(course2.getName(), foundCourse2.getName());
+            assertEquals(course3.getName(), foundCourse3.getName());
+
+            assertEquals(course1.getCity(), foundCourse1.getCity());
+            assertEquals(course2.getCity(), foundCourse2.getCity());
+            assertEquals(course3.getCity(), foundCourse3.getCity());
+
+            assertTrue((foundCourse1.getCreationDate().compareTo(beforeInscriptionDate) >= 0)
+                    && (foundCourse1.getCreationDate().compareTo(afterInscriptionDate) <= 0));
+            assertEquals(null, foundCourse1.getCreationDate());
+            assertTrue((foundCourse2.getCreationDate().compareTo(beforeInscriptionDate) >= 0)
+                    && (foundCourse2.getCreationDate().compareTo(afterInscriptionDate) <= 0));
+            assertEquals(null, foundCourse2.getCreationDate());
+            assertTrue((foundCourse3.getCreationDate().compareTo(beforeInscriptionDate) >= 0)
+                    && (foundCourse3.getCreationDate().compareTo(afterInscriptionDate) <= 0));
+            assertEquals(null, foundCourse3.getCreationDate());
+
+
+            assertEquals(course1.getStartDate(), foundCourse1.getStartDate());
+            assertEquals(course2.getStartDate(), foundCourse2.getStartDate());
+            assertEquals(course3.getStartDate(), foundCourse3.getStartDate());
+
+            assertEquals(course1.getPrice(), foundCourse1.getPrice());
+            assertEquals(course2.getPrice(), foundCourse2.getPrice());
+            assertEquals(course3.getPrice(), foundCourse3.getPrice());
+
+            assertEquals(course1.getMaxSpots(), foundCourse1.getMaxSpots());
+            assertEquals(course2.getMaxSpots(), foundCourse2.getMaxSpots());
+            assertEquals(course3.getMaxSpots(), foundCourse3.getMaxSpots());
+
+            assertEquals(course1.getVacantSpots(), foundCourse1.getVacantSpots());
+            assertEquals(course2.getVacantSpots(), foundCourse2.getVacantSpots());
+            assertEquals(course3.getVacantSpots(), foundCourse3.getVacantSpots());
+
+        } finally {
+            // Clear Database
+            removeCourse(course1.getCourseId());
+            removeCourse(course2.getCourseId());
+            removeCourse(course3.getCourseId());
+        }
+    }
+
+    @Test
+    public void testAddInscriptionAndFindInscription()
+            throws InstanceNotFoundException, InputValidationException {
+        Course course = createCourse(getValidCourse());
+        Inscription inscription = new Inscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+
+        try {
+            // Make inscription
+            LocalDateTime beforeInscriptionDate = LocalDateTime.now().withNano(0);
+            Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+            LocalDateTime afterInscriptionDate = LocalDateTime.now().withNano(0);
+
+            // Find inscription by email
+            List<Inscription> inscriptionList = courseService.findInscriptions(VALID_EMAIL);
+            Inscription foundInscription = inscriptionList.get(0);
+
+            // Check inscription
+            assertEquals(inscriptionList.size(), 0);
+            assertEquals(inscription, foundInscription);
+            //assertEquals(VALID_CREDIT_CARD, foundInscription.getCreditCard());
+            assertEquals(VALID_EMAIL, foundInscription.getUserEmail());
+            assertEquals(course.getCourseId(), foundInscription.getInscriptionId());
+            assertTrue((foundInscription.getInscriptionDate().compareTo(beforeInscriptionDate) >= 0)
+                    && (foundInscription.getInscriptionDate().compareTo(afterInscriptionDate) <= 0));
+            assertEquals(null, foundInscription.getCancelationDate());
+
+        } finally {
+            // Clear database: remove sale (if created) and movie
+            if (inscription != null) {
+                removeInscription(inscription.getInscriptionId());
+            }
+            removeCourse(course.getCourseId());
+        }
+    }
+
+    @Test
+    public void testAddInscriptionOnIllegalDate() {}
+
+    @Test
+    public void testAddInscriptionWithInvalidEmail() {
+        Course course = createCourse(getValidCourse());
+        try {
+            assertThrows(InputValidationException.class, () -> {
+                Long inscriptionId = courseService.addInscription(course.getCourseId(), INVALID_EMAIL, VALID_CREDIT_CARD);
+                removeInscription(inscriptionId);
+            });
+        } finally {
+            // Clear database
+            removeCourse(course.getCourseId());
+        }
     }
 
     @Test
     public void testAddInscriptionWithInvalidCreditCard() {
+        Course course = createCourse(getValidCourse());
+        try {
+            assertThrows(InputValidationException.class, () -> {
+                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, INVALID_CREDIT_CARD);
+                removeInscription(inscriptionId);
+            });
+        } finally {
+            // Clear database
+            removeCourse(course.getCourseId());
+        }
     }
 
     @Test
     public void testAddInscriptionToNonExistentCourse() {
+        Course course = createCourse(getValidCourse());
+        try {
+            assertThrows(InputValidationException.class, () -> {
+                Long inscriptionId = courseService.addInscription(NON_EXISTENT_COURSE_ID, VALID_EMAIL, VALID_CREDIT_CARD);
+                removeInscription(inscriptionId);
+            });
+        } finally {
+            // Clear database
+            removeCourse(course.getCourseId());
+        }
     }
+
 
     @Test
     public void testFindNonExistentInscription() {
