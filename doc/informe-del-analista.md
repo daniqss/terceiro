@@ -38,29 +38,44 @@
 
 ## Evaluación final de la semana 1
 
-   - Miembro del equipo.
+   - Santiago Garea Cidre
    
-     - Evaluación cuantitativa (numérica).
-	 
-	 - Evaluación cualitativa.
+     - 5
+     - Este integrante del equipo ha realizado aportaciones de calidad al diseño estático de la aplicación.
+  
+   - Javier Manotas Ruiz
+     - 5
+     - Este integrante del equipo ha realizado aportaciones de calidad al diseño dinámico de la aplicación.
+
+   - Daniel Queijo Seoane
+     - 5
+     - Este integrante del equipo ha logrado tomar la iniciativa a la hora de comenzar con el desarrollo de la entrega.
 
 
 ## Retrospectiva de la semana 1
 
   a) ¿Qué ha sido lo mejor de la práctica?
+  Nuestra capacidad de coordinación y trabajo en equipo
   
   b) ¿Qué fue lo peor?
+  La gran dificultad de la instalación de flutter.
 
   c) ¿Cuál fue el mejor momento de cada semana durante el trabajo del
      equipo?
+  Cuando llegamos a un consenso de como queríamos el diseño de nuestra aplicación
 
   d) ¿Cuál ha sido el peor?
+  El tener que apurar para terminar la tarea en plazo
 
   e) ¿Qué has aprendido?
+  Ha hacer el diseño de software para una aplicación de móvil
 
   f) ¿Qué necesitáis conservar -como equipo- para las próximas semanas?
+  Nuestra capacidad de comunicación y coordinación a la hora de trabajar.
 
   g) ¿Qué tenéis que mejorar -como equipo- para las próximas semanas?
+  El empezar a trabajar con más antelación.
 
   h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
      titulación?
+  Como en muchas otras asignaturas se tiene que planificar el desarrollo de software antes de comenzar a implementarlo.
