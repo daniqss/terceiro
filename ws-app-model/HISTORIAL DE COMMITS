@@ -1,0 +1,108 @@
+paulacarril [VARIOS] Arregladado test findcourses
+paulacarril [VARIOS] Arreglado error en tests
+paulacarril [VARIOS] Arreglado error en tests
+paulacarril [VARIOS] Arreglado error en tests
+paulacarril [VARIOS] Arreglado error en tests
+jnoguevera [FUNC-5] Añadidos e implementados tests de Cancelar Inscripción en los tests del Modelo
+paulacarril [VARIOS] Correcciones de nombres de variables en las excepciones
+paulacarril [VARIOS] Correcciones de nombres en el test
+jnoguevera [FUNC-5] Añadidas e implementadas las excepciones de la funcionalidad Cancelar inscripción de CourseService
+jnoguevera [FUNC-5] Añadidas excepciones de la funcionalidad Cancelar inscripción de CourseService
+daniqss [FUNC-2] Aumentar casos de prueba para testFindCourses
+paulacarril [VARIOS] Arreglo en tests
+paulacarril [VARIOS] Arreglo en tests
+daniqss [FUNC-1] Ahora addCourse puede lanzar CourseStartTooSoonException
+daniqss [FUNC-2] Añadidas más aserciones en testFindCourses
+        [VARIOS] Añadido MIN_ID
+daniqss [FUNC-1] Añadidos más casos de prueba y la variable MIN_PRICE
+paulacarril [VARIOS] Arreglo en tests
+paulacarril [VARIOS] Arreglo en tests
+paulacarril [VARIOS] Arreglo en tests
+paulacarril [VARIOS] Arreglo en tests
+paulacarril [VARIOS] Arreglo en tests
+daniqss [VARIOS] Refactoriza en varios tests testAddInvalidCourse
+paulacarril [VARIOS] Arreglo en las funciones getValidCourse y getInvalidCourse
+            [VARIOS] Creadas variables para fechas validad e invalidas
+paulacarril [VARIOS] Añadida constante MAX_ID
+daniqss [VARIOS] Añadido excepción CourseStartTooSoonException
+paulacarril [VARIOS] Añadida constante MAX_ID
+daniqss Merge branch 'master' of https://github.com/GEI-ISD-614G010232425/isd-018
+daniqss [VARIOS] Añadido withNano(0) a getters de Course
+paulacarril [FUNC-4] Añadidas excepciones para la funcionalidad de añadir inscripton del courseservice
+daniqss [FUNC-2] Añadido testFindCoursesByInvalidCity
+daniqss [FUNC-1] Mejorado testAddInvalidCourse
+        [FUNC-2] Añadido testFindCourses
+daniqss [FUNC-1] Añadido testAddInvalidCourse
+daniqss [VARIOS] Arreglado findById en AbstractSqlInscriptionDao
+daniqss [VARIOS] Eliminados carácteres añadidos durante el merge
+jnoguevera Merge branch 'master' of github.com:GEI-ISD-614G010232425/isd-018
+jnoguevera [FUNC-6] Implementado encontrar inscripciones de un usuario en servicio de la capa Modelo
+           [FUNC-5] Implementado Cancelar Inscripción de un usuario en servicio de la capa Modelo
+           [FUNC-6] Añadida e implementada la funcionalidad de buscar inscripciones por ID en el DAO de Inscripción
+paulacarril [VARIOS] Correccion de errores updatecourse
+paulacarril [VARIOS] Correccion de errores
+paulacarril [VARIOS] Añadido atributo creditCars a inscription
+paulacarril [VARIOS] correccion en addcourse
+paulacarril [VARIOS] Añadida condicion de validacion a las fechas de course
+paulacarril [VARIOS] Arreglos en los tests AddAndFindCourse y FindCourse
+            [VARIOS] Arreglo en el hash de la clase courso
+daniqss [VARIOS] Arreglado script de creación de tablas
+daniqss [VARIOS] Arreglado ConfigurationParameters
+daniqss [FUNC-1] Implementada testAddCourseAndFindCourse
+        [FUNC-2] Implementada testAddCourseAndFindCourse
+paulacarril [VARIOS] Implementados tests para las funcionalidades findcourse y addinscription
+daniqss [VARIOS] Añadidos ConfigurationParameters
+daniqss [VARIOS] Soluciona error en los constructores de Inscription
+daniqss [VARIOS] Añadido manejo de excepciones en métodos de CourseServiceImpl
+paulacarril [VARIOS] Eliminadas cabeceras de test UpdateCourse
+            [VARIOS] Añadida cabecera test testFindCourseByInvalidCity
+paulacarril [VARIOS] Creadas cabeceras de los tests a implementar
+            [VARIOS] Implementada incializacio del datasource
+            [VARIOS] Implementadas funciones remove, create y update para gestionar los objetos course e inscription en los test
+daniqss [VARIOS] Añadido InstanceNotFoundException a las excepciones de SqlInscriptionDao
+daniqss [VARIOS] Añadido InstanceNotFoundException a las excepciones de SqlCourseDao
+daniqss [VARIOS] Añadido el método findByUserEmail en AbstractSqlInscriptionDao
+daniqss [VARIOS] Cambiado mensaje de una excepción a español
+daniqss [VARIOS] Añadido el método remove en AbstractSqlInscriptionDao
+paulacarril [VARIOS] Implementado script de creacion de las tablas SQL Course y Inscription
+daniqss [VARIOS] Modificadas las excepciones añadidas en varios métodos
+paulacarril [VARIOS] Corrección función addInscription de servicio de curso duplicada
+paulacarril [FUNC-3] Implementada funcionalidad findCourse al servicio de curso
+            [FUNC-4] Implementada funcionalidad addInscripton al servicio de curso
+            [VARIOS] Implementadas funciones validateEmail y validateInscription, auxiliares a addInscription en el servicio de curso
+paulacarril [VARIOS] Añadidos atributos courseId y cancelationDate a la clase inscription
+paulacarril [VARIOS] Correción en el extends de jdbcInscription
+paulacarril [FUNC-4] Corrección nombre función create de incription
+jnoguevera [VARIOS] Añadida factoría para el servicio de Curso
+daniqss [VARIOS] Cambiada las excepciones que puede lanzar SqlCourseDao de InputValidationException a RuntimeException
+daniqss [FUNC 2] Implementada findMovies
+daniqss [FUNC 1] Añadida validación de la fecha de alta y de comienzo del curso
+daniqss [VARIOS] Cambiado el nombre del atributo de Curso de registrationDate a creationDate, y añadido a varias funciones
+daniqss Merge branch 'master' of https://github.com/GEI-ISD-614G010232425/isd-018
+daniqss [FUNC-1] Implementada addCourse en CourseServiceImpl
+daniqss [VARIOS] Añadido registrationDate a Course
+jnoguevera [FUNC-2] Añadida e implementada la funcionalidad de Buscar curso por ciudad a partir de una fecha en el DAO de Curso
+           [VARIOS] Añadida e implementada la funcionalidad de Eliminar curso en el DAO de Curso
+           [VARIOS] Añadida e implementada la funcionalidad de Actualizar inscripción en el DAO de Inscripción
+daniqss Merge branch 'master' of https://github.com/GEI-ISD-614G010232425/isd-018
+daniqss [VARIOS] Añadida estructura de courseservice y interfaz CourseService
+paulacarril [VARIOS] Corrección nombre atributo en create
+paulacarril [VARIOS] Añadida variable maxSpots a update y findById
+daniqss [VARIOS] Añadido vacantSpots al constructor de Course y adaptado Jdbc3CcSqlCourseDao
+daniqss Merge branch 'master' of https://github.com/GEI-ISD-614G010232425/isd-018
+paulacarril [VARIOS] Creada e implementada factoria Dao de Inscription
+daniqss Merge branch 'master' of https://github.com/GEI-ISD-614G010232425/isd-018
+daniqss [VARIOS] Añadido maxVacantSpots a Course
+paulacarril [VARIOS] Implementada interfaz Dao de Inscription
+            [FUNC-4] Creada e implementada funcionalidad create de Inscription
+paulacarril [VARIOS] Cambiados nombres de variables y archivos de Curso e Inscripcion
+paulacarril [VARIOS] Cambiados nombres de variables de Curso
+            [FUNC-3] Añadida e implementada la funcionalidad buscar por id en el DAO de Curso
+            [FUNC-4-5] Añadida e implementada la funcionalidad actualizar en el DAO de Curso
+daniqss [FUNC-1] Añadida e implementada la operación create en el DAO de Curso
+daniqss [VARIOS] Añadida factoría para el DAO de Curso
+daniqss [VARIOS] Implementada interfaz para el DAO de Curso.
+paulacarril [VARIOS] Creada estructura de DAOS para Curso y Inscripcion
+paulacarril Merge remote-tracking branch 'origin/master'
+paulacarril [VARIOS] Añadida entidad Inscripcion
+daniqss [VARIOS] Añadida entidad Curso.
