@@ -1,0 +1,10 @@
+f43acde [VARIOS] Arreglado error en tests --> [VARIOS] Arreglado error en testCancelInscription
+caefbe1 [VARIOS] Arreglado error en tests --> [VARIOS] Arreglado error  en la funcion cancelInscription del courseservice
+bad916c [VARIOS] Arreglado error en tests --> [VARIOS] Arreglado error en testCancelTooCloseToCourseStartException y testInscriptionAlreadyCancelledException
+c2cd224 [VARIOS] Arreglado error en tests --> [VARIOS] Arreglado error en testCourseAlreadyStartedException
+eeff67b [VARIOS] Arreglo en tests --> [VARIOS] Borrado throws InstanceNotFoundException de la funcion testAddInvalidInscription
+cd56512 [VARIOS] Arreglo en tests --> [VARIOS] Cambio de nombre en la variable de tests
+92a3729 [VARIOS] Arreglo en tests --> [VARIOS] Arreglado testCourseAlreadyStartedException
+86dbb76 [VARIOS] Arreglo en tests --> [VARIOS] Añadido throws InstanceNotFoundException testCourseFullException
+9467cc5 [VARIOS] Arreglo en tests --> [VARIOS] Añadidas y eliminados thows de excepciones en las funciones testAddInscriptionAndFindInscription, testCourseFullException y testCourseAlreadyStartedException
+20db098 [VARIOS] Arreglo en tests --> [VARIOS] Añadidas excepciones CourseAlreadyStartedException y CourseFullException a la funcion addInscription
