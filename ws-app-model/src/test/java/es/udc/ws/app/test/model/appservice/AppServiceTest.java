@@ -322,7 +322,14 @@ public class AppServiceTest {
             List<Course> courses = courseService.findCourses("Coruña", LocalDateTime.now().minusDays(1));
 
             assertEquals(1, courses.size());
-            assertEquals(addedCourse3, courses.get(0));
+            assertEquals(addedCourse3, courses.getFirst());
+            assertEquals(addedCourse3.getCourseId(), courses.getFirst().getCourseId());
+            assertEquals(addedCourse3.getName(), courses.getFirst().getName());
+            assertEquals(addedCourse3.getCity(), courses.getFirst().getCity());
+            assertEquals(addedCourse3.getStartDate(), courses.getFirst().getStartDate());
+            assertEquals(addedCourse3.getPrice(), courses.getFirst().getPrice());
+            assertEquals(addedCourse3.getMaxSpots(), courses.getFirst().getMaxSpots());
+            assertEquals(addedCourse3.getVacantSpots(), courses.getFirst().getVacantSpots());
 
         } finally {
             if (addedCourse1 != null) {
@@ -448,17 +455,17 @@ public class AppServiceTest {
     @Test
     public void testAddInvalidInscription() throws InstanceNotFoundException {
         assertThrows(InputValidationException.class, () -> {
-            Long inscriptionId = courseService.addInscription(-1L, VALID_EMAIL, VALID_CREDIT_CARD);
+            Long inscriptionId = courseService.addInscription(MIN_ID - 2, VALID_EMAIL, VALID_CREDIT_CARD);
             removeInscription(inscriptionId);
         });
 
         assertThrows(InputValidationException.class, () -> {
-            Long inscriptionId = courseService.addInscription(0L, VALID_EMAIL, VALID_CREDIT_CARD);
+            Long inscriptionId = courseService.addInscription(MIN_ID - 1, VALID_EMAIL, VALID_CREDIT_CARD);
             removeInscription(inscriptionId);
         });
 
         assertThrows(InstanceNotFoundException.class, () -> {
-            Long inscriptionId = courseService.addInscription(1L, VALID_EMAIL, VALID_CREDIT_CARD);
+            Long inscriptionId = courseService.addInscription(MIN_ID, VALID_EMAIL, VALID_CREDIT_CARD);
             removeInscription(inscriptionId);
         });
 
