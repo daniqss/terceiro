@@ -395,20 +395,20 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testCourseFullException() {
+    public void testCourseFullException() throws InstanceNotFoundException {
         Course course = createCourse(getValidCourse3());
+        try {
             assertThrows(CourseFullException.class, () -> {
-                try {
                     Long inscriptionId1 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
                     Long inscriptionId2 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
                     Long inscriptionId3 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
                     removeInscription(inscriptionId1);
                     removeInscription(inscriptionId2);
                     removeInscription(inscriptionId3);
-                } finally {
-                    if (course!=null) removeCourse(course.getCourseId());
-                }
             });
+        } finally {
+            if (course!=null) removeCourse(course.getCourseId());
+        }
     }
 
     @Test
