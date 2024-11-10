@@ -26,8 +26,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
-import static es.udc.ws.app.model.util.ModelConstants.APP_DATA_SOURCE;
-import static es.udc.ws.app.model.util.ModelConstants.MAX_PRICE;
+import static es.udc.ws.app.model.util.ModelConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AppServiceTest {
@@ -252,7 +251,7 @@ public class AppServiceTest {
     }
     
     @Test
-    public void testAddCourseInvalidStartDate() {
+    public void testAddInvalidCourse() {
         assertThrows(InputValidationException.class, () -> courseService.addCourse(
                 new Course(
                         "How to Train Your Dragon",
@@ -260,11 +259,26 @@ public class AppServiceTest {
                         INVALID_COURSE_START_DATE,
                         90,
                         20
-                )));
-    }
-
-    @Test
-    public void testAddCourseInvalidPrice() {
+                )
+        ));
+        assertThrows(InputValidationException.class, () -> courseService.addCourse(
+                new Course(
+                        "",
+                        "Fuenlabrada",
+                        INVALID_COURSE_START_DATE,
+                        90,
+                        20
+                )
+        ));
+        assertThrows(InputValidationException.class, () -> courseService.addCourse(
+                new Course(
+                        "Adiestramiento canino",
+                        "",
+                        INVALID_COURSE_START_DATE,
+                        90,
+                        20
+                )
+        ));
         assertThrows(InputValidationException.class, () -> courseService.addCourse(
                 new Course(
                         "Yoga",
@@ -274,10 +288,15 @@ public class AppServiceTest {
                         15
                 )
         ));
-    }
-
-    @Test
-    public void testAddCourseInvalidMaxSpots() {
+        assertThrows(InputValidationException.class, () -> courseService.addCourse(
+                new Course(
+                        "Yoga",
+                        "Padron",
+                        VALID_COURSE_START_DATE,
+                        MIN_PRICE - 1,
+                        15
+                )
+        ));
         assertThrows(InputValidationException.class, () -> courseService.addCourse(
                 new Course(
                         "Andar en bici",

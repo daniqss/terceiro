@@ -25,9 +25,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static es.udc.ws.app.model.util.ModelConstants.APP_DATA_SOURCE;
-import static es.udc.ws.app.model.util.ModelConstants.MAX_PRICE;
-import static es.udc.ws.app.model.util.ModelConstants.MAX_ID;
+import static es.udc.ws.app.model.util.ModelConstants.*;
 
 public class CourseServiceImpl implements CourseService {
     private final DataSource dataSource;
@@ -50,7 +48,7 @@ public class CourseServiceImpl implements CourseService {
     private void validateCourse(Course course) throws InputValidationException {
         PropertyValidator.validateMandatoryString("city", course.getCity());
         PropertyValidator.validateMandatoryString("name", course.getName());
-        PropertyValidator.validateDouble("price", course.getPrice(), 0, MAX_PRICE);
+        PropertyValidator.validateDouble("price", course.getPrice(), MIN_PRICE, MAX_PRICE);
         PropertyValidator.validateNotNegativeLong("maxSpots", course.getMaxSpots());
 
         if (ChronoUnit.DAYS.between(course.getCreationDate(), course.getStartDate()) < 15) {
