@@ -37,7 +37,6 @@ public class CourseServiceImpl implements CourseService {
         dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
         courseDao = SqlCourseDaoFactory.getDao();
         inscriptionDao = SqlInscriptionDaoFactory.getDao();
-<<<<<<< Updated upstream
     }
 
     private static boolean validateEmail(String email) throws InputValidationException {
@@ -45,8 +44,6 @@ public class CourseServiceImpl implements CourseService {
         Pattern pattern = Pattern.compile(patron);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
-=======
->>>>>>> Stashed changes
     }
 
     private void validateCourse(Course course) throws InputValidationException {
