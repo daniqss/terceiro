@@ -30,6 +30,11 @@ public class AppServiceTest {
     private static CourseService courseService = null;
     private static SqlCourseDao courseDao = null;
     private static SqlInscriptionDao inscriptionDao = null;
+    private final String VALID_CREDIT_CARD = "5555557558554444";
+    private final String INVALID_CREDIT_CARD = "";
+    private final String VALID_EMAIL = "correo@gmail.com";
+    private final String INVALID_EMAIL = "";
+    private final Long NON_EXISTENT_COURSE_ID = -1L;
 
     @BeforeAll
     public static void init() {
@@ -40,29 +45,25 @@ public class AppServiceTest {
         inscriptionDao = SqlInscriptionDaoFactory.getDao();
     }
 
-    private final String VALID_CREDIT_CARD = "5555557558554444";
-    private final String INVALID_CREDIT_CARD = "";
-    private final String VALID_EMAIL = "correo@gmail.com";
-    private final String INVALID_EMAIL = "";
-    private final Long NON_EXISTENT_COURSE_ID = -1L;
-
     private Course getValidCourse() {
-        return null;
+        return new Course(
+                "Fuenlabrada",
+                "How to Train Your Dragon",
+                LocalDateTime.of(2020, 1, 1, 0, 0),
+                90,
+                20
+        );
     }
 
     private Course createCourse(Course course) {
-
-        Course addedCourse = null;
         try {
-            addedCourse = courseService.addCourse(course);
+            return courseService.addCourse(course);
         } catch (InputValidationException e) {
             throw new RuntimeException(e);
         }
-        return addedCourse;
-
     }
 
-    private void removeCourse(Long courseId) {
+    private void removeCourse(Long courseId) throws RuntimeException, InstanceNotFoundException {
         DataSource dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
         try (Connection connection = dataSource.getConnection()) {
             try {
@@ -77,7 +78,7 @@ public class AppServiceTest {
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (RuntimeException | Error e) {
+            } catch (RuntimeException | InstanceNotFoundException e) {
                 connection.rollback();
                 throw e;
             }
@@ -86,7 +87,7 @@ public class AppServiceTest {
         }
     }
 
-    private void removeInscription(Long inscriptionId) {
+    private void removeInscription(Long inscriptionId) throws RuntimeException, InstanceNotFoundException {
         DataSource dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
         try (Connection connection = dataSource.getConnection()) {
             try {
@@ -100,7 +101,7 @@ public class AppServiceTest {
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (RuntimeException | Error e) {
+            } catch (RuntimeException | InstanceNotFoundException e) {
                 connection.rollback();
                 throw e;
             }
@@ -109,7 +110,7 @@ public class AppServiceTest {
         }
     }
 
-    private void updateCourse(Course course) {
+    private void updateCourse(Course course) throws RuntimeException, InstanceNotFoundException{
         DataSource dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
         try (Connection connection = dataSource.getConnection()) {
             try {
@@ -123,7 +124,7 @@ public class AppServiceTest {
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (RuntimeException | Error e) {
+            } catch (RuntimeException | InstanceNotFoundException e) {
                 connection.rollback();
                 throw e;
             }
@@ -132,7 +133,7 @@ public class AppServiceTest {
         }
     }
 
-    private void updateInscription(Inscription inscription) {
+    private void updateInscription(Inscription inscription) throws RuntimeException, InstanceNotFoundException{
         DataSource dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
         try (Connection connection = dataSource.getConnection()) {
             try {
@@ -146,7 +147,7 @@ public class AppServiceTest {
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);
-            } catch (RuntimeException | Error e) {
+            } catch (RuntimeException | InstanceNotFoundException e) {
                 connection.rollback();
                 throw e;
             }
@@ -156,7 +157,28 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testAddCourseAndFindCourse() {
+    public void testAddCourseAndFindCourse() throws InputValidationException, InstanceNotFoundException {
+        Course course = getValidCourse();
+        Course addedCourse = null;
+
+        try {
+            LocalDateTime beforeAdd = LocalDateTime.now().withNano(0);
+            addedCourse = courseService.addCourse(course);
+            LocalDateTime afterAdd = LocalDateTime.now().withNano(0);
+
+            Course findedCourse = courseService.findCourse(addedCourse.getCourseId());
+
+            assertEquals(addedCourse, findedCourse);
+            assertEquals(addedCourse.getCourseId(), findedCourse.getCourseId());
+            assertEquals(addedCourse.getName(), findedCourse.getName());
+            assertEquals(addedCourse.getCity(), findedCourse.getCity());
+            assertTrue((!findedCourse.getCreationDate().isBefore(beforeAdd))
+                    && (!findedCourse.getCreationDate().isAfter(afterAdd)));
+        } finally {
+            if (addedCourse != null) {
+                removeCourse(addedCourse.getCourseId());
+            }
+        }
     }
 
     @Test
@@ -177,11 +199,11 @@ public class AppServiceTest {
 
     @Test
     public void testFindNonExistentCourse() {
-        assertThrows(InstanceNotFoundException.class, () ->  courseService.findCourse(NON_EXISTENT_COURSE_ID));
+        assertThrows(InstanceNotFoundException.class, () -> courseService.findCourse(NON_EXISTENT_COURSE_ID));
     }
 
     @Test
-    public void testFindCourse() throws InputValidationException {
+    public void testFindCourse() throws InputValidationException, InstanceNotFoundException {
         LocalDateTime beforeInscriptionDate = LocalDateTime.now().withNano(0);
         Course course1 = courseService.addCourse(getValidCourse());
         Course course2 = courseService.addCourse(getValidCourse());
@@ -208,15 +230,15 @@ public class AppServiceTest {
             assertEquals(course2.getCity(), foundCourse2.getCity());
             assertEquals(course3.getCity(), foundCourse3.getCity());
 
-            assertTrue((foundCourse1.getCreationDate().compareTo(beforeInscriptionDate) >= 0)
-                    && (foundCourse1.getCreationDate().compareTo(afterInscriptionDate) <= 0));
-            assertEquals(null, foundCourse1.getCreationDate());
-            assertTrue((foundCourse2.getCreationDate().compareTo(beforeInscriptionDate) >= 0)
-                    && (foundCourse2.getCreationDate().compareTo(afterInscriptionDate) <= 0));
-            assertEquals(null, foundCourse2.getCreationDate());
-            assertTrue((foundCourse3.getCreationDate().compareTo(beforeInscriptionDate) >= 0)
-                    && (foundCourse3.getCreationDate().compareTo(afterInscriptionDate) <= 0));
-            assertEquals(null, foundCourse3.getCreationDate());
+            assertTrue((!foundCourse1.getCreationDate().isBefore(beforeInscriptionDate))
+                    && (!foundCourse1.getCreationDate().isAfter(afterInscriptionDate)));
+            assertNull(foundCourse1.getCreationDate());
+            assertTrue((!foundCourse2.getCreationDate().isBefore(beforeInscriptionDate))
+                    && (!foundCourse2.getCreationDate().isAfter(afterInscriptionDate)));
+            assertNull(foundCourse2.getCreationDate());
+            assertTrue((!foundCourse3.getCreationDate().isBefore(beforeInscriptionDate))
+                    && (!foundCourse3.getCreationDate().isAfter(afterInscriptionDate)));
+            assertNull(foundCourse3.getCreationDate());
 
 
             assertEquals(course1.getStartDate(), foundCourse1.getStartDate());
@@ -247,7 +269,7 @@ public class AppServiceTest {
     public void testAddInscriptionAndFindInscription()
             throws InstanceNotFoundException, InputValidationException {
         Course course = createCourse(getValidCourse());
-        Inscription inscription = new Inscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+        Inscription inscription = new Inscription(course.getCourseId(), LocalDateTime.now().withNano(0), VALID_CREDIT_CARD);
 
         try {
             // Make inscription
@@ -257,7 +279,7 @@ public class AppServiceTest {
 
             // Find inscription by email
             List<Inscription> inscriptionList = courseService.findInscriptions(VALID_EMAIL);
-            Inscription foundInscription = inscriptionList.get(0);
+            Inscription foundInscription = inscriptionList.getFirst();
 
             // Check inscription
             assertEquals(inscriptionList.size(), 0);
@@ -265,24 +287,23 @@ public class AppServiceTest {
             //assertEquals(VALID_CREDIT_CARD, foundInscription.getCreditCard());
             assertEquals(VALID_EMAIL, foundInscription.getUserEmail());
             assertEquals(course.getCourseId(), foundInscription.getInscriptionId());
-            assertTrue((foundInscription.getInscriptionDate().compareTo(beforeInscriptionDate) >= 0)
-                    && (foundInscription.getInscriptionDate().compareTo(afterInscriptionDate) <= 0));
-            assertEquals(null, foundInscription.getCancelationDate());
+            assertTrue((!foundInscription.getInscriptionDate().isBefore(beforeInscriptionDate))
+                    && (!foundInscription.getInscriptionDate().isAfter(afterInscriptionDate)));
+            assertNull(foundInscription.getCancelationDate());
 
         } finally {
             // Clear database: remove sale (if created) and movie
-            if (inscription != null) {
-                removeInscription(inscription.getInscriptionId());
-            }
+            removeInscription(inscription.getInscriptionId());
             removeCourse(course.getCourseId());
         }
     }
 
     @Test
-    public void testAddInscriptionOnIllegalDate() {}
+    public void testAddInscriptionOnIllegalDate() {
+    }
 
     @Test
-    public void testAddInscriptionWithInvalidEmail() {
+    public void testAddInscriptionWithInvalidEmail() throws InstanceNotFoundException {
         Course course = createCourse(getValidCourse());
         try {
             assertThrows(InputValidationException.class, () -> {
@@ -296,7 +317,7 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testAddInscriptionWithInvalidCreditCard() {
+    public void testAddInscriptionWithInvalidCreditCard() throws InstanceNotFoundException{
         Course course = createCourse(getValidCourse());
         try {
             assertThrows(InputValidationException.class, () -> {
@@ -310,7 +331,7 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testAddInscriptionToNonExistentCourse() {
+    public void testAddInscriptionToNonExistentCourse() throws InstanceNotFoundException{
         Course course = createCourse(getValidCourse());
         try {
             assertThrows(InputValidationException.class, () -> {

@@ -14,7 +14,7 @@ public interface CourseService {
     the price and the maximum number of places. In addition, the date and time at which the course was registered will
     be saved. The start date of the course must be at least 15 days after the time of registration.
     */
-    Course addCourse(Course course) throws InputValidationException, InstanceNotFoundException;
+    Course addCourse(Course course) throws InputValidationException, RuntimeException;
 
     /*
     It will be possible to search for courses that are held in a city from a date. Only courses that are held in that
