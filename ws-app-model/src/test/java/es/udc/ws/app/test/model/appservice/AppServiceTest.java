@@ -36,6 +36,12 @@ public class AppServiceTest {
     private final String INVALID_CREDIT_CARD = "";
     private final String VALID_EMAIL = "correo@gmail.com";
     private final String INVALID_EMAIL = "";
+    private final LocalDateTime VALID_COURSE_START_DATE = LocalDateTime.now().plusDays(15);
+    private final LocalDateTime INVALID_COURSE_START_DATE = LocalDateTime.now().plusDays(14);
+    private final LocalDateTime VALID_INSCRIPTION_DATE = LocalDateTime.now().minusDays(1);
+    private final LocalDateTime INVALID_INSCRIPTION_DATE = LocalDateTime.now();
+    private final LocalDateTime VALID_CANCELLATION_DATE = LocalDateTime.now().plusDays(7);
+    private final LocalDateTime INVALID_CANCELLATION_DATE = LocalDateTime.now().plusDays(6);
     private final Long NON_EXISTENT_COURSE_ID = -1L;
 
     @BeforeAll
@@ -51,7 +57,7 @@ public class AppServiceTest {
         return new Course(
                 "How to Train Your Dragon",
                 "Fuenlabrada",
-                LocalDateTime.of(2025, 1, 1, 0, 0),
+                VALID_COURSE_START_DATE,
                 90,
                 20
         );
@@ -61,7 +67,7 @@ public class AppServiceTest {
         return new Course(
                 "Yoga",
                 "Padron",
-                LocalDateTime.of(2026, 5, 5, 20, 0),
+                VALID_COURSE_START_DATE,
                 100,
                 15
         );
@@ -71,49 +77,39 @@ public class AppServiceTest {
         return new Course(
                 "Andar en bici",
                 "Coruña",
-                LocalDateTime.of(2026, 4, 6, 19, 30),
+                VALID_COURSE_START_DATE,
                 50,
                 30
         );
     }
 
-    private Course getInvalidCourse1() {
+    private Course getCourseInvalidStartDate() {
         return new Course(
                 "How to Train Your Dragon",
                 "Fuenlabrada",
-                LocalDateTime.now().plusDays(10),
+                INVALID_COURSE_START_DATE,
                 90,
                 20
         );
     }
 
-    private Course getInvalidCourse2() {
+    private Course getCourseInvalidPrice() {
         return new Course(
                 "Yoga",
                 "Padron",
-                LocalDateTime.of(2026, 5, 5, 20, 0),
+                VALID_COURSE_START_DATE,
                 MAX_PRICE + 1,
                 15
         );
     }
 
-    private Course getInvalidCourse3() {
+    private Course getCourseInvalidMaxSpots() {
         return new Course(
                 "Andar en bici",
                 "Coruña",
-                LocalDateTime.of(2026, 4, 6, 19, 30),
+                VALID_COURSE_START_DATE,
                 50,
                 -1
-        );
-    }
-
-    private Course getInvalidCourse4() {
-        return new Course(
-                "How to Train Your Dragon",
-                "Fuenlabrada",
-                LocalDateTime.now().minusDays(10),
-                90,
-                20
         );
     }
 
