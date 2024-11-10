@@ -52,7 +52,7 @@ public class CourseServiceImpl implements CourseService {
         if (course.getStartDate().isBefore(course.getCreationDate())) {
             throw new InputValidationException("Start date must be after the creation date");
         }
-        if (ChronoUnit.DAYS.between(LocalDateTime.now(), course.getStartDate()) < 15) {
+        if (ChronoUnit.DAYS.between(course.getCreationDate(), course.getStartDate()) < 15) {
             throw new InputValidationException("New courses must be at created at least 15 days before the start date");
         }
     }
@@ -73,8 +73,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course addCourse(Course course) throws InputValidationException, RuntimeException {
-        validateCourse(course);
         course.setCreationDate(LocalDateTime.now());
+        validateCourse(course);
 
         try (Connection connection = dataSource.getConnection()) {
             try {
