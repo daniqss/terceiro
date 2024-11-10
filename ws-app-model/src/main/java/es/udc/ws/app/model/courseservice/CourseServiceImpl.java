@@ -51,9 +51,7 @@ public class CourseServiceImpl implements CourseService {
         PropertyValidator.validateMandatoryString("name", course.getName());
         PropertyValidator.validateDouble("price", course.getPrice(), 0, MAX_PRICE);
         PropertyValidator.validateNotNegativeLong("maxSpots", course.getMaxSpots());
-        if (course.getStartDate().isBefore(course.getCreationDate())) {
-            throw new InputValidationException("Start date must be after the creation date");
-        }
+
         if (ChronoUnit.DAYS.between(course.getCreationDate(), course.getStartDate()) < 15) {
             throw new InputValidationException("New courses must be at created at least 15 days before the start date");
         }

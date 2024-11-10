@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static es.udc.ws.app.model.util.ModelConstants.APP_DATA_SOURCE;
+import static es.udc.ws.app.model.util.ModelConstants.MAX_PRICE;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AppServiceTest {
@@ -71,6 +72,36 @@ public class AppServiceTest {
                 LocalDateTime.of(2026, 4, 6, 19, 30),
                 50,
                 30
+        );
+    }
+
+    private Course getInvalidCourse1() {
+        return new Course(
+                "How to Train Your Dragon",
+                "Fuenlabrada",
+                LocalDateTime.of(2020, 1, 1, 0, 0),
+                90,
+                20
+        );
+    }
+
+    private Course getInvalidCourse2() {
+        return new Course(
+                "Yoga",
+                "Padron",
+                LocalDateTime.of(2026, 5, 5, 20, 0),
+                MAX_PRICE + 1,
+                15
+        );
+    }
+
+    private Course getInvalidCourse3() {
+        return new Course(
+                "Andar en bici",
+                "Coruña",
+                LocalDateTime.of(2026, 4, 6, 19, 30),
+                50,
+                -1
         );
     }
 
@@ -193,7 +224,7 @@ public class AppServiceTest {
         try {
             LocalDateTime beforeAdd = LocalDateTime.now().withNano(0);
             addedCourse = courseService.addCourse(course);
-            LocalDateTime afterAdd = LocalDateTime.now().withNano(0).plusSeconds(1);
+            LocalDateTime afterAdd = LocalDateTime.now().withNano(0);
 
             Course findedCourse = courseService.findCourse(addedCourse.getCourseId());
 
@@ -216,11 +247,16 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testCourseOutOfVacants() {
+    public void testAddInvalidCourse() {
+        InputValidationException exception1 = assertThrows(InputValidationException.class,
+                () -> courseService.addCourse(getInvalidCourse1()));
+        assertEquals("New courses must be at created at least 15 days before the start date", exception1.getMessage());
+        assertThrows(InputValidationException.class, () -> courseService.addCourse(getInvalidCourse2()));
+        assertThrows(InputValidationException.class, () -> courseService.addCourse(getInvalidCourse3()));
     }
 
     @Test
-    public void testAddInvalidCourse() {
+    public void testCourseOutOfVacants() {
     }
 
     @Test
