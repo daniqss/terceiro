@@ -21,13 +21,13 @@
 
 ## Objetivos de aprendizaje de la semana 1
 
-  - Concepto, herramienta, ...
-
-    Recursos indentificados para su estudio.
+  El objetivo de esta semana es que el equipo de desarrollo sea capaz
+  de definir los casos de uso de la aplicación, así como hacer un diseño
+  amigable y accesible para las usuarias y una buena documentación con un
+  diseño estático y dinámico claros de la aplicación.
 	
 	
 ## Otros recursos empleados en la semana 1
 
-  - Descripción del recurso.
-  
-    Utilidad y aplicación a la práctica.
+  - Mermaid Live Editor 
+  - Markdown Guide 
