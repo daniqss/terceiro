@@ -7,8 +7,9 @@ public class CourseStartTooSoonException extends Exception {
     private LocalDateTime startDate;
     private LocalDateTime creationDate;
 
-    public CourseStartTooSoonException(Long idCourse, LocalDateTime startDate, LocalDateTime creationDate) {
-        super("La fecha de inicio indicada para el curso con id=\"" + idCourse + "\" es inválida (" + startDate + "); debe programarse para al menos 15 dias despues de la fecha de creación (" + creationDate + ").");
+    public CourseStartTooSoonException(Long idCourse, LocalDateTime creationDate, LocalDateTime startDate) {
+        super("Start date for course with id = " + idCourse + "\" is invalid (" + startDate
+                + "); it must be at least 15 days after the creation date (" + creationDate + ").");
         this.idCourse = idCourse;
         this.startDate = startDate;
         this.creationDate = creationDate;

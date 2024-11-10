@@ -8,6 +8,7 @@ import es.udc.ws.app.model.courseservice.CourseService;
 import es.udc.ws.app.model.courseservice.CourseServiceFactory;
 import es.udc.ws.app.model.courseservice.exceptions.CourseAlreadyStartedException;
 import es.udc.ws.app.model.courseservice.exceptions.CourseFullException;
+import es.udc.ws.app.model.courseservice.exceptions.CourseStartTooSoonException;
 import es.udc.ws.app.model.inscription.Inscription;
 import es.udc.ws.app.model.inscription.SqlInscriptionDao;
 import es.udc.ws.app.model.inscription.SqlInscriptionDaoFactory;
@@ -86,7 +87,7 @@ public class AppServiceTest {
     private Course createCourse(Course course) {
         try {
             return courseService.addCourse(course);
-        } catch (InputValidationException e) {
+        } catch (InputValidationException | CourseStartTooSoonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -221,7 +222,7 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testAddCourseAndFindCourse() throws InputValidationException, InstanceNotFoundException {
+    public void testAddCourseAndFindCourse() throws InputValidationException, InstanceNotFoundException, CourseStartTooSoonException {
         Course course = getValidCourse();
         Course addedCourse = null;
 
@@ -249,10 +250,10 @@ public class AppServiceTest {
             }
         }
     }
-    
+
     @Test
-    public void testAddInvalidCourse() {
-        assertThrows(InputValidationException.class, () -> courseService.addCourse(
+    public void testCourseStartTooSoon() {
+        assertThrows(CourseStartTooSoonException.class, () -> courseService.addCourse(
                 new Course(
                         "How to Train Your Dragon",
                         "Fuenlabrada",
@@ -261,11 +262,15 @@ public class AppServiceTest {
                         20
                 )
         ));
+    }
+    
+    @Test
+    public void testAddInvalidCourse() {
         assertThrows(InputValidationException.class, () -> courseService.addCourse(
                 new Course(
                         "",
                         "Fuenlabrada",
-                        INVALID_COURSE_START_DATE,
+                        VALID_COURSE_START_DATE,
                         90,
                         20
                 )
@@ -274,7 +279,7 @@ public class AppServiceTest {
                 new Course(
                         "Adiestramiento canino",
                         "",
-                        INVALID_COURSE_START_DATE,
+                        VALID_COURSE_START_DATE,
                         90,
                         20
                 )
@@ -355,7 +360,7 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testFindCourse() throws InputValidationException, InstanceNotFoundException {
+    public void testFindCourse() throws InputValidationException, InstanceNotFoundException, CourseStartTooSoonException {
         LocalDateTime beforeInscriptionDate = LocalDateTime.now().withNano(0);
 
         Course course = courseService.addCourse(getValidCourse());

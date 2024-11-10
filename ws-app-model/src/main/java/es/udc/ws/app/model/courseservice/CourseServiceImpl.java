@@ -2,6 +2,7 @@ package es.udc.ws.app.model.courseservice;
 
 import es.udc.ws.app.model.courseservice.exceptions.CourseAlreadyStartedException;
 import es.udc.ws.app.model.courseservice.exceptions.CourseFullException;
+import es.udc.ws.app.model.courseservice.exceptions.CourseStartTooSoonException;
 import es.udc.ws.app.model.inscription.SqlInscriptionDao;
 import es.udc.ws.app.model.inscription.SqlInscriptionDaoFactory;
 import es.udc.ws.util.exceptions.InputValidationException;
@@ -45,14 +46,14 @@ public class CourseServiceImpl implements CourseService {
         return matcher.matches();
     }
 
-    private void validateCourse(Course course) throws InputValidationException {
+    private void validateCourse(Course course) throws InputValidationException, CourseStartTooSoonException {
         PropertyValidator.validateMandatoryString("city", course.getCity());
         PropertyValidator.validateMandatoryString("name", course.getName());
         PropertyValidator.validateDouble("price", course.getPrice(), MIN_PRICE, MAX_PRICE);
         PropertyValidator.validateNotNegativeLong("maxSpots", course.getMaxSpots());
 
         if (ChronoUnit.DAYS.between(course.getCreationDate(), course.getStartDate()) < 15) {
-            throw new InputValidationException("New courses must be at created at least 15 days before the start date");
+            throw new CourseStartTooSoonException(course.getCourseId(), course.getStartDate(), course.getCreationDate());
         }
     }
 
@@ -73,7 +74,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course addCourse(Course course) throws InputValidationException, RuntimeException {
+    public Course addCourse(Course course) throws InputValidationException, RuntimeException, CourseStartTooSoonException {
         course.setCreationDate(LocalDateTime.now());
         validateCourse(course);
 
