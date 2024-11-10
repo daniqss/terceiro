@@ -82,7 +82,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
 
     @Override
     public Inscription findById(Connection connection, Long inscriptionId) throws InstanceNotFoundException, RuntimeException {
-        String queryString = "SELECT courseId, inscriptionDate, cancelationDate, userEmail  FROM Inscription WHERE inscriptionId = ?";
+        String queryString = "SELECT courseId, inscriptionDate, cancelationDate, userEmail, creditCard  FROM Inscription WHERE inscriptionId = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
             int i = 1;
             preparedStatement.setLong(i, inscriptionId);
@@ -96,9 +96,10 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
             Timestamp cancelationDateAsTimestamp = resultSet.getTimestamp(i++);
             LocalDateTime inscriptionDate = inscriptionDateAsTimestamp.toLocalDateTime();
             LocalDateTime cancelationDate = cancelationDateAsTimestamp.toLocalDateTime();
-            String userEmail = resultSet.getString(i);
+            String userEmail = resultSet.getString(i++);
+            String creditCard = resultSet.getString(i);
 
-            return new Inscription(inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail);
+            return new Inscription(inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail, creditCard);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
