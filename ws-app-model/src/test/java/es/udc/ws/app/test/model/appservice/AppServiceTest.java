@@ -358,7 +358,7 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testAddInscriptionAndFindInscription() throws InstanceNotFoundException, InputValidationException, CourseAlreadyStartedException, CourseFullException {
+    public void testAddInscriptionAndFindInscription() throws InstanceNotFoundException, CourseAlreadyStartedException, InputValidationException, CourseFullException {
         Course course = createCourse(getValidCourse());
 
         try {
@@ -395,7 +395,7 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testCourseFullException() throws InstanceNotFoundException {
+    public void testCourseFullException() {
         Course course = createCourse(getValidCourse3());
             assertThrows(CourseFullException.class, () -> {
                 try {
@@ -412,16 +412,16 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testCourseAlreadyStartedException() throws InputValidationException {
+    public void testCourseAlreadyStartedException() {
         assertThrows(CourseAlreadyStartedException.class, () -> {
-            Course course1 = createCourseDao(getValidCourse2(), INVALID_COURSE_START_DATE_TO_INSC);
+            Course course = createCourseDao(getValidCourse2(), INVALID_COURSE_START_DATE_TO_INSC);
             try {
-                Long inscriptionId = courseService.addInscription(course1.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                System.out.println(course1.getStartDate());
+                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                System.out.println(course.getStartDate());
                 System.out.println(findInscription(inscriptionId).getInscriptionDate());
                 removeInscription(inscriptionId);
             } finally {
-                if (course1!=null) removeCourse(course1.getCourseId());
+                if (course!=null) removeCourse(course.getCourseId());
             }
         });
     }
