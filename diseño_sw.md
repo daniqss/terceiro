@@ -74,3 +74,29 @@ classDiagram
     MedicationProvider --o Intake : logs
     MedicationProvider --> ReminderService : uses
 ```
+
+## Diseño dinámico
+
+```mermaid
+
+sequenceDiagram
+    
+    participant User
+    participant MI as MedicationInterface
+    participant MP as MedicationProvider
+    participant RS as ReminderService
+
+    User->>MI: showMedications()
+    MI->>MP: getMedications()
+    MP-->>MI: List of Medications
+    
+    User->>MI: showMedicationDetails(medicationId)
+    MI->>MP: getPosologies(medicationId)
+    MP-->>MI: List of Posologies
+    
+    User->>MI: confirmIntake(posologyId)
+    MI->>MP: logIntake(posologyId)
+    MP->>RS: sendReminder(medication, posology)
+    RS-->>MP: Reminder sent (bool)
+
+```
