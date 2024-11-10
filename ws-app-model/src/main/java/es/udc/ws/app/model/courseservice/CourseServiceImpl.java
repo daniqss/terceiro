@@ -1,5 +1,7 @@
 package es.udc.ws.app.model.courseservice;
 
+import es.udc.ws.app.model.courseservice.exceptions.CourseAlreadyStartedException;
+import es.udc.ws.app.model.courseservice.exceptions.CourseFullException;
 import es.udc.ws.app.model.inscription.SqlInscriptionDao;
 import es.udc.ws.app.model.inscription.SqlInscriptionDaoFactory;
 import es.udc.ws.util.exceptions.InputValidationException;
@@ -56,7 +58,7 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    private void validateInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException {
+    private void validateInscription(Long courseId, LocalDateTime inscriptionDate, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException, CourseAlreadyStartedException, CourseFullException {
         if (!validateEmail(userEmail)) {
             throw new InputValidationException("Non valid email");
         }
@@ -66,12 +68,11 @@ public class CourseServiceImpl implements CourseService {
         PropertyValidator.validateLong("courseId",courseId,0, MAX_ID);
         PropertyValidator.validateCreditCard(bankCardNumber);
         LocalDateTime courseStartDate = findCourse(courseId).getStartDate();
-        if (LocalDateTime.now().isAfter(courseStartDate)) {
-            throw new InputValidationException("The course where you want to enter has already started");
+        if (inscriptionDate.isAfter(courseStartDate)) {
+            throw new CourseAlreadyStartedException(courseId, findCourse(courseId).getStartDate());
         }
-
         if (findCourse(courseId).getVacantSpots() == 0) {
-            throw new InputValidationException("No vacants in the course");
+            throw new CourseFullException(courseId);
         }
     }
 
@@ -122,8 +123,9 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Long addInscription(Long courseId, String userEmail, String creditCard) throws InputValidationException, InstanceNotFoundException {
-        validateInscription(courseId, userEmail, creditCard);
+    public Long addInscription(Long courseId, String userEmail, String creditCard) throws InputValidationException, InstanceNotFoundException, CourseAlreadyStartedException, CourseFullException {
+        LocalDateTime inscriptionDate = LocalDateTime.now();
+        validateInscription( courseId, inscriptionDate, userEmail, creditCard);
 
         try (Connection connection = dataSource.getConnection()) {
             try {

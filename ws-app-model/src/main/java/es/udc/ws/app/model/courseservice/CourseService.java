@@ -1,6 +1,8 @@
 package es.udc.ws.app.model.courseservice;
 
 import es.udc.ws.app.model.course.Course;
+import es.udc.ws.app.model.courseservice.exceptions.CourseAlreadyStartedException;
+import es.udc.ws.app.model.courseservice.exceptions.CourseFullException;
 import es.udc.ws.app.model.inscription.Inscription;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
@@ -36,7 +38,7 @@ public interface CourseService {
     bank card number to make the payment. If successful, the registration is stored, recording the date and time at
     which it was made, and the identifier assigned to it is returned.
     */
-    Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException ;
+    Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException, CourseAlreadyStartedException, CourseFullException;
 
     /*
     A user can cancel a registration as long as the cancellation period is still open (i.e., there are more than 7 days

@@ -1,18 +1,18 @@
 package es.udc.ws.app.model.courseservice.exceptions;
 
 public class CourseFullException extends Exception {
-    private Long idCourse;
+    private Long courseId;
 
-    public CourseFullException(Long idCourse, String name) {
-        super("Al curso con id = " + idCourse + " no le quedan plazas disponibles");
-        this.idCourse = idCourse;
+    public CourseFullException(Long courseId) {
+        super("Al curso con id = " + courseId + " no le quedan plazas disponibles");
+        this.courseId = courseId;
     }
 
-    public Long getIdCourse() {
-        return idCourse;
+    public Long getCourseId() {
+        return courseId;
     }
 
-    public void setIdCourse(Long idCourse) {
-        this.idCourse = idCourse;
+    public void setCourseId(Long idCourse) {
+        this.courseId = idCourse;
     }
 }

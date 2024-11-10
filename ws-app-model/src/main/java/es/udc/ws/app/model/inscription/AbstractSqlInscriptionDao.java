@@ -95,7 +95,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
             Timestamp inscriptionDateAsTimestamp = resultSet.getTimestamp(i++);
             Timestamp cancelationDateAsTimestamp = resultSet.getTimestamp(i++);
             LocalDateTime inscriptionDate = inscriptionDateAsTimestamp.toLocalDateTime();
-            LocalDateTime cancelationDate = cancelationDateAsTimestamp.toLocalDateTime();
+            LocalDateTime cancelationDate = cancelationDateAsTimestamp !=null ? cancelationDateAsTimestamp.toLocalDateTime() : null;
             String userEmail = resultSet.getString(i++);
             String creditCard = resultSet.getString(i);
 

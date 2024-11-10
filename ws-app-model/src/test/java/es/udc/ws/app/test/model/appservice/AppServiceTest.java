@@ -6,6 +6,8 @@ import es.udc.ws.app.model.course.SqlCourseDao;
 import es.udc.ws.app.model.course.SqlCourseDaoFactory;
 import es.udc.ws.app.model.courseservice.CourseService;
 import es.udc.ws.app.model.courseservice.CourseServiceFactory;
+import es.udc.ws.app.model.courseservice.exceptions.CourseAlreadyStartedException;
+import es.udc.ws.app.model.courseservice.exceptions.CourseFullException;
 import es.udc.ws.app.model.inscription.Inscription;
 import es.udc.ws.app.model.inscription.SqlInscriptionDao;
 import es.udc.ws.app.model.inscription.SqlInscriptionDaoFactory;
@@ -38,8 +40,7 @@ public class AppServiceTest {
     private final String INVALID_EMAIL = "";
     private final LocalDateTime VALID_COURSE_START_DATE = LocalDateTime.now().plusDays(15);
     private final LocalDateTime INVALID_COURSE_START_DATE = LocalDateTime.now().plusDays(14);
-    private final LocalDateTime VALID_INSCRIPTION_DATE = LocalDateTime.now().minusDays(1);
-    private final LocalDateTime INVALID_INSCRIPTION_DATE = LocalDateTime.now();
+    private final LocalDateTime INVALID_COURSE_START_DATE_TO_INSC = LocalDateTime.now();
     private final LocalDateTime VALID_CANCELLATION_DATE = LocalDateTime.now().plusDays(7);
     private final LocalDateTime INVALID_CANCELLATION_DATE = LocalDateTime.now().plusDays(6);
     private final Long NON_EXISTENT_COURSE_ID = -1L;
@@ -67,7 +68,7 @@ public class AppServiceTest {
         return new Course(
                 "Yoga",
                 "Padron",
-                VALID_COURSE_START_DATE,
+                INVALID_COURSE_START_DATE_TO_INSC,
                 100,
                 15
         );
@@ -79,7 +80,7 @@ public class AppServiceTest {
                 "Coruña",
                 VALID_COURSE_START_DATE,
                 50,
-                30
+                2
         );
     }
 
@@ -91,7 +92,33 @@ public class AppServiceTest {
         }
     }
 
-    private void removeCourse(Long courseId) throws RuntimeException, InstanceNotFoundException {
+    public Course createCourseDao(Course course, LocalDateTime creationDate) throws InputValidationException, RuntimeException {
+        course.setCreationDate(creationDate);
+        DataSource dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
+        try (Connection connection = dataSource.getConnection()) {
+            try {
+                /* Prepare connection. */
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                Course createdCourse = courseDao.create(connection, course);
+
+                // if the course is created without throwing an exception
+                // we can commit the changes
+                connection.commit();
+
+                return createdCourse;
+
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new RuntimeException(e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void removeCourse(Long courseId) throws RuntimeException, InstanceNotFoundException{
         DataSource dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
         try (Connection connection = dataSource.getConnection()) {
             try {
@@ -263,10 +290,6 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testCourseOutOfVacants() {
-    }
-
-    @Test
     public void testFindCourses() throws InstanceNotFoundException, InputValidationException {
         Course addedCourse1 = null;
         Course addedCourse2 = null;
@@ -335,8 +358,7 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testAddInscriptionAndFindInscription()
-            throws InstanceNotFoundException, InputValidationException {
+    public void testAddInscriptionAndFindInscription() throws InstanceNotFoundException, InputValidationException, CourseAlreadyStartedException, CourseFullException {
         Course course = createCourse(getValidCourse());
 
         try {
@@ -345,40 +367,26 @@ public class AppServiceTest {
             Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
             LocalDateTime afterInscriptionDate = LocalDateTime.now().withNano(0);
 
+            // Get inserted inscription
             Inscription inscription = findInscription(inscriptionId);
 
-            // Find inscription by email
+            // Find inscriptions by email
             List<Inscription> inscriptionList = courseService.findInscriptions(VALID_EMAIL);
+            // Get found inscription
             Inscription foundInscription = inscriptionList.getFirst();
-            System.out.println(beforeInscriptionDate);
-            System.out.println(afterInscriptionDate);
-
-            System.out.println(inscriptionList.size());
-            System.out.println(inscription);
-            System.out.println(foundInscription);
-
-            System.out.println(VALID_EMAIL);
-            System.out.println(foundInscription.getUserEmail());
-
-            System.out.println(course.getCourseId());
-            System.out.println(foundInscription.getInscriptionId());
-
-            System.out.println(foundInscription.getInscriptionDate());
-
-            System.out.println(foundInscription.getCancelationDate());
 
             // Check inscription
             assertEquals(inscriptionList.size(), 1);
             assertEquals(inscription, foundInscription);
+
             //assertEquals(VALID_CREDIT_CARD, foundInscription.getCreditCard());
             assertEquals(VALID_EMAIL, foundInscription.getUserEmail());
-            assertEquals(course.getCourseId(), foundInscription.getInscriptionId());
+            assertEquals(course.getCourseId(), foundInscription.getCourseId());
             assertTrue((!foundInscription.getInscriptionDate().isBefore(beforeInscriptionDate))
                     && (!foundInscription.getInscriptionDate().isAfter(afterInscriptionDate)));
             assertNull(foundInscription.getCancelationDate());
 
             removeInscription(inscription.getInscriptionId());
-
 
         } finally {
             // Clear database: remove sale (if created) and movie
@@ -387,7 +395,35 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testAddInscriptionOnIllegalDate() {
+    public void testCourseFullException() throws InstanceNotFoundException {
+        Course course = createCourse(getValidCourse3());
+            assertThrows(CourseFullException.class, () -> {
+                try {
+                    Long inscriptionId1 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                    Long inscriptionId2 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                    Long inscriptionId3 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                    removeInscription(inscriptionId1);
+                    removeInscription(inscriptionId2);
+                    removeInscription(inscriptionId3);
+                } finally {
+                    if (course!=null) removeCourse(course.getCourseId());
+                }
+            });
+    }
+
+    @Test
+    public void testCourseAlreadyStartedException() throws InputValidationException {
+        assertThrows(CourseAlreadyStartedException.class, () -> {
+            Course course1 = createCourseDao(getValidCourse2(), INVALID_COURSE_START_DATE_TO_INSC);
+            try {
+                Long inscriptionId = courseService.addInscription(course1.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                System.out.println(course1.getStartDate());
+                System.out.println(findInscription(inscriptionId).getInscriptionDate());
+                removeInscription(inscriptionId);
+            } finally {
+                if (course1!=null) removeCourse(course1.getCourseId());
+            }
+        });
     }
 
     @Test
@@ -431,8 +467,7 @@ public class AppServiceTest {
             removeCourse(course.getCourseId());
         }
     }
-
-
+    
     @Test
     public void testFindNonExistentInscription() {
     }
