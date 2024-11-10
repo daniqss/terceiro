@@ -480,31 +480,48 @@ public class AppServiceTest {
         });
 
         assertThrows(InputValidationException.class, () -> {
-            Course course = createCourse(getValidCourse());
-            Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, INVALID_CREDIT_CARD);
-            removeInscription(inscriptionId);
-            removeCourse(course.getCourseId());
+            Course course = null;
+            try {
+                course = createCourse(getValidCourse());
+                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, INVALID_CREDIT_CARD);
+                removeInscription(inscriptionId);
+            } finally {
+                if (course != null) removeCourse(course.getCourseId());
+            }
         });
 
         assertThrows(InputValidationException.class, () -> {
-            Course course = createCourse(getValidCourse());
-            Long inscriptionId = courseService.addInscription(course.getCourseId(), "", INVALID_CREDIT_CARD);
-            removeInscription(inscriptionId);
-            removeCourse(course.getCourseId());
+            Course course = null;
+            try {
+                course = createCourse(getValidCourse());
+                Long inscriptionId = courseService.addInscription(course.getCourseId(), "", INVALID_CREDIT_CARD);
+                removeInscription(inscriptionId);
+                removeCourse(course.getCourseId());
+            } finally {
+                if (course != null) removeCourse(course.getCourseId());
+            }
         });
 
         assertThrows(InputValidationException.class, () -> {
-            Course course = createCourse(getValidCourse());
-            Long inscriptionId = courseService.addInscription(course.getCourseId(), INVALID_EMAIL, VALID_CREDIT_CARD);
-            removeInscription(inscriptionId);
-            removeCourse(course.getCourseId());
+            Course course = null;
+            try {
+                course = createCourse(getValidCourse());
+                Long inscriptionId = courseService.addInscription(course.getCourseId(), INVALID_EMAIL, VALID_CREDIT_CARD);
+                removeInscription(inscriptionId);
+            } finally {
+                if (course != null) removeCourse(course.getCourseId());
+            }
         });
 
         assertThrows(InputValidationException.class, () -> {
-            Course course = createCourse(getValidCourse());
-            Long inscriptionId = courseService.addInscription(course.getCourseId(), "", VALID_CREDIT_CARD);
-            removeInscription(inscriptionId);
-            removeCourse(course.getCourseId());
+            Course course = null;
+            try {
+                course = createCourse(getValidCourse());
+                Long inscriptionId = courseService.addInscription(course.getCourseId(), "", VALID_CREDIT_CARD);
+                removeInscription(inscriptionId);
+            } finally {
+                if (course != null) removeCourse(course.getCourseId());
+            }
         });
     }
 
@@ -516,9 +533,9 @@ public class AppServiceTest {
         Inscription inscription3 = null;
 
         try {
-            Long addedinscriptionId1 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-            Long addedinscriptionId2 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-            Long addedinscriptionId3 = courseService.addInscription(course.getCourseId(), VALID_EMAIL2, VALID_CREDIT_CARD);
+            courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+            courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+            courseService.addInscription(course.getCourseId(), VALID_EMAIL2, VALID_CREDIT_CARD);
             List<Inscription> inscriptionList1 = courseService.findInscriptions(VALID_EMAIL);
             List<Inscription> inscriptionList2 = courseService.findInscriptions(VALID_EMAIL2);
 
@@ -586,7 +603,7 @@ public class AppServiceTest {
                 removeInscription(inscriptionId);
             });
         } finally {
-            if (course!=null) removeCourse(course.getCourseId());
+            if (course != null) removeCourse(course.getCourseId());
         }
     }
 
@@ -600,7 +617,7 @@ public class AppServiceTest {
                 removeInscription(inscriptionId);
             });
         } finally {
-            if (course!=null) removeCourse(course.getCourseId());
+            if (course != null) removeCourse(course.getCourseId());
         }
     }
 
@@ -618,7 +635,7 @@ public class AppServiceTest {
         } finally {
             removeCourse(course.getCourseId());
         }
-    };
+    }
 
 }
 
