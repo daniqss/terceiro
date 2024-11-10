@@ -180,8 +180,6 @@ public class CourseServiceImpl implements CourseService {
                 connection.commit();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
-            } catch (InputValidationException | InstanceNotFoundException e) {
-                throw e;
             }
             finally {
                 connection.rollback();

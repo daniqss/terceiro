@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static es.udc.ws.app.model.util.ModelConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,7 +68,7 @@ public class AppServiceTest {
     private Course getValidCourse2() {
         return new Course(
                 "Yoga",
-                "Padron",
+                "Coruña",
                 VALID_COURSE_START_DATE,
                 100,
                 15
@@ -118,7 +119,7 @@ public class AppServiceTest {
         }
     }
 
-    private void removeCourse(Long courseId) throws RuntimeException, InstanceNotFoundException{
+    private void removeCourse(Long courseId) throws RuntimeException, InstanceNotFoundException {
         DataSource dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
         try (Connection connection = dataSource.getConnection()) {
             try {
@@ -324,17 +325,29 @@ public class AppServiceTest {
             addedCourse2 = createCourse(getValidCourse2());
             addedCourse3 = createCourse(getValidCourse3());
 
+            // Empty list test case
+            assert (courseService.findCourses("Gibraltar", LocalDateTime.now().minusDays(1)).isEmpty());
+            // 2 element list test case
             List<Course> courses = courseService.findCourses("Coruña", LocalDateTime.now().minusDays(1));
+            assertEquals(2, courses.size());
 
-            assertEquals(1, courses.size());
-            assertEquals(addedCourse3, courses.getFirst());
-            assertEquals(addedCourse3.getCourseId(), courses.getFirst().getCourseId());
-            assertEquals(addedCourse3.getName(), courses.getFirst().getName());
-            assertEquals(addedCourse3.getCity(), courses.getFirst().getCity());
-            assertEquals(addedCourse3.getStartDate(), courses.getFirst().getStartDate());
-            assertEquals(addedCourse3.getPrice(), courses.getFirst().getPrice());
-            assertEquals(addedCourse3.getMaxSpots(), courses.getFirst().getMaxSpots());
-            assertEquals(addedCourse3.getVacantSpots(), courses.getFirst().getVacantSpots());
+            assertEquals(addedCourse2, courses.getFirst());
+            assertEquals(addedCourse2.getCourseId(), courses.getFirst().getCourseId());
+            assertEquals(addedCourse2.getName(), courses.getFirst().getName());
+            assertEquals(addedCourse2.getCity(), courses.getFirst().getCity());
+            assertEquals(addedCourse2.getStartDate(), courses.getFirst().getStartDate());
+            assertEquals(addedCourse2.getPrice(), courses.getFirst().getPrice());
+            assertEquals(addedCourse2.getMaxSpots(), courses.getFirst().getMaxSpots());
+            assertEquals(addedCourse2.getVacantSpots(), courses.getFirst().getVacantSpots());
+
+            assertEquals(addedCourse3, courses.getLast());
+            assertEquals(addedCourse3.getCourseId(), courses.getLast().getCourseId());
+            assertEquals(addedCourse3.getName(), courses.getLast().getName());
+            assertEquals(addedCourse3.getCity(), courses.getLast().getCity());
+            assertEquals(addedCourse3.getStartDate(), courses.getLast().getStartDate());
+            assertEquals(addedCourse3.getPrice(), courses.getLast().getPrice());
+            assertEquals(addedCourse3.getMaxSpots(), courses.getLast().getMaxSpots());
+            assertEquals(addedCourse3.getVacantSpots(), courses.getLast().getVacantSpots());
 
         } finally {
             if (addedCourse1 != null) {
@@ -430,15 +443,15 @@ public class AppServiceTest {
         Course course = createCourse(getValidCourse3());
         try {
             assertThrows(CourseFullException.class, () -> {
-                    Long inscriptionId1 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                    Long inscriptionId2 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                    Long inscriptionId3 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                    removeInscription(inscriptionId1);
-                    removeInscription(inscriptionId2);
-                    removeInscription(inscriptionId3);
+                Long inscriptionId1 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                Long inscriptionId2 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                Long inscriptionId3 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                removeInscription(inscriptionId1);
+                removeInscription(inscriptionId2);
+                removeInscription(inscriptionId3);
             });
         } finally {
-            if (course!=null) removeCourse(course.getCourseId());
+            if (course != null) removeCourse(course.getCourseId());
         }
     }
 
@@ -452,7 +465,7 @@ public class AppServiceTest {
                 System.out.println(findInscription(inscriptionId).getInscriptionDate());
                 removeInscription(inscriptionId);
             } finally {
-                if (course!=null) removeCourse(course.getCourseId());
+                if (course != null) removeCourse(course.getCourseId());
             }
         });
     }
@@ -504,22 +517,29 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testFindInscription(){};
+    public void testFindInscription() {
+    }
 
     @Test
-    public void testFindNonExistentInscription(){};
+    public void testFindNonExistentInscription() {
+    }
 
     @Test
-    public void testCancelInscription(){};
+    public void testCancelInscription() {
+    }
 
     @Test
-    public void testCancelTooCloseToCourseStartException(){};
+    public void testCancelTooCloseToCourseStartException() {
+    }
 
     @Test
-    public void testIncorrectUserException(){};
+    public void testIncorrectUserException() {
+    }
 
     @Test
-    public void testInscriptionAlreadyCancelledException(){};
+    public void testInscriptionAlreadyCancelledException() {
+    }
+
 }
 
 
