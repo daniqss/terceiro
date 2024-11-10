@@ -59,13 +59,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     private void validateInscription(Long courseId, LocalDateTime inscriptionDate, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException, CourseAlreadyStartedException, CourseFullException {
+        PropertyValidator.validateLong("courseId",courseId,1, MAX_ID);
+        findCourse(courseId);
         if (!validateEmail(userEmail)) {
             throw new InputValidationException("Non valid email");
         }
-        if (courseId==null){
-            throw new InputValidationException("Course id is null");
-        }
-        PropertyValidator.validateLong("courseId",courseId,0, MAX_ID);
         PropertyValidator.validateCreditCard(bankCardNumber);
         LocalDateTime courseStartDate = findCourse(courseId).getStartDate();
         if (inscriptionDate.isAfter(courseStartDate)) {

@@ -427,66 +427,68 @@ public class AppServiceTest {
     }
 
     @Test
-    public void testAddInscriptionWithInvalidEmail() throws InstanceNotFoundException {
-        Course course = createCourse(getValidCourse());
-        try {
-            assertThrows(InputValidationException.class, () -> {
-                Long inscriptionId = courseService.addInscription(course.getCourseId(), INVALID_EMAIL, VALID_CREDIT_CARD);
-                removeInscription(inscriptionId);
-            });
-        } finally {
-            // Clear database
+    public void testAddInvalidInscription() throws InstanceNotFoundException {
+        assertThrows(InputValidationException.class, () -> {
+            Long inscriptionId = courseService.addInscription(-1L, VALID_EMAIL, VALID_CREDIT_CARD);
+            removeInscription(inscriptionId);
+        });
+
+        assertThrows(InputValidationException.class, () -> {
+            Long inscriptionId = courseService.addInscription(0L, VALID_EMAIL, VALID_CREDIT_CARD);
+            removeInscription(inscriptionId);
+        });
+
+        assertThrows(InstanceNotFoundException.class, () -> {
+            Long inscriptionId = courseService.addInscription(1L, VALID_EMAIL, VALID_CREDIT_CARD);
+            removeInscription(inscriptionId);
+        });
+
+        assertThrows(InputValidationException.class, () -> {
+            Course course = createCourse(getValidCourse());
+            Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, INVALID_CREDIT_CARD);
+            removeInscription(inscriptionId);
             removeCourse(course.getCourseId());
-        }
-    }
+        });
 
-    @Test
-    public void testAddInscriptionWithInvalidCreditCard() throws InstanceNotFoundException {
-        Course course = createCourse(getValidCourse());
-        try {
-            assertThrows(InputValidationException.class, () -> {
-                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, INVALID_CREDIT_CARD);
-                removeInscription(inscriptionId);
-            });
-        } finally {
-            // Clear database
+        assertThrows(InputValidationException.class, () -> {
+            Course course = createCourse(getValidCourse());
+            Long inscriptionId = courseService.addInscription(course.getCourseId(), "", INVALID_CREDIT_CARD);
+            removeInscription(inscriptionId);
             removeCourse(course.getCourseId());
-        }
-    }
+        });
 
-    @Test
-    public void testAddInscriptionToNonExistentCourse() throws InstanceNotFoundException {
-        Course course = createCourse(getValidCourse());
-        try {
-            assertThrows(InputValidationException.class, () -> {
-                Long inscriptionId = courseService.addInscription(NON_EXISTENT_COURSE_ID, VALID_EMAIL, VALID_CREDIT_CARD);
-                removeInscription(inscriptionId);
-            });
-        } finally {
-            // Clear database
+        assertThrows(InputValidationException.class, () -> {
+            Course course = createCourse(getValidCourse());
+            Long inscriptionId = courseService.addInscription(course.getCourseId(), INVALID_EMAIL, VALID_CREDIT_CARD);
+            removeInscription(inscriptionId);
             removeCourse(course.getCourseId());
-        }
-    }
-    
-    @Test
-    public void testFindNonExistentInscription() {
+        });
+
+        assertThrows(InputValidationException.class, () -> {
+            Course course = createCourse(getValidCourse());
+            Long inscriptionId = courseService.addInscription(course.getCourseId(), "", VALID_CREDIT_CARD);
+            removeInscription(inscriptionId);
+            removeCourse(course.getCourseId());
+        });
     }
 
     @Test
-    public void testFindInscription() {
-    }
+    public void testFindInscription(){};
 
     @Test
-    public void testCancelInscription() {
-    }
+    public void testFindNonExistentInscription(){};
 
     @Test
-    public void testCancelInscriptionOnIllegalDate() {
-    }
+    public void testCancelInscription(){};
 
     @Test
-    public void testCancelNonExistentInscription() {
-    }
+    public void testCancelTooCloseToCourseStartException(){};
+
+    @Test
+    public void testIncorrectUserException(){};
+
+    @Test
+    public void testInscriptionAlreadyCancelledException(){};
 }
 
 
