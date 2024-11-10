@@ -312,15 +312,11 @@ public class AppServiceTest {
 
     @Test
     public void testFindCourses() throws InstanceNotFoundException, InputValidationException {
-        Course addedCourse1 = null;
-        Course addedCourse2 = null;
-        Course addedCourse3 = null;
+        Course addedCourse1 = createCourse(getValidCourse());
+        Course addedCourse2 = createCourse(getValidCourse2());
+        Course addedCourse3 = createCourse(getValidCourse3());
 
         try {
-            addedCourse1 = createCourse(getValidCourse());
-            addedCourse2 = createCourse(getValidCourse2());
-            addedCourse3 = createCourse(getValidCourse3());
-
             // Empty list test case
             assert (courseService.findCourses("Gibraltar", LocalDateTime.now().minusDays(1)).isEmpty());
             // 2 element list test case
