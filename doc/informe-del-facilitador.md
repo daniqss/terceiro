@@ -18,14 +18,24 @@
 
 
 ##  Registro de tareas llevadas a cabo durante la semana 1
-
-  - Descripción de la tarea
+### Descripción de la tarea
+Esta semana tivemos que diseñar a aplicación tendo en conta os requisitos solicitados e seguindo o patrón arquitectónico _provider_
   
-  - Asignación de responsables
+### Asignación de responsables
+  - Javier Manotas Ruiz: diseño dinámico
+  - Yago Garea Cidre: diseño estático
+  - Daniel Queijo Seoane: diseño da interfaz
   
-  - Estado de completud
+### Estado de completud
+Realizada a tarefa 1, pero en vista de ser completada segundo avance el desenvolvemento da aplicación
   
-  - Conflictos, desviaciones, etc.
-  
+### Conflictos, desviaciones, etc.
+Nada que comentar
 
 ## Estado del repositorio en la semama 1
+Engadíronse os seguintes ficheiros:
+  - diseño_ui.excalidraw
+  - diseño_ui.pdf
+  - diseño_sw.md
+
+Modificáronse os ficheiros da documentación
