@@ -10,6 +10,8 @@ import es.udc.ws.app.model.course.Course;
 import es.udc.ws.app.model.course.SqlCourseDao;
 import es.udc.ws.app.model.course.SqlCourseDaoFactory;
 import es.udc.ws.app.model.inscription.Inscription;
+import es.udc.ws.app.model.inscription.SqlInscriptionDao;
+import es.udc.ws.app.model.inscription.SqlInscriptionDaoFactory;
 import es.udc.ws.util.sql.DataSourceLocator;
 
 import javax.sql.DataSource;
@@ -35,6 +37,7 @@ public class CourseServiceImpl implements CourseService {
         dataSource = DataSourceLocator.getDataSource(APP_DATA_SOURCE);
         courseDao = SqlCourseDaoFactory.getDao();
         inscriptionDao = SqlInscriptionDaoFactory.getDao();
+<<<<<<< Updated upstream
     }
 
     private static boolean validateEmail(String email) throws InputValidationException {
@@ -42,6 +45,8 @@ public class CourseServiceImpl implements CourseService {
         Pattern pattern = Pattern.compile(patron);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+=======
+>>>>>>> Stashed changes
     }
 
     private void validateCourse(Course course) throws InputValidationException {
@@ -149,9 +154,51 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    public void cancelInscription(Long inscriptionId, String userEmail) throws RuntimeException, InstanceNotFoundException, InputValidationException {}
+    public void cancelInscription(Long inscriptionId, String userEmail) throws RuntimeException, InstanceNotFoundException, InputValidationException{
+        try (Connection connection = dataSource.getConnection()) {
+            try {
+                connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+                connection.setAutoCommit(false);
+
+                Inscription inscription = inscriptionDao.findById(connection, inscriptionId);
+                if (inscription == null) {
+                    throw new InstanceNotFoundException("Inscription not found", inscriptionId.getClass().toString());
+                }
+
+                if (!inscription.getUserEmail().equals(userEmail)) {
+                    throw new InputValidationException("User email does not match the inscription");
+                }
+
+                // Check if the cancellation is within the allowed time frame
+                // Assuming we need to check this against the course start date
+                Course course = courseDao.findById(connection, inscription.getCourseId());
+                if (course.getStartDate().minusDays(7).isBefore(LocalDateTime.now())) {
+                    throw new InputValidationException("Cancellation period has ended");
+                }
+
+                inscriptionDao.remove(connection, inscriptionId);
+                course.setVacantSpots(course.getVacantSpots() - 1);
+
+                courseDao.update(connection, course);
+                connection.commit();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (InputValidationException | InstanceNotFoundException e) {
+                throw e;
+            }
+            finally {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public List<Inscription> findInscriptions(String userEmail) {
-        return null;
+        try (Connection connection = dataSource.getConnection()) {
+            return inscriptionDao.findByUserEmail(connection, userEmail);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

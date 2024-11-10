@@ -80,8 +80,28 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
         }
     }
 
+    @Override
     public Inscription findById(Connection connection, Long inscriptionId) throws InstanceNotFoundException, RuntimeException {
+        String queryString = "SELECT courseId, inscriptionDate, cancelationDate, userEmail  FROM Inscription WHERE inscriptionId = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
+            int i = 1;
+            preparedStatement.setLong(i, inscriptionId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (!resultSet.next()) {
+                throw new InstanceNotFoundException(inscriptionId, Inscription.class.getName());
+            }
+            i = 1;
+            Long courseId = resultSet.getLong(i++);
+            Timestamp inscriptionDateAsTimestamp = resultSet.getTimestamp(i++);
+            Timestamp cancelationDateAsTimestamp = resultSet.getTimestamp(i++);
+            LocalDateTime inscriptionDate = inscriptionDateAsTimestamp.toLocalDateTime();
+            LocalDateTime cancelationDate = cancelationDateAsTimestamp.toLocalDateTime();
+            String userEmail = resultSet.getString(i);
 
-        return null;
+            return new Inscription(inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
