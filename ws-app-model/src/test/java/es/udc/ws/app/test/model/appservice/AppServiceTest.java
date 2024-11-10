@@ -616,23 +616,16 @@ public class AppServiceTest {
     @Test
     public void testInscriptionAlreadyCancelledException() throws InstanceNotFoundException {
         Course course = createCourse(getValidCourse());
-        System.out.println(course.getCourseId());
         try {
             assertThrows(InscriptionAlreadyCancelledException.class, () -> {
-                System.out.println(course.getCourseId());
-                System.out.println(VALID_EMAIL);
-                System.out.println(VALID_CREDIT_CARD);
 
                 Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                System.out.println(inscriptionId);
-                System.out.println(findInscription(inscriptionId).getUserEmail());
-                System.out.println(findInscription(inscriptionId).getCreditCard());
                 courseService.cancelInscription(inscriptionId, VALID_EMAIL);
                 courseService.cancelInscription(inscriptionId, VALID_EMAIL);
                 removeInscription(inscriptionId);
             });
         } finally {
-            if (course!=null) removeCourse(course.getCourseId());
+            removeCourse(course.getCourseId());
         }
     };
 

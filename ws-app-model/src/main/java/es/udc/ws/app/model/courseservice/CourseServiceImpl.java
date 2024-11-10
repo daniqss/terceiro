@@ -178,9 +178,13 @@ public class CourseServiceImpl implements CourseService {
                     throw new CancelTooCloseToCourseStartException(inscriptionId, inscription.getCourseId(), course.getStartDate(), LocalDateTime.now());
                 }
 
-                inscriptionDao.remove(connection, inscriptionId);
-                course.setVacantSpots(course.getVacantSpots() - 1);
+                inscription.setCancelationDate(LocalDateTime.now());
+                inscriptionDao.update(connection, inscription);
 
+                course.setVacantSpots(course.getVacantSpots() - 1);
+                courseDao.update(connection, course);
+
+                course.setVacantSpots(course.getVacantSpots() - 1);
                 courseDao.update(connection, course);
                 connection.commit();
             } catch (SQLException e) {
