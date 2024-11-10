@@ -116,8 +116,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Long addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException {
-        validateInscription(courseId, userEmail, bankCardNumber);
+    public Long addInscription(Long courseId, String userEmail, String creditCard) throws InputValidationException, InstanceNotFoundException {
+        validateInscription(courseId, userEmail, creditCard);
 
         try (Connection connection = dataSource.getConnection()) {
             try {
@@ -126,13 +126,14 @@ public class CourseServiceImpl implements CourseService {
                 Course course = courseDao.findById(connection, courseId);
                 int vacantSpots = course.getVacantSpots();
 
-                Inscription inscription = inscriptionDao.create(connection, new Inscription(courseId, LocalDateTime.now(), userEmail));
+                Inscription inscription = inscriptionDao.create(connection, new Inscription(courseId, LocalDateTime.now(), userEmail, creditCard));
 
                 course.setVacantSpots(vacantSpots - 1);
                 courseDao.update(connection, course);
                 connection.commit();
 
                 return inscription.getInscriptionId();
+
             } catch (SQLException e) {
                 connection.rollback();
                 throw new RuntimeException(e);

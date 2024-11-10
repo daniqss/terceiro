@@ -269,7 +269,6 @@ public class AppServiceTest {
     public void testAddInscriptionAndFindInscription()
             throws InstanceNotFoundException, InputValidationException {
         Course course = createCourse(getValidCourse());
-        Inscription inscription = new Inscription(course.getCourseId(), LocalDateTime.now().withNano(0), VALID_CREDIT_CARD);
 
         try {
             // Make inscription
@@ -277,12 +276,30 @@ public class AppServiceTest {
             Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
             LocalDateTime afterInscriptionDate = LocalDateTime.now().withNano(0);
 
+            Inscription inscription = findInscription(inscriptionId);
+
             // Find inscription by email
             List<Inscription> inscriptionList = courseService.findInscriptions(VALID_EMAIL);
             Inscription foundInscription = inscriptionList.getFirst();
+            System.out.println(beforeInscriptionDate);
+            System.out.println(afterInscriptionDate);
+
+            System.out.println(inscriptionList.size());
+            System.out.println(inscription);
+            System.out.println(foundInscription);
+
+            System.out.println(VALID_EMAIL);
+            System.out.println(foundInscription.getUserEmail());
+
+            System.out.println(course.getCourseId());
+            System.out.println(foundInscription.getInscriptionId());
+
+            System.out.println(foundInscription.getInscriptionDate());
+
+            System.out.println(foundInscription.getCancelationDate());
 
             // Check inscription
-            assertEquals(inscriptionList.size(), 0);
+            assertEquals(inscriptionList.size(), 1);
             assertEquals(inscription, foundInscription);
             //assertEquals(VALID_CREDIT_CARD, foundInscription.getCreditCard());
             assertEquals(VALID_EMAIL, foundInscription.getUserEmail());
@@ -291,9 +308,12 @@ public class AppServiceTest {
                     && (!foundInscription.getInscriptionDate().isAfter(afterInscriptionDate)));
             assertNull(foundInscription.getCancelationDate());
 
-        } finally {
-            // Clear database: remove sale (if created) and movie
             removeInscription(inscription.getInscriptionId());
+
+
+        } finally {
+
+            // Clear database: remove sale (if created) and movie
             removeCourse(course.getCourseId());
         }
     }

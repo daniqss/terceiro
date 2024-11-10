@@ -21,6 +21,7 @@ CREATE TABLE Inscription
     inscriptionDate DATETIME     NOT NULL,
     cancelationDate DATETIME,
     userEmail       VARCHAR(200) NOT NULL,
+    creditCard      VARCHAR(200) NOT NULL,
     PRIMARY KEY (inscriptionId),
     FOREIGN KEY (courseId)
         REFERENCES Course (courseId)

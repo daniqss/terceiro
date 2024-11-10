@@ -14,7 +14,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
 
     @Override
     public Inscription update(Connection connection, Inscription inscription) throws InstanceNotFoundException, RuntimeException {
-        String queryString = "UPDATE Inscription SET courseId =?, inscriptionDate =?, cancelationDate =?, userEmail = ? WHERE inscriptionId = ?";
+        String queryString = "UPDATE Inscription SET courseId =?, inscriptionDate =?, cancelationDate =?, userEmail = ?, creditCard = ? WHERE inscriptionId = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
             int i = 1;
@@ -22,6 +22,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(inscription.getInscriptionDate()));
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(inscription.getCancelationDate()));
             preparedStatement.setString(i++, inscription.getUserEmail());
+            preparedStatement.setString(i++, inscription.getCreditCard());
             preparedStatement.setLong(i, inscription.getInscriptionId());
 
             int updatedRows = preparedStatement.executeUpdate();
@@ -52,7 +53,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
     }
 
     public List<Inscription> findByUserEmail(Connection connection, String userEmail) throws RuntimeException {
-        String queryString = "SELECT inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail " +
+        String queryString = "SELECT inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail, creditCard " +
                 "FROM Inscription " +
                 "WHERE LOWER(userEmail) = LOWER(?) " +
                 "ORDER BY inscriptionDate";
@@ -67,8 +68,9 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
                     LocalDateTime inscriptionDate = resultSet.getObject("inscriptionDate", LocalDateTime.class);
                     LocalDateTime cancelationDate = resultSet.getObject("cancelationDate", LocalDateTime.class);
                     String resultEmail = resultSet.getString("userEmail");
+                    String creditCard = resultSet.getString("creditCard");
 
-                    Inscription inscription = new Inscription(inscriptionId, courseId, inscriptionDate, cancelationDate, resultEmail);
+                    Inscription inscription = new Inscription(inscriptionId, courseId, inscriptionDate, cancelationDate, resultEmail, creditCard);
                     inscriptions.add(inscription);
                 }
             }

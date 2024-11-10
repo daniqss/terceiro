@@ -10,20 +10,22 @@ public class Inscription {
     private LocalDateTime inscriptionDate;
     private LocalDateTime cancelationDate = null;
     private String userEmail;
+    private String creditCard;
 
-    public Inscription(Long courseId, LocalDateTime inscriptionDate, String userEmail) {
+    public Inscription(Long courseId, LocalDateTime inscriptionDate, String userEmail, String creditCard) {
         this.courseId = courseId;
         this.inscriptionDate = (inscriptionDate != null) ? inscriptionDate.withNano(0) : null;
         this.userEmail = userEmail;
+        this.creditCard = creditCard;
     }
 
-    public Inscription(Long inscriptionId, Long courseId, LocalDateTime inscriptionDate, String userEmail) {
-        this(courseId, inscriptionDate, userEmail);
+    public Inscription(Long inscriptionId, Long courseId, LocalDateTime inscriptionDate, String userEmail, String creditCard) {
+        this(courseId, inscriptionDate, userEmail, creditCard);
         this.inscriptionId = inscriptionId;
     }
 
-    public Inscription(Long inscriptionId, Long courseId, LocalDateTime inscriptionDate, LocalDateTime cancelationDate, String userEmail) {
-        this(inscriptionId, courseId, inscriptionDate, userEmail);
+    public Inscription(Long inscriptionId, Long courseId, LocalDateTime inscriptionDate, LocalDateTime cancelationDate, String userEmail, String creditCard) {
+        this(inscriptionId, courseId, inscriptionDate, userEmail, creditCard);
         this.cancelationDate = (cancelationDate != null) ? cancelationDate.withNano(0) : null;
     }
 
@@ -67,16 +69,20 @@ public class Inscription {
         this.userEmail = userEmail;
     }
 
+    public String getCreditCard() { return creditCard;}
+
+    public void setCreditCard(String creditCard) {this.creditCard = creditCard;}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Inscription that = (Inscription) o;
-        return Objects.equals(inscriptionId, that.inscriptionId) && Objects.equals(courseId, that.courseId) && Objects.equals(inscriptionDate, that.inscriptionDate) && Objects.equals(cancelationDate, that.cancelationDate) && Objects.equals(userEmail, that.userEmail);
+        return Objects.equals(inscriptionId, that.inscriptionId) && Objects.equals(courseId, that.courseId) && Objects.equals(inscriptionDate, that.inscriptionDate) && Objects.equals(cancelationDate, that.cancelationDate) && Objects.equals(userEmail, that.userEmail) && Objects.equals(creditCard, that.creditCard);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail);
+        return Objects.hash(inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail, creditCard);
     }
 }

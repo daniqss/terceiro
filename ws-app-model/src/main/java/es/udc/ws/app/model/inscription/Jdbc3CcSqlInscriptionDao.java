@@ -7,8 +7,8 @@ public class Jdbc3CcSqlInscriptionDao extends AbstractSqlInscriptionDao {
     @Override
     public Inscription create(Connection connection, Inscription inscription) throws RuntimeException {
         String queryString = "INSERT INTO Inscription"
-                + "(courseId, inscriptionDate, userEmail)"
-                + " VALUES (?,?,?)";
+                + "(courseId, inscriptionDate, userEmail, creditCard)"
+                + " VALUES (?,?,?,?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(
                 queryString, Statement.RETURN_GENERATED_KEYS)
@@ -16,7 +16,8 @@ public class Jdbc3CcSqlInscriptionDao extends AbstractSqlInscriptionDao {
             int i = 1;
             preparedStatement.setLong(++i, inscription.getCourseId());
             preparedStatement.setTimestamp(i++, Timestamp.valueOf(inscription.getInscriptionDate()));
-            preparedStatement.setString(i, inscription.getUserEmail());
+            preparedStatement.setString(i++, inscription.getUserEmail());
+            preparedStatement.setString(i, inscription.getCreditCard());
 
             preparedStatement.executeUpdate();
 
@@ -24,9 +25,10 @@ public class Jdbc3CcSqlInscriptionDao extends AbstractSqlInscriptionDao {
             if (!resultSet.next()) {
                 throw new SQLException("JDBC driver did not return generated key");
             }
+
             Long inscriptionId = resultSet.getLong(1);
 
-            return new Inscription(inscriptionId, inscription.getCourseId(), inscription.getInscriptionDate(), inscription.getUserEmail());
+            return new Inscription(inscriptionId, inscription.getCourseId(), inscription.getInscriptionDate(), inscription.getUserEmail(), inscription.getCreditCard());
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
