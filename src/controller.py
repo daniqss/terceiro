@@ -28,7 +28,7 @@ class Controller:
                 self.abbort_operation = False
                 self.view.update_medication_list_panel_patient(patient["id"], medications)
         except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            self.view.show_dialog(e)
 
     @run_async
     def on_refresh_patients(self):
@@ -56,7 +56,7 @@ class Controller:
             self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
 
         except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            self.view.show_dialog(e)
 
     @run_async
     def on_update_medication(self, patient_id, medication_id, name, dosage, duration, start_date):
@@ -67,7 +67,7 @@ class Controller:
             self.view.update_medication_list_panel_patient(patient_id, self.model.get_medications(patient_id))
             
         except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            self.view.show_dialog(e)
 
     @run_async
     def on_cancel_medication(self, patient_id):
@@ -78,7 +78,7 @@ class Controller:
             self.view.update_medication_list_panel_patient(patient_id, medication)
 
         except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            self.view.show_dialog(e)
     
     def on_edit_medication(self, patient_id, medication):
         id = medication["id"]
@@ -102,7 +102,7 @@ class Controller:
             self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
         except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            self.view.show_dialog(e)
 
     def on_delete_medication(self, paciente_id, medication_id):
         @run_async
@@ -114,7 +114,7 @@ class Controller:
                 self.view.update_medication_list_panel_patient(paciente_id, self.model.get_medications(paciente_id))
 
             except Exception as e:
-                self.view.show_dialog(e.title_message(), e.body_message())
+                self.view.show_dialog(e)
 
         self.view.show_confirmation_dialog(
             _("Confirm deletion"), 
@@ -139,10 +139,10 @@ class Controller:
                 self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
                 
             except Exception as e:
-                self.view.show_dialog(e.title_message(), e.body_message())
+                self.view.show_dialog(e)
         
         except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            self.view.show_dialog(e)
                 
     def on_delete_posology(self, button, container, patient_id, medication_id, posology_id):
         @run_async
@@ -158,10 +158,10 @@ class Controller:
                     self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
                 
                 except Exception as e:
-                    self.view.show_dialog(e.title_message(), e.body_message())
+                    self.view.show_dialog(e)
 
             except Exception as e:
-                self.view.show_dialog(e.title_message(), e.body_message())
+                self.view.show_dialog(e)
         
         self.view.show_confirmation_dialog(
             _("Confirm deletion"),
@@ -182,10 +182,10 @@ class Controller:
                 self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
                 
             except Exception as e:
-                self.view.show_dialog(e.title_message(), e.body_message())
+                self.view.show_dialog(e)
             
         except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            self.view.show_dialog(e)
 
     @run_async
     def on_cancel_posology(self, button, container, patient_id, medication_id):
@@ -196,13 +196,13 @@ class Controller:
             self.view.update_posology_list_panel(button, container, patient_id, medication_id, posologies)
 
         except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            self.view.show_dialog(e)
     
     def get_patients(self):
         try:
             return self.model.get_patients()
         except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            self.view.show_dialog(e)
             return []    
     
     @run_async
@@ -210,7 +210,7 @@ class Controller:
         try:
             return self.model.get_medications(patient_id)
         except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            self.view.show_dialog(e)
             return []
     
     @run_async
@@ -218,5 +218,5 @@ class Controller:
         try:
             return self.model.get_posologies(patient_id, medication_id)
         except Exception as e:
-            self.view.show_dialog(e.title_message(), e.body_message())
+            self.view.show_dialog(e)
             return []
