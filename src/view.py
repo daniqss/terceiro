@@ -609,7 +609,10 @@ class View(Adw.Application):
 
 
 
-    def show_dialog(self, title: str, message: str):
+    def show_dialog(self, e: Exception):
+        title = e.title_message()
+        message = e.body_message()
+
         dialog = Adw.AlertDialog(heading=title, body=message)
 
         escape_trigger = Gtk.ShortcutTrigger.parse_string("Escape");
@@ -618,9 +621,38 @@ class View(Adw.Application):
         dialog.add_shortcut(shortcut)
 
         dialog.add_response("accept", _("Accept"))
-        
         dialog.set_response_appearance("accept", Adw.ResponseAppearance.SUGGESTED)
+
+        complete_message = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=3,
+            margin_start=15,
+            margin_end=15,
+            margin_top=6,
+            margin_bottom=6    
+        )
+
+        def toggle_error_visibility():
+            error_label.set_visible(not error_label.get_visible())
+            self.buttons.switchExpandableButton(expand_button)
+        expand_button = self.buttons.expandButton(lambda _: toggle_error_visibility())
+        expand_button.add_css_class('flat')
         
+        button_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        button_box.append(expand_button)
+        
+        error_label = Gtk.Label(label=str(e))
+        error_label.set_wrap(True)
+        error_label.set_wrap_mode(2)
+        error_label.set_max_width_chars(50)
+        error_label.set_visible(False)
+        error_label.add_css_class('dim-label')
+        
+        complete_message.append(button_box)
+        complete_message.append(error_label)
+    
+        
+        dialog.set_extra_child(complete_message)
         dialog.connect("response", lambda _, __: dialog.close())
         dialog.present(self.window)
 
