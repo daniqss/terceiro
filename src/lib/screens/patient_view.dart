@@ -111,20 +111,44 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
         final patientName = patient["name"];
         final patientSurname = patient["surname"];
 
-        return Scaffold(
-          appBar: buildAppBar(isLandscape, patientName, patientSurname),
-          body: Stack(
-            children: [
-              Column(
-                children: [
-                  buildFilterSection(),
-                  buildMedicationsList(medications),
-                ],
-              ),
-              buildSlideMenu(allMedications, isLandscape),
-            ],
-          ),
-        );
+        if (isLandscape) {
+          return Scaffold(
+            appBar: buildAppBar(isLandscape, patientName, patientSurname),
+            body: Row(
+              children: [
+                SizedBox(
+                  width: 280,
+                  child: Drawer(
+                    child: buildSlideMenuContent(allMedications),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      buildFilterSection(),
+                      buildMedicationsList(medications),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else {
+          return Scaffold(
+            appBar: buildAppBar(isLandscape, patientName, patientSurname),
+            body: Stack(
+              children: [
+                Column(
+                  children: [
+                    buildFilterSection(),
+                    buildMedicationsList(medications),
+                  ],
+                ),
+                buildSlideMenu(allMedications, isLandscape),
+              ],
+            ),
+          );
+        }
       },
     );
   }
@@ -138,7 +162,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       centerTitle: true,
-      leading: IconButton(
+      leading: isLandscape ? null : IconButton(
         icon: const Icon(Icons.menu),
         onPressed: toggleMedicationsList,
       ),
@@ -241,42 +265,54 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
   }
 
   Widget buildSlideMenu(List allMedications, bool isLandscape) {
-    return SlideTransition(
-      position: _slideAnimation,
-      child: Container(
-        width: 250,
-        color: Colors.teal.shade100,
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Medicamentos",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: allMedications.length,
-                itemBuilder: (context, index) {
-                  final medication = allMedications[index];
-                  final medicationId = medication["id"];
-                  final posologies =
-                  Provider.of<PatientProvider>(context, listen: false)
-                      .getPosologiesForMedication(medicationId);
-                  final isExpanded = _expandedMedications.contains(
-                      medicationId);
-
-                  return buildMedicationItem(
-                      medication, medicationId, posologies, isExpanded, index);
-                },
-              ),
-            ),
-          ],
+    if (isLandscape) {
+      return buildSlideMenuContent(allMedications);
+    } else {
+      return SlideTransition(
+        position: _slideAnimation,
+        child: Container(
+          width: 250,
+          color: Colors.teal.shade100,
+          padding: const EdgeInsets.all(16.0),
+          child: buildSlideMenuContent(allMedications),
         ),
-      ),
+      );
+    }
+  }
+
+  Widget buildSlideMenuContent(List allMedications) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Medicamentos",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: allMedications.length,
+            itemBuilder: (context, index) {
+              final medication = allMedications[index];
+              final medicationId = medication["id"];
+              final posologies =
+              Provider.of<PatientProvider>(context, listen: false)
+                  .getPosologiesForMedication(medicationId);
+              final isExpanded = _expandedMedications.contains(medicationId);
+
+              return buildMedicationItem(
+                medication,
+                medicationId,
+                posologies,
+                isExpanded,
+                index,
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
