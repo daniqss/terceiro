@@ -79,3 +79,49 @@
   h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
      titulación?
   Como en muchas otras asignaturas se tiene que planificar el desarrollo de software antes de comenzar a implementarlo.
+
+
+
+## Evaluación final de la semana 2
+
+   - Santiago Garea Cidre
+   
+     - 4
+     - Este integrante del equipo ha ayudado al resto de miembros con la configuración del entorno y ha realizado aportaciones de calidad al diseño de la aplicación.
+  
+   - Javier Manotas Ruiz
+     - 4
+     - Este integrante del equipo ha realizado aportaciones de calidad al diseño de la aplicación.
+
+   - Daniel Queijo Seoane
+     - 4
+     - Este integrante del equipo ha realizado aportaciones de calidad al diseño de la aplicación y a la corrección de errores que surgieron en esta.
+
+
+## Retrospectiva de la semana 2
+
+  a) ¿Qué ha sido lo mejor de la práctica?
+  El aprender los fundamentos básicos de programación de aplicaciones móbiles
+  
+  b) ¿Qué fue lo peor?
+  Conseguir que funcionase el entorno de desarrollo.
+
+  c) ¿Cuál fue el mejor momento de cada semana durante el trabajo del
+     equipo?
+  El momento en el que vimos como iba cobrando forma nuestra aplicación
+
+  d) ¿Cuál ha sido el peor?
+  La gran dificultad del momento de empezar de 0 un proyecto en un lenguaje que nunca antes habíamos usado
+
+  e) ¿Qué has aprendido?
+  Los fundamentos de Dart y Flutter para el desarrollo de aplicaciones móviles
+
+  f) ¿Qué necesitáis conservar -como equipo- para las próximas semanas?
+  Nuestra capacidad de comunicación y coordinación a la hora de trabajar.
+
+  g) ¿Qué tenéis que mejorar -como equipo- para las próximas semanas?
+  El empezar a trabajar con más antelación.
+
+  h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
+     titulación?
+  Hemos tenido que familiriazarnos de manera rápida con una nueva tecnología
