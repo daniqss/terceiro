@@ -6,7 +6,7 @@ import 'package:src/providers/login_provider.dart';
 class PatientView extends StatefulWidget {
   final int patientId;
 
-  const PatientView({super.key, required this.patientId});
+  const PatientView({Key? key, required this.patientId}) : super(key: key);
 
   @override
   PatientViewState createState() => PatientViewState();
@@ -16,9 +16,11 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
   final Set<int> _expandedMedications = {};
-  int _selectedFilter = 24;
+  int? _selectedFilter = 24;
   DateTimeRange? _selectedDateRange;
   bool _isLoadingFilter = false;
+  List<Map<String, dynamic>> _filteredMedications = [];
+  final Map<int, bool> _checkedMedications = {};
 
   @override
   void initState() {
@@ -36,8 +38,16 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
     ));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<PatientProvider>(context, listen: false)
-          .loadPatientData(widget.patientId);
+      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+
+      // Primero cargar datos de medicamentos y posologías.
+      patientProvider.loadPatientData(widget.patientId).then((_) {
+        // Luego, cargar las posologías de todos los medicamentos.
+        patientProvider.loadAllPosologies(widget.patientId).then((_) {
+          // Filtrar los medicamentos una vez que todos los datos están cargados.
+          _filterMedications(patientProvider);
+        });
+      });
     });
   }
 
@@ -47,12 +57,28 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
     super.dispose();
   }
 
-  void toggleMedicationsList() {
-    if (_animationController.isDismissed) {
-      _animationController.forward();
-    } else {
-      _animationController.reverse();
-    }
+  void _filterMedications(PatientProvider provider) {
+    setState(() => _isLoadingFilter = true);
+
+    setState(() {
+      if (_selectedFilter != null) {
+        _filteredMedications = provider.filterMedications(
+          patientId: widget.patientId,
+          filterHours: _selectedFilter,
+        );
+      } else if (_selectedDateRange != null) {
+        _filteredMedications = provider.filterMedicationsByDateRange(
+          patientId: widget.patientId,
+          dateRange: _selectedDateRange!,
+        );
+      }
+      _isLoadingFilter = false;
+
+      // Inicializa el estado de cada checkbox de los medicamentos filtrados
+      for (var medication in _filteredMedications) {
+        _checkedMedications[medication["id"]] = false;
+      }
+    });
   }
 
   Future<void> _selectDateRange() async {
@@ -65,18 +91,51 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
             start: DateTime.now(),
             end: DateTime.now().add(const Duration(days: 1)),
           ),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Colors.teal, // Color principal del calendario
+              onPrimary: Colors.white, // Color del texto en botones
+              onSurface: Colors.teal, // Color de texto en el calendario
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.teal, // Color del botón de selección
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null && picked != _selectedDateRange) {
       setState(() {
         _selectedDateRange = picked;
-        _isLoadingFilter = true;
+        _selectedFilter = null; // Cambiamos a rango personalizado
       });
-      Future.delayed(const Duration(milliseconds: 500), () {
-        setState(() {
-          _isLoadingFilter = false;
-        });
-      });
+      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+      _filterMedications(patientProvider);
+    }
+  }
+
+  void _updateFilter(int? filterHours) {
+    setState(() {
+      _selectedFilter = filterHours;
+      if (filterHours != null) {
+        _selectedDateRange = null; // Descartar rango personalizado si seleccionamos horas
+      }
+    });
+    final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+    _filterMedications(patientProvider);
+  }
+
+  void toggleMedicationsList() {
+    if (_animationController.isDismissed) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
     }
   }
 
@@ -88,20 +147,11 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery
-        .of(context)
-        .orientation == Orientation.landscape;
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Consumer<PatientProvider>(
       builder: (context, patientProvider, child) {
         final patient = patientProvider.patient;
-        final allMedications = patientProvider.medications;
-        final medications = patientProvider.filterMedications(
-          patientId: widget.patientId,
-          filterHours: _selectedFilter,
-          dateRange: _selectedDateRange,
-        );
-
         if (patient == null) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
@@ -111,50 +161,24 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
         final patientName = patient["name"];
         final patientSurname = patient["surname"];
 
-        if (isLandscape) {
-          return Scaffold(
-            appBar: buildAppBar(isLandscape, patientName, patientSurname),
-            body: Row(
-              children: [
-                SizedBox(
-                  width: 280,
-                  child: Drawer(
-                    child: buildSlideMenuContent(allMedications),
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      buildFilterSection(),
-                      buildMedicationsList(medications),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        } else {
-          return Scaffold(
-            appBar: buildAppBar(isLandscape, patientName, patientSurname),
-            body: Stack(
-              children: [
-                Column(
-                  children: [
-                    buildFilterSection(),
-                    buildMedicationsList(medications),
-                  ],
-                ),
-                buildSlideMenu(allMedications, isLandscape),
-              ],
-            ),
-          );
-        }
+        return Scaffold(
+          appBar: buildAppBar(isLandscape, patientName, patientSurname),
+          body: Column(
+            children: [
+              buildFilterSection(),
+              Expanded(
+                child: _isLoadingFilter
+                    ? const Center(child: CircularProgressIndicator())
+                    : buildMedicationsList(_filteredMedications),
+              ),
+            ],
+          ),
+        );
       },
     );
   }
 
-  AppBar buildAppBar(bool isLandscape, String patientName,
-      String patientSurname) {
+  AppBar buildAppBar(bool isLandscape, String patientName, String patientSurname) {
     return AppBar(
       backgroundColor: Colors.teal,
       title: Text(
@@ -162,7 +186,9 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       centerTitle: true,
-      leading: isLandscape ? null : IconButton(
+      leading: isLandscape
+          ? null
+          : IconButton(
         icon: const Icon(Icons.menu),
         onPressed: toggleMedicationsList,
       ),
@@ -181,7 +207,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          DropdownButton<int>(
+          DropdownButton<int?>(
             value: _selectedFilter,
             underline: Container(),
             items: const [
@@ -197,28 +223,18 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
                 value: 72,
                 child: Text("Próximas 72 horas"),
               ),
+              DropdownMenuItem(
+                value: null,
+                child: Text("Rango personalizado"),
+              ),
             ],
             onChanged: (value) {
-              if (value != null) {
-                setState(() {
-                  _selectedFilter = value;
-                  _isLoadingFilter = true;
-                });
-                Future.delayed(const Duration(milliseconds: 500), () {
-                  setState(() {
-                    _isLoadingFilter = false;
-                  });
-                });
+              if (value == null) {
+                _selectDateRange();
+              } else {
+                _updateFilter(value);
               }
             },
-          ),
-          ElevatedButton.icon(
-            onPressed: _selectDateRange,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-            ),
-            icon: const Icon(Icons.calendar_today),
-            label: const Text("Intervalo"),
           ),
         ],
       ),
@@ -226,175 +242,59 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
   }
 
   Widget buildMedicationsList(List medications) {
-    return _isLoadingFilter
-        ? const Center(
-      child: CircularProgressIndicator(),
-    )
-        : Expanded(
-      child: ListView.builder(
-        itemCount: medications.length,
-        itemBuilder: (context, index) {
-          final medication = medications[index];
-          return Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+    return ListView.builder(
+      itemCount: medications.length,
+      itemBuilder: (context, index) {
+        final medication = medications[index];
+        final medicationId = medication["id"];
+        final nextPosologyTime = _getNextPosologyTime(medication);
+        final timeUntilNext = _calculateTimeUntil(nextPosologyTime);
+
+        return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          child: ListTile(
+            leading: Checkbox(
+              value: _checkedMedications[medicationId] ?? false,
+              onChanged: (bool? value) {
+                setState(() {
+                  _checkedMedications[medicationId] = value ?? false;
+                });
+              },
             ),
-            margin: const EdgeInsets.symmetric(
-              vertical: 8,
-              horizontal: 16,
+            title: Text(
+              medication["name"],
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            child: ListTile(
-              title: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  medication["name"],
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              subtitle: Text("Dosis: ${medication["dosage"]}mg"),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () {},
+            subtitle: Text(
+              timeUntilNext.isNotEmpty ? "Próxima dosis en: $timeUntilNext" : "Sin próximas dosis",
             ),
-          );
-        },
-      ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () {},
+          ),
+        );
+      },
     );
   }
 
-  Widget buildSlideMenu(List allMedications, bool isLandscape) {
-    if (isLandscape) {
-      return buildSlideMenuContent(allMedications);
+  DateTime? _getNextPosologyTime(Map<String, dynamic> medication) {
+    final validPosologies = medication["valid_posologies"] as List<DateTime>;
+    return validPosologies.isNotEmpty ? validPosologies.first : null;
+  }
+
+  String _calculateTimeUntil(DateTime? time) {
+    if (time == null) return "";
+    final now = DateTime.now();
+    final difference = time.difference(now);
+
+    if (difference.isNegative) {
+      return "";
+    } else if (difference.inHours > 0) {
+      return "${difference.inHours} horas y ${difference.inMinutes % 60} minutos";
     } else {
-      return SlideTransition(
-        position: _slideAnimation,
-        child: Container(
-          width: 250,
-          color: Colors.teal.shade100,
-          padding: const EdgeInsets.all(16.0),
-          child: buildSlideMenuContent(allMedications),
-        ),
-      );
+      return "${difference.inMinutes} minutos";
     }
-  }
-
-  Widget buildSlideMenuContent(List allMedications) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Medicamentos",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: allMedications.length,
-            itemBuilder: (context, index) {
-              final medication = allMedications[index];
-              final medicationId = medication["id"];
-              final posologies =
-              Provider.of<PatientProvider>(context, listen: false)
-                  .getPosologiesForMedication(medicationId);
-              final isExpanded = _expandedMedications.contains(medicationId);
-
-              return buildMedicationItem(
-                medication,
-                medicationId,
-                posologies,
-                isExpanded,
-                index,
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildMedicationItem(dynamic medication,
-      int medicationId,
-      List posologies,
-      bool isExpanded,
-      int index,) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                if (isExpanded) {
-                  _expandedMedications.remove(medicationId);
-                } else {
-                  _expandedMedications.add(medicationId);
-                  Provider.of<PatientProvider>(context, listen: false)
-                      .loadPosologies(widget.patientId, medicationId, index);
-                }
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 4.0,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        medication["name"],
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  Icon(
-                    isExpanded ? Icons.expand_less : Icons.expand_more,
-                    color: Colors.teal,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (isExpanded)
-            posologies.isEmpty
-                ? const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              child: Text(
-                "No hay posologías disponibles.",
-                style: TextStyle(
-                    fontStyle: FontStyle.italic, color: Colors.grey),
-              ),
-            )
-                : Column(
-              children: posologies.map((posology) {
-                final hour = posology['hour'].toString().padLeft(2, '0');
-                final minute = posology['minute'].toString().padLeft(2, '0');
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 4.0, horizontal: 12.0),
-                  child: Text("Posología: $hour:$minute"),
-                );
-              }).toList(),
-            ),
-        ],
-      ),
-    );
   }
 }
