@@ -39,3 +39,21 @@ Engadíronse os seguintes ficheiros:
   - diseño_sw.md
 
 Modificáronse os ficheiros da documentación
+
+##  Registro de tareas llevadas a cabo durante la semana 1
+### Descripción de la tarea
+Esta semana tivemos que desarrollar a aplicación diseñada na semana pasada, controlando errores e concurrencia
+  
+### Asignación de responsables
+  - Javier Manotas Ruiz: desarrollador
+  - Yago Garea Cidre: desarrollador principal de la aplicación
+  - Daniel Queijo Seoane: desarrollador
+  
+### Estado de completud
+Realizada a tarefa 2
+  
+### Conflictos, desviaciones, etc.
+Na seguinte semana teremos que completar algúns aspectos do software e pulir algunhas partes
+
+## Estado del repositorio en la semama 2
+Engadiuse o proxecto de flutter
