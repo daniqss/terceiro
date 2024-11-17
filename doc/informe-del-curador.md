@@ -25,9 +25,15 @@
   de definir los casos de uso de la aplicación, así como hacer un diseño
   amigable y accesible para las usuarias y una buena documentación con un
   diseño estático y dinámico claros de la aplicación.
-	
-	
+
+## Objetivos de aprendizaje de la semana 2
+  El objetivo de esta semana es que el equipo de desarrollo sea capaz de 
+  organizarse y de desarrollar la aplicación con una interfaz útil y sencilla.
+ 
 ## Otros recursos empleados en la semana 1
 
   - Mermaid Live Editor 
-  - Markdown Guide 
+  - Markdown Guide
+
+## Otros recursos empleados en la semana 2
+ - Flutter Api Docs
