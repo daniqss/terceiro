@@ -4,6 +4,7 @@ import 'package:src/model.dart';
 
 class IntakeModel {
   Future<void> addIntake(int patientId, int medicationId, Map<String, dynamic> intakeData) async {
+    print("Intake data: $intakeData");
     final url = Uri.parse("${Model.path}/patients/$patientId/medications/$medicationId/intakes");
     final response = await http.post(
       url,
@@ -12,6 +13,8 @@ class IntakeModel {
     );
 
     if (response.statusCode != 201) {
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
       throw Exception("Error al añadir el intake");
     }
   }
