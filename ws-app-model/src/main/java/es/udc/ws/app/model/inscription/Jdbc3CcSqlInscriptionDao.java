@@ -5,7 +5,7 @@ import java.sql.*;
 public class Jdbc3CcSqlInscriptionDao extends AbstractSqlInscriptionDao {
 
     @Override
-    public Inscription create(Connection connection, Inscription inscription) throws RuntimeException {
+    public Inscription create(Connection connection, Inscription inscription) {
         String queryString = "INSERT INTO Inscription"
                 + "(courseId, inscriptionDate, userEmail, creditCard)"
                 + " VALUES (?,?,?,?)";

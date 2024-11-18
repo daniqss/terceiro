@@ -13,7 +13,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
     }
 
     @Override
-    public Inscription update(Connection connection, Inscription inscription) throws InstanceNotFoundException, RuntimeException {
+    public Inscription update(Connection connection, Inscription inscription) throws InstanceNotFoundException {
         String queryString = "UPDATE Inscription SET courseId =?, inscriptionDate =?, cancelationDate =?, userEmail = ?, creditCard = ? WHERE inscriptionId = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
@@ -37,7 +37,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
         }
     }
 
-    public void remove(Connection connection, long inscriptionId) throws InstanceNotFoundException, RuntimeException {
+    public void remove(Connection connection, long inscriptionId) throws InstanceNotFoundException {
         String queryString = "DELETE FROM Inscription WHERE inscriptionId = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
@@ -52,7 +52,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
         }
     }
 
-    public List<Inscription> findByUserEmail(Connection connection, String userEmail) throws RuntimeException {
+    public List<Inscription> findByUserEmail(Connection connection, String userEmail) {
         String queryString = "SELECT inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail, creditCard " +
                 "FROM Inscription " +
                 "WHERE LOWER(userEmail) = LOWER(?) " +
@@ -81,7 +81,7 @@ public abstract class AbstractSqlInscriptionDao implements SqlInscriptionDao {
     }
 
     @Override
-    public Inscription findById(Connection connection, Long inscriptionId) throws InstanceNotFoundException, RuntimeException {
+    public Inscription findById(Connection connection, Long inscriptionId) throws InstanceNotFoundException {
         String queryString = "SELECT courseId, inscriptionDate, cancelationDate, userEmail, creditCard  FROM Inscription WHERE inscriptionId = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
             int i = 1;

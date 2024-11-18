@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 public class Jdbc3CcSqlCourseDao extends AbstractSqlCourseDao {
 
     @Override
-    public Course create(Connection connection, Course course) throws RuntimeException {
+    public Course create(Connection connection, Course course) {
         String queryString = "INSERT INTO Course"
                 + " (name, city, creationDate, startDate, price, maxSpots, vacantSpots)"
                 + " VALUES (?, ?, ?, ?, ?, ?, ?)";

@@ -6,9 +6,9 @@ import java.sql.Connection;
 import java.util.List;
 
 public interface SqlInscriptionDao {
-    public Inscription create(Connection connection, Inscription inscription) throws RuntimeException;
-    public void remove(Connection connection, long inscriptionId) throws InstanceNotFoundException, RuntimeException;
-    public Inscription update(Connection connection, Inscription inscription) throws InstanceNotFoundException, RuntimeException;
-    public Inscription findById(Connection connection, Long inscriptionId) throws InstanceNotFoundException, RuntimeException;
-    public List<Inscription> findByUserEmail(Connection connection, String userEmail) throws RuntimeException;
+    public Inscription create(Connection connection, Inscription inscription);
+    public void remove(Connection connection, long inscriptionId) throws InstanceNotFoundException;
+    public Inscription update(Connection connection, Inscription inscription) throws InstanceNotFoundException;
+    public Inscription findById(Connection connection, Long inscriptionId) throws InstanceNotFoundException;
+    public List<Inscription> findByUserEmail(Connection connection, String userEmail);
 }

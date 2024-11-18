@@ -12,7 +12,7 @@ public abstract class AbstractSqlCourseDao implements SqlCourseDao {
     }
 
     @Override
-    public Course update(Connection connection, Course course) throws InstanceNotFoundException, RuntimeException {
+    public Course update(Connection connection, Course course) throws InstanceNotFoundException {
         String queryString = "UPDATE Course SET name = ?, city = ?, creationDate = ?, startDate = ?, price = ?, maxSpots = ?, vacantSpots = ? WHERE courseId = ?";
         try (PreparedStatement ps = connection.prepareStatement(queryString)) {
             int i = 1;
@@ -30,15 +30,12 @@ public abstract class AbstractSqlCourseDao implements SqlCourseDao {
             }
             return findById(connection, course.getCourseId());
         } catch (SQLException e) {
-                System.err.println("SQL Error Code: " + e.getErrorCode());
-                System.err.println("SQL State: " + e.getSQLState());
-                System.err.println("Message: " + e.getMessage());
                 throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void remove(Connection connection, Long courseId) throws InstanceNotFoundException, RuntimeException {
+    public void remove(Connection connection, Long courseId) throws InstanceNotFoundException {
         String queryString = "DELETE FROM Course WHERE courseId = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
@@ -54,7 +51,7 @@ public abstract class AbstractSqlCourseDao implements SqlCourseDao {
     }
 
     @Override
-    public Course findById(Connection connection, Long courseId) throws InstanceNotFoundException, RuntimeException {
+    public Course findById(Connection connection, Long courseId) throws InstanceNotFoundException {
         String queryString = "SELECT name, city, creationDate, startDate, price, maxSpots, vacantSpots  FROM Course WHERE courseId = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(queryString)) {
             int i = 1;
@@ -82,7 +79,7 @@ public abstract class AbstractSqlCourseDao implements SqlCourseDao {
     }
 
     @Override
-    public List<Course> findByKeyword(Connection connection, String city, LocalDateTime date) throws RuntimeException {
+    public List<Course> findByKeyword(Connection connection, String city, LocalDateTime date) {
         String queryString = "SELECT courseId, name, city, creationDate, startDate, price, maxSpots, vacantSpots " +
                 "FROM Course " +
                 "WHERE LOWER(city) = LOWER(?) AND startDate > ? " +
