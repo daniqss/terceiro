@@ -423,12 +423,13 @@ public class AppServiceTest {
             assertEquals(inscriptionList.size(), 1);
             assertEquals(inscription, foundInscription);
 
-            //assertEquals(VALID_CREDIT_CARD, foundInscription.getCreditCard());
+            assertEquals(VALID_CREDIT_CARD, foundInscription.getCreditCard());
             assertEquals(VALID_EMAIL, foundInscription.getUserEmail());
             assertEquals(course.getCourseId(), foundInscription.getCourseId());
             assertTrue((!foundInscription.getInscriptionDate().isBefore(beforeInscriptionDate))
                     && (!foundInscription.getInscriptionDate().isAfter(afterInscriptionDate)));
             assertNull(foundInscription.getCancelationDate());
+
 
             removeInscription(inscription.getInscriptionId());
 
