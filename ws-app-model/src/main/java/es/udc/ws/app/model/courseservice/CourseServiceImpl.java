@@ -158,10 +158,6 @@ public class CourseServiceImpl implements CourseService {
 
                 Inscription inscription = inscriptionDao.findById(connection, inscriptionId);
 
-                if (inscription == null) {
-                    throw new InstanceNotFoundException("Inscription not found", inscriptionId.getClass().toString());
-                }
-
                 if(inscription.getCancelationDate()!=null) {
                     throw new InscriptionAlreadyCancelledException(inscriptionId, userEmail, inscription.getCancelationDate());
                 }
@@ -181,10 +177,7 @@ public class CourseServiceImpl implements CourseService {
                 inscription.setCancelationDate(LocalDateTime.now());
                 inscriptionDao.update(connection, inscription);
 
-                course.setVacantSpots(course.getVacantSpots() - 1);
-                courseDao.update(connection, course);
-
-                course.setVacantSpots(course.getVacantSpots() - 1);
+                course.setVacantSpots(course.getVacantSpots() + 1);
                 courseDao.update(connection, course);
                 connection.commit();
             } catch (SQLException e) {
