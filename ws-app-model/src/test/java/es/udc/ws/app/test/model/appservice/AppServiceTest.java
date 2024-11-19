@@ -398,10 +398,15 @@ public class AppServiceTest {
         Course course = createCourse(getValidCourse());
 
         try {
+
+            Course courseBefore = courseService.findCourse(course.getCourseId());
+
             // Make inscription
             LocalDateTime beforeInscriptionDate = LocalDateTime.now().withNano(0);
             Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
             LocalDateTime afterInscriptionDate = LocalDateTime.now().withNano(0);
+
+            Course courseAfter = courseService.findCourse(course.getCourseId());
 
             // Get inserted inscription
             Inscription inscription = findInscription(inscriptionId);
@@ -410,6 +415,9 @@ public class AppServiceTest {
             List<Inscription> inscriptionList = courseService.findInscriptions(VALID_EMAIL);
             // Get found inscription
             Inscription foundInscription = inscriptionList.getFirst();
+
+            //Check vacantSpots
+            assertEquals(1, courseBefore.getVacantSpots()-courseAfter.getVacantSpots());
 
             // Check inscription
             assertEquals(inscriptionList.size(), 1);
@@ -581,8 +589,14 @@ public class AppServiceTest {
             Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
             Inscription inscription = findInscription(inscriptionId);
 
+            Course courseBefore = courseService.findCourse(course.getCourseId());
+
             courseService.cancelInscription(inscriptionId, VALID_EMAIL);
             Inscription inscriptionAfterCancel = findInscription(inscriptionId);
+
+            Course courseAfter = courseService.findCourse(course.getCourseId());
+
+            assertEquals(1,courseAfter.getVacantSpots()-courseBefore.getVacantSpots());
 
             assertNotNull(inscriptionAfterCancel.getCancelationDate());
             removeInscription(inscription.getInscriptionId());
