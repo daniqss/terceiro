@@ -17,7 +17,6 @@ import javax.sql.DataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -37,11 +36,13 @@ public class CourseServiceImpl implements CourseService {
         inscriptionDao = SqlInscriptionDaoFactory.getDao();
     }
 
-    private static boolean validateEmail(String email) throws InputValidationException {
+    private static void validateEmail(String email) throws InputValidationException {
         String patron = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         Pattern pattern = Pattern.compile(patron);
         Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
+        if (matcher.matches()) {
+            throw new InputValidationException("Non valid email");
+        };
     }
 
     private void validateCourse(Course course) throws InputValidationException, CourseStartTooSoonException {
@@ -58,9 +59,7 @@ public class CourseServiceImpl implements CourseService {
     private void validateInscription(Long courseId, LocalDateTime inscriptionDate, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException, CourseAlreadyStartedException, CourseFullException {
         PropertyValidator.validateLong("courseId",courseId, (int)MIN_ID, (int)MAX_ID);
         findCourse(courseId);
-        if (!validateEmail(userEmail)) {
-            throw new InputValidationException("Non valid email");
-        }
+        validateEmail(userEmail);
         PropertyValidator.validateCreditCard(bankCardNumber);
         LocalDateTime courseStartDate = findCourse(courseId).getStartDate();
         if (!(ChronoUnit.DAYS.between(inscriptionDate, courseStartDate) > 0)) {
