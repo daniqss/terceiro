@@ -125,16 +125,16 @@ public class CourseServiceImpl implements CourseService {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
 
-                Inscription inscription = inscriptionDao.create(connection, new Inscription(courseId, LocalDateTime.now(), userEmail, creditCard));
-
                 // Course checks
                 Course course = courseDao.findById(connection, courseId);
-                if (!(ChronoUnit.DAYS.between(inscription.getInscriptionDate(), course.getStartDate()) > 0)) {
+                if (!(ChronoUnit.DAYS.between(inscriptionDate, course.getStartDate()) > 0)) {
                     throw new CourseAlreadyStartedException(courseId, course.getStartDate());
                 }
                 if (course.getVacantSpots() == 0) {
                     throw new CourseFullException(course.getCourseId());
                 }
+
+                Inscription inscription = inscriptionDao.create(connection, new Inscription(courseId, LocalDateTime.now(), userEmail, creditCard));
 
                 // Update course vacant spots
                 course.setVacantSpots(course.getVacantSpots() - 1);
