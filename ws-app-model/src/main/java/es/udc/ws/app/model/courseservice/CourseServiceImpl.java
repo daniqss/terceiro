@@ -40,7 +40,7 @@ public class CourseServiceImpl implements CourseService {
         String patron = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         Pattern pattern = Pattern.compile(patron);
         Matcher matcher = pattern.matcher(email);
-        if (matcher.matches()) {
+        if (!matcher.matches()) {
             throw new InputValidationException("Non valid email");
         };
     }
@@ -58,16 +58,15 @@ public class CourseServiceImpl implements CourseService {
 
     private void validateInscription(Long courseId, LocalDateTime inscriptionDate, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException, CourseAlreadyStartedException, CourseFullException {
         PropertyValidator.validateLong("courseId",courseId, (int)MIN_ID, (int)MAX_ID);
-        findCourse(courseId);
-        validateEmail(userEmail);
         PropertyValidator.validateCreditCard(bankCardNumber);
-        LocalDateTime courseStartDate = findCourse(courseId).getStartDate();
-        if (!(ChronoUnit.DAYS.between(inscriptionDate, courseStartDate) > 0)) {
-            throw new CourseAlreadyStartedException(courseId, findCourse(courseId).getStartDate());
-        }
-        if (findCourse(courseId).getVacantSpots() == 0) {
-            throw new CourseFullException(courseId);
-        }
+        validateEmail(userEmail);
+//        LocalDateTime courseStartDate = findCourse(courseId).getStartDate();
+//        if (!(ChronoUnit.DAYS.between(inscriptionDate, courseStartDate) > 0)) {
+//            throw new CourseAlreadyStartedException(courseId, findCourse(courseId).getStartDate());
+//        }
+//        if (findCourse(courseId).getVacantSpots() == 0) {
+//            throw new CourseFullException(courseId);
+//        }
     }
 
     @Override
@@ -119,18 +118,26 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Long addInscription(Long courseId, String userEmail, String creditCard) throws InputValidationException, InstanceNotFoundException, CourseAlreadyStartedException, CourseFullException {
         LocalDateTime inscriptionDate = LocalDateTime.now();
-        validateInscription( courseId, inscriptionDate, userEmail, creditCard);
+        validateInscription(courseId, inscriptionDate, userEmail, creditCard);
 
         try (Connection connection = dataSource.getConnection()) {
             try {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
-                Course course = courseDao.findById(connection, courseId);
-                int vacantSpots = course.getVacantSpots();
 
                 Inscription inscription = inscriptionDao.create(connection, new Inscription(courseId, LocalDateTime.now(), userEmail, creditCard));
 
-                course.setVacantSpots(vacantSpots - 1);
+                // Course checks
+                Course course = courseDao.findById(connection, courseId);
+                if (!(ChronoUnit.DAYS.between(inscription.getInscriptionDate(), course.getStartDate()) > 0)) {
+                    throw new CourseAlreadyStartedException(courseId, course.getStartDate());
+                }
+                if (course.getVacantSpots() == 0) {
+                    throw new CourseFullException(course.getCourseId());
+                }
+
+                // Update course vacant spots
+                course.setVacantSpots(course.getVacantSpots() - 1);
                 courseDao.update(connection, course);
                 connection.commit();
 
@@ -154,14 +161,10 @@ public class CourseServiceImpl implements CourseService {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
 
-
                 Inscription inscription = inscriptionDao.findById(connection, inscriptionId);
-
                 if(inscription.getCancelationDate()!=null) {
                     throw new InscriptionAlreadyCancelledException(inscriptionId, userEmail, inscription.getCancelationDate());
                 }
-
-
                 if (!inscription.getUserEmail().equals(userEmail)) {
                     throw new IncorrectUserException(inscriptionId, userEmail);
                 }
