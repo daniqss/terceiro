@@ -60,13 +60,6 @@ public class CourseServiceImpl implements CourseService {
         PropertyValidator.validateLong("courseId",courseId, (int)MIN_ID, (int)MAX_ID);
         PropertyValidator.validateCreditCard(bankCardNumber);
         validateEmail(userEmail);
-//        LocalDateTime courseStartDate = findCourse(courseId).getStartDate();
-//        if (!(ChronoUnit.DAYS.between(inscriptionDate, courseStartDate) > 0)) {
-//            throw new CourseAlreadyStartedException(courseId, findCourse(courseId).getStartDate());
-//        }
-//        if (findCourse(courseId).getVacantSpots() == 0) {
-//            throw new CourseFullException(courseId);
-//        }
     }
 
     @Override
