@@ -45,7 +45,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
       final patientProvider = Provider.of<PatientProvider>(context, listen: false);
       patientProvider.loadPatientData(widget.patientId).then((_) {
         patientProvider.loadAllPosologies(widget.patientId).then((_) {
-          _applyDateRangeFilter(patientProvider);
+          applyDateRangeFilter(patientProvider);
         });
       });
     });
@@ -59,7 +59,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
     }
   }
 
-  Future<void> _applyDateRangeFilter(PatientProvider provider) async {
+  Future<void> applyDateRangeFilter(PatientProvider provider) async {
     if (selectedDateRange != null) {
       setState(() => isLoadingFilter = true);
 
@@ -75,7 +75,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
     }
   }
 
-  Future<void> _selectDateRange() async {
+  Future<void> selectDateRange() async {
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
       firstDate: DateTime.now().subtract(const Duration(days: 30)),
@@ -101,11 +101,11 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
       });
 
       final patientProvider = Provider.of<PatientProvider>(context, listen: false);
-      await _applyDateRangeFilter(patientProvider);
+      await applyDateRangeFilter(patientProvider);
     }
   }
 
-  Future<void> _addIntake(BuildContext context, int medicationId) async {
+  Future<void> addIntake(BuildContext context, int medicationId) async {
     DateTime selectedDateTime = DateTime.now();
 
     final intakeConfirmed = await showDialog<bool>(
@@ -163,7 +163,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
 
       final patientProvider = Provider.of<PatientProvider>(context, listen: false);
       await patientProvider.addMedicationIntake(widget.patientId, medicationId, intakeData);
-      await _applyDateRangeFilter(patientProvider);
+      await applyDateRangeFilter(patientProvider);
     }
   }
 
@@ -218,7 +218,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
                   Container(
                     padding: const EdgeInsets.all(16.0),
                     child: ElevatedButton.icon(
-                      onPressed: _selectDateRange,
+                      onPressed: selectDateRange,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal,
                         foregroundColor: Colors.black
@@ -230,7 +230,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
                   Expanded(
                     child: isLoadingFilter
                         ? const Center(child: CircularProgressIndicator())
-                        : _buildMedicationsList(filteredMedications, patientProvider),
+                        : buildMedicationsList(filteredMedications, patientProvider),
                   ),
                 ],
               ),
@@ -352,7 +352,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
     );
   }
 
-  Widget _buildMedicationsList(List filteredMedications, PatientProvider patientProvider) {
+  Widget buildMedicationsList(List filteredMedications, PatientProvider patientProvider) {
     return ListView.builder(
       itemCount: filteredMedications.length,
       itemBuilder: (context, index) {
@@ -366,7 +366,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
           child: ListTile(
             title: Text(medication["name"]),
             trailing: const Icon(Icons.add),
-            onTap: () => _addIntake(context, medicationId),
+            onTap: () => addIntake(context, medicationId),
           ),
         );
       },
