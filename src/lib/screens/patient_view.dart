@@ -14,30 +14,30 @@ class PatientView extends StatefulWidget {
 }
 
 class PatientViewState extends State<PatientView> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<Offset> _slideAnimation;
-  late bool _isLoadingFilter;
-  late List<Map<String, dynamic>> _filteredMedications;
-  final Set<int> _expandedMedications = {};
-  DateTimeRange? _selectedDateRange;
+  late AnimationController animationController;
+  late Animation<Offset> slideAnimation;
+  late bool isLoadingFilter;
+  late List<Map<String, dynamic>> filteredMedications;
+  final Set<int> expandedMedications = {};
+  DateTimeRange? selectedDateRange;
 
   @override
   void initState() {
     super.initState();
-    _isLoadingFilter = false;
-    _filteredMedications = [];
+    isLoadingFilter = false;
+    filteredMedications = [];
     final today = DateTime.now();
-    _selectedDateRange = DateTimeRange(start: today, end: today);
+    selectedDateRange = DateTimeRange(start: today, end: today);
 
-    _animationController = AnimationController(
+    animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    _slideAnimation = Tween<Offset>(
+    slideAnimation = Tween<Offset>(
       begin: const Offset(-1.0, 0.0),
       end: Offset.zero,
     ).animate(CurvedAnimation(
-      parent: _animationController,
+      parent: animationController,
       curve: Curves.easeInOut,
     ));
 
@@ -52,25 +52,25 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
   }
 
   void toggleMedicationsList() {
-    if (_animationController.isDismissed) {
-      _animationController.forward();
+    if (animationController.isDismissed) {
+      animationController.forward();
     } else {
-      _animationController.reverse();
+      animationController.reverse();
     }
   }
 
   Future<void> _applyDateRangeFilter(PatientProvider provider) async {
-    if (_selectedDateRange != null) {
-      setState(() => _isLoadingFilter = true);
+    if (selectedDateRange != null) {
+      setState(() => isLoadingFilter = true);
 
       await provider.filterMedicationsByDateRange(
-        _selectedDateRange!.start,
-        _selectedDateRange!.end,
+        selectedDateRange!.start,
+        selectedDateRange!.end,
       );
 
       setState(() {
-        _filteredMedications = provider.filteredMedications;
-        _isLoadingFilter = false;
+        filteredMedications = provider.filteredMedications;
+        isLoadingFilter = false;
       });
     }
   }
@@ -80,7 +80,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
       context: context,
       firstDate: DateTime.now().subtract(const Duration(days: 30)),
       lastDate: DateTime.now().add(const Duration(days: 30)),
-      initialDateRange: _selectedDateRange,
+      initialDateRange: selectedDateRange,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -97,7 +97,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
 
     if (picked != null) {
       setState(() {
-        _selectedDateRange = picked;
+        selectedDateRange = picked;
       });
 
       final patientProvider = Provider.of<PatientProvider>(context, listen: false);
@@ -169,7 +169,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
 
   @override
   void dispose() {
-    _animationController.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -228,9 +228,9 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
                     ),
                   ),
                   Expanded(
-                    child: _isLoadingFilter
+                    child: isLoadingFilter
                         ? const Center(child: CircularProgressIndicator())
-                        : _buildMedicationsList(_filteredMedications, patientProvider),
+                        : _buildMedicationsList(filteredMedications, patientProvider),
                   ),
                 ],
               ),
@@ -249,7 +249,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
       );
     } else {
       return SlideTransition(
-        position: _slideAnimation,
+        position: slideAnimation,
         child: Container(
           width: 250,
           color: Colors.teal.shade100,
@@ -276,7 +276,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
               final medicationId = medication["id"];
               final posologies = Provider.of<PatientProvider>(context, listen: false)
                   .getPosologiesForMedication(medicationId);
-              final isExpanded = _expandedMedications.contains(medicationId);
+              final isExpanded = expandedMedications.contains(medicationId);
 
               return buildMedicationItem(medication, medicationId, posologies, isExpanded);
             },
@@ -296,9 +296,9 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
             onTap: () {
               setState(() {
                 if (isExpanded) {
-                  _expandedMedications.remove(medicationId);
+                  expandedMedications.remove(medicationId);
                 } else {
-                  _expandedMedications.add(medicationId);
+                  expandedMedications.add(medicationId);
                 }
               });
             },
