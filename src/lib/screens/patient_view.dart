@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:src/providers/patient_provider.dart';
 import 'package:src/providers/login_provider.dart';
@@ -6,7 +7,7 @@ import 'package:src/providers/login_provider.dart';
 class PatientView extends StatefulWidget {
   final int patientId;
 
-  const PatientView({Key? key, required this.patientId}) : super(key: key);
+  const PatientView({super.key, required this.patientId});
 
   @override
   PatientViewState createState() => PatientViewState();
@@ -15,16 +16,19 @@ class PatientView extends StatefulWidget {
 class PatientViewState extends State<PatientView> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
+  late bool _isLoadingFilter;
+  late List<Map<String, dynamic>> _filteredMedications;
   final Set<int> _expandedMedications = {};
-  int? _selectedFilter = 24;
   DateTimeRange? _selectedDateRange;
-  bool _isLoadingFilter = false;
-  List<Map<String, dynamic>> _filteredMedications = [];
-  final Map<int, bool> _checkedMedications = {};
 
   @override
   void initState() {
     super.initState();
+    _isLoadingFilter = false;
+    _filteredMedications = [];
+    final today = DateTime.now();
+    _selectedDateRange = DateTimeRange(start: today, end: today);
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -39,96 +43,12 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final patientProvider = Provider.of<PatientProvider>(context, listen: false);
-
-      // Primero cargar datos de medicamentos y posologías.
       patientProvider.loadPatientData(widget.patientId).then((_) {
-        // Luego, cargar las posologías de todos los medicamentos.
         patientProvider.loadAllPosologies(widget.patientId).then((_) {
-          // Filtrar los medicamentos una vez que todos los datos están cargados.
-          _filterMedications(patientProvider);
+          _applyDateRangeFilter(patientProvider);
         });
       });
     });
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  void _filterMedications(PatientProvider provider) {
-    setState(() => _isLoadingFilter = true);
-
-    setState(() {
-      if (_selectedFilter != null) {
-        _filteredMedications = provider.filterMedications(
-          patientId: widget.patientId,
-          filterHours: _selectedFilter,
-        );
-      } else if (_selectedDateRange != null) {
-        _filteredMedications = provider.filterMedicationsByDateRange(
-          patientId: widget.patientId,
-          dateRange: _selectedDateRange!,
-        );
-      }
-      _isLoadingFilter = false;
-
-      // Inicializa el estado de cada checkbox de los medicamentos filtrados
-      for (var medication in _filteredMedications) {
-        _checkedMedications[medication["id"]] = false;
-      }
-    });
-  }
-
-  Future<void> _selectDateRange() async {
-    final DateTimeRange? picked = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime.now().subtract(const Duration(days: 30)),
-      lastDate: DateTime.now().add(const Duration(days: 30)),
-      initialDateRange: _selectedDateRange ??
-          DateTimeRange(
-            start: DateTime.now(),
-            end: DateTime.now().add(const Duration(days: 1)),
-          ),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.teal, // Color principal del calendario
-              onPrimary: Colors.white, // Color del texto en botones
-              onSurface: Colors.teal, // Color de texto en el calendario
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.teal, // Color del botón de selección
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null && picked != _selectedDateRange) {
-      setState(() {
-        _selectedDateRange = picked;
-        _selectedFilter = null; // Cambiamos a rango personalizado
-      });
-      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
-      _filterMedications(patientProvider);
-    }
-  }
-
-  void _updateFilter(int? filterHours) {
-    setState(() {
-      _selectedFilter = filterHours;
-      if (filterHours != null) {
-        _selectedDateRange = null; // Descartar rango personalizado si seleccionamos horas
-      }
-    });
-    final patientProvider = Provider.of<PatientProvider>(context, listen: false);
-    _filterMedications(patientProvider);
   }
 
   void toggleMedicationsList() {
@@ -139,38 +59,181 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
     }
   }
 
-  void _logout() {
-    final loginProvider = Provider.of<LoginProvider>(context, listen: false);
-    loginProvider.logout(context);
-    Navigator.pushReplacementNamed(context, '/login');
+  Future<void> _applyDateRangeFilter(PatientProvider provider) async {
+    if (_selectedDateRange != null) {
+      setState(() => _isLoadingFilter = true);
+
+      await provider.filterMedicationsByDateRange(
+        _selectedDateRange!.start,
+        _selectedDateRange!.end,
+      );
+
+      setState(() {
+        _filteredMedications = provider.filteredMedications;
+        _isLoadingFilter = false;
+      });
+    }
+  }
+
+  Future<void> _selectDateRange() async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime.now().subtract(const Duration(days: 30)),
+      lastDate: DateTime.now().add(const Duration(days: 30)),
+      initialDateRange: _selectedDateRange,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.teal,
+              onPrimary: Colors.white,
+              onSurface: Colors.teal.shade700,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedDateRange = picked;
+      });
+
+      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+      await _applyDateRangeFilter(patientProvider);
+    }
+  }
+
+  Future<void> _addIntake(BuildContext context, int medicationId) async {
+    DateTime selectedDateTime = DateTime.now();
+
+    final intakeConfirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Añadir Toma'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final time = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.fromDateTime(selectedDateTime),
+                  );
+
+                  if (time != null) {
+                    setState(() {
+                      selectedDateTime = DateTime(
+                        selectedDateTime.year,
+                        selectedDateTime.month,
+                        selectedDateTime.day,
+                        time.hour,
+                        time.minute,
+                      );
+                    });
+                  }
+                },
+                icon: const Icon(Icons.access_time),
+                label: Text(
+                  'Hora: ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (intakeConfirmed == true) {
+      final formattedDate = DateFormat("yyyy-MM-ddTHH:mm").format(selectedDateTime);
+
+      final intakeData = {'date': formattedDate};
+
+      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+      await patientProvider.addMedicationIntake(widget.patientId, medicationId, intakeData);
+      await _applyDateRangeFilter(patientProvider);
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-
     return Consumer<PatientProvider>(
       builder: (context, patientProvider, child) {
         final patient = patientProvider.patient;
+        final allMedications = patientProvider.medications;
+
         if (patient == null) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        final patientName = patient["name"];
-        final patientSurname = patient["surname"];
+        final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
         return Scaffold(
-          appBar: buildAppBar(isLandscape, patientName, patientSurname),
-          body: Column(
-            children: [
-              buildFilterSection(),
-              Expanded(
-                child: _isLoadingFilter
-                    ? const Center(child: CircularProgressIndicator())
-                    : buildMedicationsList(_filteredMedications),
+          appBar: AppBar(
+            backgroundColor: Colors.teal,
+            title: Text("Paciente: ${patient["name"]} ${patient["surname"]}"),
+            centerTitle: true,
+            leading: isLandscape
+                ? null
+                : IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: toggleMedicationsList,
+            ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () {
+                  final loginProvider = Provider.of<LoginProvider>(context, listen: false);
+                  loginProvider.logout(context);
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
               ),
+            ],
+          ),
+          body: Stack(
+            children: [
+              Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton.icon(
+                      onPressed: _selectDateRange,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        foregroundColor: Colors.black12
+                      ),
+                      icon: const Icon(Icons.calendar_today),
+                      label: const Text("Seleccionar Intervalo"),
+                    ),
+                  ),
+                  Expanded(
+                    child: _isLoadingFilter
+                        ? const Center(child: CircularProgressIndicator())
+                        : _buildMedicationsList(_filteredMedications, patientProvider),
+                  ),
+                ],
+              ),
+              buildSlideMenu(allMedications, isLandscape),
             ],
           ),
         );
@@ -178,123 +241,134 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
     );
   }
 
-  AppBar buildAppBar(bool isLandscape, String patientName, String patientSurname) {
-    return AppBar(
-      backgroundColor: Colors.teal,
-      title: Text(
-        "Paciente: $patientName $patientSurname",
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      ),
-      centerTitle: true,
-      leading: isLandscape
-          ? null
-          : IconButton(
-        icon: const Icon(Icons.menu),
-        onPressed: toggleMedicationsList,
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.logout),
-          onPressed: _logout,
+  Widget buildSlideMenu(List allMedications, bool isLandscape) {
+    if (isLandscape) {
+      return Drawer(
+        child: buildSlideMenuContent(allMedications),
+      );
+    } else {
+      return SlideTransition(
+        position: _slideAnimation,
+        child: Container(
+          width: 250,
+          color: Colors.teal.shade100,
+          padding: const EdgeInsets.all(16.0),
+          child: buildSlideMenuContent(allMedications),
+        ),
+      );
+    }
+  }
+
+  Widget buildSlideMenuContent(List allMedications) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Medicaciones",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: allMedications.length,
+            itemBuilder: (context, index) {
+              final medication = allMedications[index];
+              final medicationId = medication["id"];
+              final posologies = Provider.of<PatientProvider>(context, listen: false)
+                  .getPosologiesForMedication(medicationId);
+              final isExpanded = _expandedMedications.contains(medicationId);
+
+              return buildMedicationItem(medication, medicationId, posologies, isExpanded);
+            },
+          ),
         ),
       ],
     );
   }
 
-  Widget buildFilterSection() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget buildMedicationItem(dynamic medication, int medicationId, List posologies, bool isExpanded) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DropdownButton<int?>(
-            value: _selectedFilter,
-            underline: Container(),
-            items: const [
-              DropdownMenuItem(
-                value: 24,
-                child: Text("Próximas 24 horas"),
-              ),
-              DropdownMenuItem(
-                value: 48,
-                child: Text("Próximas 48 horas"),
-              ),
-              DropdownMenuItem(
-                value: 72,
-                child: Text("Próximas 72 horas"),
-              ),
-              DropdownMenuItem(
-                value: null,
-                child: Text("Rango personalizado"),
-              ),
-            ],
-            onChanged: (value) {
-              if (value == null) {
-                _selectDateRange();
-              } else {
-                _updateFilter(value);
-              }
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                if (isExpanded) {
+                  _expandedMedications.remove(medicationId);
+                } else {
+                  _expandedMedications.add(medicationId);
+                }
+              });
             },
+            child: Container(
+              padding: const EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black12, blurRadius: 4.0, offset: Offset(0, 2)),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      medication["name"],
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Icon(
+                    isExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: Colors.teal,
+                  ),
+                ],
+              ),
+            ),
           ),
+          if (isExpanded)
+            posologies.isEmpty
+                ? const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                "No hay posologías disponibles.",
+                style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
+              ),
+            )
+                : Column(
+              children: posologies.map((posology) {
+                final hour = posology['hour'].toString().padLeft(2, '0');
+                final minute = posology['minute'].toString().padLeft(2, '0');
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("Posología: $hour:$minute"),
+                );
+              }).toList(),
+            ),
         ],
       ),
     );
   }
 
-  Widget buildMedicationsList(List medications) {
+  Widget _buildMedicationsList(List filteredMedications, PatientProvider patientProvider) {
     return ListView.builder(
-      itemCount: medications.length,
+      itemCount: filteredMedications.length,
       itemBuilder: (context, index) {
-        final medication = medications[index];
+        final medication = filteredMedications[index];
         final medicationId = medication["id"];
-        final nextPosologyTime = _getNextPosologyTime(medication);
-        final timeUntilNext = _calculateTimeUntil(nextPosologyTime);
-
         return Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: ListTile(
-            leading: Checkbox(
-              value: _checkedMedications[medicationId] ?? false,
-              onChanged: (bool? value) {
-                setState(() {
-                  _checkedMedications[medicationId] = value ?? false;
-                });
-              },
-            ),
-            title: Text(
-              medication["name"],
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              timeUntilNext.isNotEmpty ? "Próxima dosis en: $timeUntilNext" : "Sin próximas dosis",
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {},
+            title: Text(medication["name"]),
+            trailing: const Icon(Icons.add),
+            onTap: () => _addIntake(context, medicationId),
           ),
         );
       },
     );
-  }
-
-  DateTime? _getNextPosologyTime(Map<String, dynamic> medication) {
-    final validPosologies = medication["valid_posologies"] as List<DateTime>;
-    return validPosologies.isNotEmpty ? validPosologies.first : null;
-  }
-
-  String _calculateTimeUntil(DateTime? time) {
-    if (time == null) return "";
-    final now = DateTime.now();
-    final difference = time.difference(now);
-
-    if (difference.isNegative) {
-      return "";
-    } else if (difference.inHours > 0) {
-      return "${difference.inHours} horas y ${difference.inMinutes % 60} minutos";
-    } else {
-      return "${difference.inMinutes} minutos";
-    }
   }
 }

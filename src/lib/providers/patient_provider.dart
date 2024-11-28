@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:src/models/patient_model.dart';
 import 'package:src/models/medication_model.dart';
 import 'package:src/models/posology_model.dart';
+import 'package:src/models/intake_model.dart';
 
 class PatientProvider with ChangeNotifier {
   Map<String, dynamic>? _patient;
   List<Map<String, dynamic>> _medications = [];
+  List<Map<String, dynamic>> _filteredMedications = [];
   Map<int, bool> _isExpanded = {};
   Map<int, List<Map<String, dynamic>>> _posologies = {};
   Map<int, bool> _isPosologyEmpty = {};
@@ -14,10 +16,16 @@ class PatientProvider with ChangeNotifier {
   final PatientModel _patientModel = PatientModel();
   final MedicationModel _medicationModel = MedicationModel();
   final PosologyModel _posologyModel = PosologyModel();
+  final IntakeModel _intakeModel = IntakeModel();
 
   Map<String, dynamic>? get patient => _patient;
   List<Map<String, dynamic>> get medications => _medications;
+  List<Map<String, dynamic>> get filteredMedications => _filteredMedications;
   bool get isLoading => _isLoading;
+
+  List<Map<String, dynamic>> getAllMedications() {
+    return _medications;
+  }
 
   List<Map<String, dynamic>> getPosologiesForMedication(int medicationId) {
     return _posologies[medicationId] ?? [];
@@ -52,7 +60,7 @@ class PatientProvider with ChangeNotifier {
       final posologies = await _posologyModel.getPosologies(patientId, medicationId);
       _posologies[medicationId] = posologies;
       _isPosologyEmpty[medicationId] = posologies.isEmpty;
-      _toggleExpandedState(medicationId);
+      toggleExpandedState(medicationId); // Use the method here
     } catch (e) {
       debugPrint("Error al cargar las posologías: $e");
       throw Exception("No se pudieron cargar las posologías.");
@@ -66,100 +74,98 @@ class PatientProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> addMedicationIntake(int patientId, int medicationId, Map<String, dynamic> intakeData) async {
+    try {
+      await _intakeModel.addIntake(patientId, medicationId, intakeData);
+      debugPrint("Toma añadida exitosamente para el medicamento $medicationId");
+    } catch (e) {
+      debugPrint("Error al añadir la toma: $e");
+      throw Exception("No se pudo añadir la toma.");
+    }
+  }
+
   List<Map<String, dynamic>> filterMedications({
     required int patientId,
     int? filterHours,
     DateTimeRange? dateRange,
   }) {
-    print("Iniciando filtrado de medicamentos para paciente $patientId");
     final now = DateTime.now();
     final cutoff = filterHours != null ? now.add(Duration(hours: filterHours)) : null;
 
-    print("Fecha y hora actual: $now");
-    if (filterHours != null) print("Filtrando hasta: $cutoff");
-    if (dateRange != null) {
-      print("Filtrando en rango: ${dateRange.start} - ${dateRange.end}");
-    }
-
-    DateTime _getPosologyDateTime(Map<String, dynamic> posology, DateTime baseDate) {
-      final dateTime = DateTime(
-        baseDate.year,
-        baseDate.month,
-        baseDate.day,
-        posology["hour"] ?? 0,
-        posology["minute"] ?? 0,
-      );
-      print("Posología calculada: $dateTime para baseDate: $baseDate");
-      return dateTime;
-    }
-
     bool _isWithinRange(DateTime time) {
       if (cutoff != null) {
-        final result = time.isAfter(now) && time.isBefore(cutoff);
-        print("Posología $time dentro del rango de corte ($now - $cutoff): $result");
-        return result;
+        return time.isAfter(now) && time.isBefore(cutoff);
       }
       if (dateRange != null) {
-        final result = time.isAfter(dateRange.start) && time.isBefore(dateRange.end);
-        print("Posología $time dentro del rango ($dateRange): $result");
-        return result;
+        return time.isAfter(dateRange.start) && time.isBefore(dateRange.end);
       }
       return false;
     }
 
     final filteredMedications = _medications.where((medication) {
-      print("Evaluando medicamento: ${medication['name']}, ID: ${medication['id']}");
-
       if (medication["patient_id"] != patientId) {
-        print("Medicamento ${medication['id']} no pertenece al paciente $patientId");
+        debugPrint("Medicamento ${medication['id']} filtrado: No pertenece al paciente.");
         return false;
       }
 
       final startDateString = medication["start_date"];
       final treatmentDuration = medication["treatment_duration"];
       if (startDateString == null || treatmentDuration == null) {
-        print("Medicamento ${medication['id']} tiene datos incompletos.");
+        debugPrint("Medicamento ${medication['id']} filtrado: Falta start_date o treatment_duration.");
         return false;
       }
 
       final startDate = DateTime.parse(startDateString);
       final endDate = startDate.add(Duration(days: treatmentDuration));
-      print("Tratamiento del medicamento ${medication['id']} inicia en $startDate y termina en $endDate");
-
       if (now.isAfter(endDate)) {
-        print("Medicamento ${medication['id']} ya terminó.");
+        debugPrint("Medicamento ${medication['id']} filtrado: Tratamiento vencido.");
         return false;
       }
 
       final medicationId = medication["id"];
       final medicationPosologies = getPosologiesForMedication(medicationId);
-      print("Posologías para medicamento ${medication['id']}: $medicationPosologies");
 
-      // Genera posologías válidas que estén dentro del rango de fechas
+      if (medicationPosologies.isEmpty) {
+        debugPrint("Medicamento ${medication['id']} filtrado: Sin posologías.");
+      }
+
       final validPosologies = <DateTime>[];
       for (var posology in medicationPosologies) {
         DateTime currentBaseDate = startDate;
         while (currentBaseDate.isBefore(endDate)) {
-          final posologyTime = _getPosologyDateTime(posology, currentBaseDate);
+          final posologyTime = DateTime(
+            currentBaseDate.year,
+            currentBaseDate.month,
+            currentBaseDate.day,
+            posology["hour"] ?? 0,
+            posology["minute"] ?? 0,
+          );
           if (_isWithinRange(posologyTime)) {
             validPosologies.add(posologyTime);
           }
           currentBaseDate = currentBaseDate.add(Duration(days: 1));
         }
       }
-
-      print("Posologías válidas para medicamento ${medication['id']}: $validPosologies");
       medication["valid_posologies"] = validPosologies;
 
-      // Incluir medicamentos con posologías válidas o si el inicio está dentro del rango
+      if (validPosologies.isEmpty) {
+        debugPrint("Medicamento ${medication['id']} filtrado: Sin posologías válidas.");
+      }
+
       final medicationStartsInRange = cutoff != null
           ? startDate.isBefore(cutoff) && startDate.isAfter(now)
-          : dateRange != null && startDate.isAfter(dateRange.start) && startDate.isBefore(dateRange.end);
+          : dateRange != null &&
+          startDate.isAfter(dateRange.start) &&
+          startDate.isBefore(dateRange.end);
+
+      if (!validPosologies.isNotEmpty && !medicationStartsInRange) {
+        debugPrint("Medicamento ${medication['id']} filtrado: Fuera del rango.");
+      }
 
       return validPosologies.isNotEmpty || medicationStartsInRange;
     }).toList();
 
-    // Ordenar los medicamentos filtrados por la próxima posología o la fecha de inicio
+
     filteredMedications.sort((a, b) {
       final posologyA = a["valid_posologies"] as List<DateTime>;
       final posologyB = b["valid_posologies"] as List<DateTime>;
@@ -169,66 +175,6 @@ class PatientProvider with ChangeNotifier {
 
       return nextDateA.compareTo(nextDateB);
     });
-
-    print("Medicamentos filtrados y ordenados: ${filteredMedications.map((med) => med['id']).toList()}");
-
-    return filteredMedications;
-  }
-
-  List<Map<String, dynamic>> filterMedicationsByDateRange({
-    required int patientId,
-    required DateTimeRange dateRange,
-  }) {
-    print("Filtrando medicamentos en rango de fechas ${dateRange.start} - ${dateRange.end}");
-    final filteredMedications = _medications.where((medication) {
-      print("Evaluando medicamento: ${medication['name']}, ID: ${medication['id']}");
-
-      if (medication["patient_id"] != patientId) {
-        print("Medicamento ${medication['id']} no pertenece al paciente $patientId");
-        return false;
-      }
-
-      final startDateString = medication["start_date"];
-      final treatmentDuration = medication["treatment_duration"];
-      if (startDateString == null || treatmentDuration == null) {
-        print("Medicamento ${medication['id']} tiene datos incompletos.");
-        return false;
-      }
-
-      final startDate = DateTime.parse(startDateString);
-      final endDate = startDate.add(Duration(days: treatmentDuration));
-      print("Tratamiento del medicamento ${medication['id']} inicia en $startDate y termina en $endDate");
-
-      final isInDateRange = dateRange.start.isBefore(endDate) && dateRange.end.isAfter(startDate);
-      if (!isInDateRange) {
-        print("Medicamento ${medication['id']} no está en el rango de fechas.");
-        return false;
-      }
-
-      final medicationId = medication["id"];
-      final medicationPosologies = getPosologiesForMedication(medicationId);
-
-      final validPosologies = <DateTime>[];
-      for (var posology in medicationPosologies) {
-        DateTime currentBaseDate = startDate.isAfter(dateRange.start) ? startDate : dateRange.start;
-        while (currentBaseDate.isBefore(endDate) && currentBaseDate.isBefore(dateRange.end)) {
-          final posologyTime = DateTime(
-            currentBaseDate.year,
-            currentBaseDate.month,
-            currentBaseDate.day,
-            posology["hour"] ?? 0,
-            posology["minute"] ?? 0,
-          );
-          validPosologies.add(posologyTime);
-          currentBaseDate = currentBaseDate.add(Duration(days: 1));
-        }
-      }
-
-      print("Posologías válidas para medicamento ${medication['id']}: $validPosologies");
-      medication["valid_posologies"] = validPosologies;
-
-      return validPosologies.isNotEmpty;
-    }).toList();
 
     return filteredMedications;
   }
@@ -240,7 +186,20 @@ class PatientProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void _toggleExpandedState(int medicationId) {
+  Future<void> filterMedicationsByDateRange(DateTime start, DateTime end) async {
+    _filteredMedications = _medications.where((medication) {
+      final startDate = DateTime.parse(medication["start_date"]);
+      final treatmentDuration = medication["treatment_duration"];
+      if (treatmentDuration == null) return false;
+
+      final endDate = startDate.add(Duration(days: treatmentDuration));
+
+      return startDate.isBefore(end) && endDate.isAfter(start);
+    }).toList();
+    notifyListeners();
+  }
+
+  void toggleExpandedState(int medicationId) {
     _isExpanded[medicationId] = !_isExpanded[medicationId]!;
     notifyListeners();
   }
