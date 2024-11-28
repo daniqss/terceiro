@@ -13,7 +13,8 @@ class PatientView extends StatefulWidget {
   PatientViewState createState() => PatientViewState();
 }
 
-class PatientViewState extends State<PatientView> with SingleTickerProviderStateMixin {
+class PatientViewState extends State<PatientView>
+    with SingleTickerProviderStateMixin {
   late AnimationController animationController;
   late Animation<Offset> slideAnimation;
   late bool isLoadingFilter;
@@ -42,7 +43,8 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
     ));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+      final patientProvider =
+          Provider.of<PatientProvider>(context, listen: false);
       patientProvider.loadPatientData(widget.patientId).then((_) {
         patientProvider.loadAllPosologies(widget.patientId).then((_) {
           applyDateRangeFilter(patientProvider);
@@ -100,7 +102,8 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
         selectedDateRange = picked;
       });
 
-      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+      final patientProvider =
+          Provider.of<PatientProvider>(context, listen: false);
       await applyDateRangeFilter(patientProvider);
     }
   }
@@ -157,12 +160,15 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
     );
 
     if (intakeConfirmed == true) {
-      final formattedDate = DateFormat("yyyy-MM-ddTHH:mm").format(selectedDateTime);
+      final formattedDate =
+          DateFormat("yyyy-MM-ddTHH:mm").format(selectedDateTime);
 
       final intakeData = {'date': formattedDate};
 
-      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
-      await patientProvider.addMedicationIntake(widget.patientId, medicationId, intakeData);
+      final patientProvider =
+          Provider.of<PatientProvider>(context, listen: false);
+      await patientProvider.addMedicationIntake(
+          widget.patientId, medicationId, intakeData);
       await applyDateRangeFilter(patientProvider);
     }
   }
@@ -186,51 +192,77 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
           );
         }
 
-        final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-
+        final isLandscape =
+            MediaQuery.of(context).orientation == Orientation.landscape;
+        final isWatch = MediaQuery.of(context).size.width < 300;
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.teal,
             foregroundColor: Colors.black,
-            title: Text("Paciente: ${patient["name"]} ${patient["surname"]}"),
             centerTitle: true,
-            leading: isLandscape
+            leading: isLandscape || isWatch
                 ? null
                 : IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: toggleMedicationsList,
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.logout),
-                onPressed: () {
-                  final loginProvider = Provider.of<LoginProvider>(context, listen: false);
-                  loginProvider.logout(context);
-                  Navigator.pushReplacementNamed(context, '/login');
-                },
-              ),
-            ],
+                    icon: const Icon(Icons.menu),
+                    onPressed: toggleMedicationsList,
+                  ),
+            title: isWatch
+                ? Center(
+                    child: Icon(
+                      Icons.logout,
+                      size: 16,
+                    ),
+                  )
+                : Text("Paciente: ${patient["name"]} ${patient["surname"]}"),
+            actions: isWatch
+                ? null
+                : [
+                    IconButton(
+                      icon: Icon(
+                        Icons.logout,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        final loginProvider =
+                            Provider.of<LoginProvider>(context, listen: false);
+                        loginProvider.logout(context);
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                    ),
+                  ],
           ),
           body: Stack(
             children: [
               Column(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton.icon(
-                      onPressed: selectDateRange,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        foregroundColor: Colors.black
+                  if (!isWatch)
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ElevatedButton.icon(
+                        onPressed: selectDateRange,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          foregroundColor: Colors.black,
+                          padding: isWatch
+                              ? const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4)
+                              : null,
+                        ),
+                        icon: Icon(
+                          Icons.calendar_today,
+                          size: isWatch ? 12 : 24,
+                        ),
+                        label: Text(
+                          "Seleccionar Intervalo",
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
-                      icon: const Icon(Icons.calendar_today),
-                      label: const Text("Seleccionar Intervalo"),
                     ),
-                  ),
                   Expanded(
                     child: isLoadingFilter
                         ? const Center(child: CircularProgressIndicator())
-                        : buildMedicationsList(filteredMedications, patientProvider),
+                        : buildMedicationsList(
+                            filteredMedications, patientProvider, isWatch),
                   ),
                 ],
               ),
@@ -274,11 +306,13 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
             itemBuilder: (context, index) {
               final medication = allMedications[index];
               final medicationId = medication["id"];
-              final posologies = Provider.of<PatientProvider>(context, listen: false)
-                  .getPosologiesForMedication(medicationId);
+              final posologies =
+                  Provider.of<PatientProvider>(context, listen: false)
+                      .getPosologiesForMedication(medicationId);
               final isExpanded = expandedMedications.contains(medicationId);
 
-              return buildMedicationItem(medication, medicationId, posologies, isExpanded);
+              return buildMedicationItem(
+                  medication, medicationId, posologies, isExpanded);
             },
           ),
         ),
@@ -286,7 +320,8 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
     );
   }
 
-  Widget buildMedicationItem(dynamic medication, int medicationId, List posologies, bool isExpanded) {
+  Widget buildMedicationItem(
+      dynamic medication, int medicationId, List posologies, bool isExpanded) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Column(
@@ -308,7 +343,10 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8.0),
                 boxShadow: const [
-                  BoxShadow(color: Colors.black12, blurRadius: 4.0, offset: Offset(0, 2)),
+                  BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4.0,
+                      offset: Offset(0, 2)),
                 ],
               ),
               child: Row(
@@ -331,28 +369,31 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
           if (isExpanded)
             posologies.isEmpty
                 ? const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "No hay posologías disponibles.",
-                style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
-              ),
-            )
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "No hay posologías disponibles.",
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic, color: Colors.grey),
+                    ),
+                  )
                 : Column(
-              children: posologies.map((posology) {
-                final hour = posology['hour'].toString().padLeft(2, '0');
-                final minute = posology['minute'].toString().padLeft(2, '0');
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("Posología: $hour:$minute"),
-                );
-              }).toList(),
-            ),
+                    children: posologies.map((posology) {
+                      final hour = posology['hour'].toString().padLeft(2, '0');
+                      final minute =
+                          posology['minute'].toString().padLeft(2, '0');
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("Posología: $hour:$minute"),
+                      );
+                    }).toList(),
+                  ),
         ],
       ),
     );
   }
 
-  Widget buildMedicationsList(List filteredMedications, PatientProvider patientProvider) {
+  Widget buildMedicationsList(
+      List filteredMedications, PatientProvider patientProvider, bool isWatch) {
     return ListView.builder(
       itemCount: filteredMedications.length,
       itemBuilder: (context, index) {
@@ -364,6 +405,11 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
           ),
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: ListTile(
+            titleTextStyle: TextStyle(
+                fontSize: isWatch ? 11 : 16,
+                backgroundColor: Colors.white60,
+                color: Colors.black,
+            ),
             title: Text(medication["name"]),
             trailing: const Icon(Icons.add),
             onTap: () => addIntake(context, medicationId),
