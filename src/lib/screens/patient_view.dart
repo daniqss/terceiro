@@ -118,16 +118,30 @@ class PatientViewState extends State<PatientView>
         return /*Dialog(
             insetPadding: EdgeInsets.symmetric(
                 horizontal: isWatch ? 3 : 40, vertical: isWatch ? 3 : 40),
-            child: */AlertDialog(
-          insetPadding: EdgeInsets.symmetric(
-              horizontal: isWatch ? 3 : 40, vertical: isWatch ? 3 : 40),
-                title: Text(
-                  isWatch
-                      ? "Añadir toma a las ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}"
-                      : 'Añadir Toma',
-                  style: TextStyle(fontSize: isWatch ? 5 : 18),
-                  textAlign: TextAlign.center,
-                ),
+            child: */
+            AlertDialog(
+                insetPadding: EdgeInsets.symmetric(
+                    horizontal: isWatch ? 10 : 40, vertical: isWatch ? 13 : 40),
+                title: isWatch
+                    ? ElevatedButton.icon(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 2, vertical: 2)),
+                        icon: Icon(
+                          Icons.access_time,
+                          size: 10,
+                        ),
+                        label: Text(
+                          'Añadir toma a las ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
+                          style: TextStyle(fontSize: 8),
+                        ),
+                      )
+                    : Text(
+                        'Añadir Toma',
+                        style: TextStyle(fontSize: 5),
+                        textAlign: TextAlign.center,
+                      ),
                 content: isWatch
                     ? null
                     : Column(
@@ -153,48 +167,45 @@ class PatientViewState extends State<PatientView>
                                 });
                               }
                             },
-                            style: ElevatedButton.styleFrom(
-                              padding: isWatch
-                                  ? const EdgeInsets.symmetric(
-                                      horizontal: 2, vertical: 3)
-                                  : null,
-                              minimumSize: isWatch ? const Size(0, 0) : null,
-                            ),
                             icon: Icon(
                               Icons.access_time,
-                              size: isWatch ? 10 : 24,
+                              size: 24,
                             ),
                             label: Text(
                               'Hora: ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
-                              style: TextStyle(fontSize: isWatch ? 8 : 16),
+                              style: TextStyle(fontSize: 16),
                             ),
                           ),
                         ],
                       ),
                 actions: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      padding: isWatch ? EdgeInsets.zero : null,
-                      minimumSize: isWatch ? const Size(0, 0) : null,
-                    ),
-                    onPressed: () => Navigator.pop(context, false),
-                    child: Text(
-                      'Cancelar',
-                      style: TextStyle(fontSize: isWatch ? 8 : 14),
-                    ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: isWatch ? EdgeInsets.zero : null,
-                      minimumSize: isWatch ? const Size(0, 0) : null,
-                    ),
-                    onPressed: () => Navigator.pop(context, true),
-                    child: Text(
-                      'Confirmar',
-                      style: TextStyle(fontSize: isWatch ? 8 : 14),
-                    ),
-                  ),
-                ])/*)*/;
+              TextButton(
+                style: ElevatedButton.styleFrom(
+                  padding: isWatch
+                      ? EdgeInsets.symmetric(horizontal: 8, vertical: 4)
+                      : null,
+                  minimumSize: isWatch ? const Size(1, 1) : null,
+                ),
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(fontSize: isWatch ? 8 : 14),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: isWatch
+                      ? EdgeInsets.symmetric(horizontal: 8, vertical: 4)
+                      : null,
+                  minimumSize: isWatch ? const Size(1, 1) : null,
+                ),
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(
+                  'Confirmar',
+                  style: TextStyle(fontSize: isWatch ? 8 : 14),
+                ),
+              ),
+            ]) /*)*/;
       },
     );
 
