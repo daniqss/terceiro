@@ -108,54 +108,93 @@ class PatientViewState extends State<PatientView>
     }
   }
 
-  Future<void> addIntake(BuildContext context, int medicationId) async {
+  Future<void> addIntake(
+      BuildContext context, int medicationId, bool isWatch) async {
     DateTime selectedDateTime = DateTime.now();
 
     final intakeConfirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Añadir Toma'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () async {
-                  final time = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.fromDateTime(selectedDateTime),
-                  );
-
-                  if (time != null) {
-                    setState(() {
-                      selectedDateTime = DateTime(
-                        selectedDateTime.year,
-                        selectedDateTime.month,
-                        selectedDateTime.day,
-                        time.hour,
-                        time.minute,
-                      );
-                    });
-                  }
-                },
-                icon: const Icon(Icons.access_time),
-                label: Text(
-                  'Hora: ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
+        return /*Dialog(
+            insetPadding: EdgeInsets.symmetric(
+                horizontal: isWatch ? 3 : 40, vertical: isWatch ? 3 : 40),
+            child: */AlertDialog(
+          insetPadding: EdgeInsets.symmetric(
+              horizontal: isWatch ? 3 : 40, vertical: isWatch ? 3 : 40),
+                title: Text(
+                  isWatch
+                      ? "Añadir toma a las ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}"
+                      : 'Añadir Toma',
+                  style: TextStyle(fontSize: isWatch ? 5 : 18),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Confirmar'),
-            ),
-          ],
-        );
+                content: isWatch
+                    ? null
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              final time = await showTimePicker(
+                                context: context,
+                                initialTime:
+                                    TimeOfDay.fromDateTime(selectedDateTime),
+                              );
+
+                              if (time != null) {
+                                setState(() {
+                                  selectedDateTime = DateTime(
+                                    selectedDateTime.year,
+                                    selectedDateTime.month,
+                                    selectedDateTime.day,
+                                    time.hour,
+                                    time.minute,
+                                  );
+                                });
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: isWatch
+                                  ? const EdgeInsets.symmetric(
+                                      horizontal: 2, vertical: 3)
+                                  : null,
+                              minimumSize: isWatch ? const Size(0, 0) : null,
+                            ),
+                            icon: Icon(
+                              Icons.access_time,
+                              size: isWatch ? 10 : 24,
+                            ),
+                            label: Text(
+                              'Hora: ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
+                              style: TextStyle(fontSize: isWatch ? 8 : 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                actions: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      padding: isWatch ? EdgeInsets.zero : null,
+                      minimumSize: isWatch ? const Size(0, 0) : null,
+                    ),
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text(
+                      'Cancelar',
+                      style: TextStyle(fontSize: isWatch ? 8 : 14),
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: isWatch ? EdgeInsets.zero : null,
+                      minimumSize: isWatch ? const Size(0, 0) : null,
+                    ),
+                    onPressed: () => Navigator.pop(context, true),
+                    child: Text(
+                      'Confirmar',
+                      style: TextStyle(fontSize: isWatch ? 8 : 14),
+                    ),
+                  ),
+                ])/*)*/;
       },
     );
 
@@ -406,13 +445,12 @@ class PatientViewState extends State<PatientView>
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: ListTile(
             titleTextStyle: TextStyle(
-                fontSize: isWatch ? 11 : 16,
-                backgroundColor: Colors.white60,
-                color: Colors.black,
+              fontSize: isWatch ? 11 : 16,
+              color: Colors.black,
             ),
             title: Text(medication["name"]),
             trailing: const Icon(Icons.add),
-            onTap: () => addIntake(context, medicationId),
+            onTap: () => addIntake(context, medicationId, isWatch),
           ),
         );
       },
