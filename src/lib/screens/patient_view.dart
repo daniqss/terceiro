@@ -191,6 +191,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.teal,
+            foregroundColor: Colors.black,
             title: Text("Paciente: ${patient["name"]} ${patient["surname"]}"),
             centerTitle: true,
             leading: isLandscape
@@ -220,7 +221,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
                       onPressed: _selectDateRange,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal,
-                        foregroundColor: Colors.black12
+                        foregroundColor: Colors.black
                       ),
                       icon: const Icon(Icons.calendar_today),
                       label: const Text("Seleccionar Intervalo"),
