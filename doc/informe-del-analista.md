@@ -125,3 +125,48 @@
   h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
      titulación?
   Hemos tenido que familiriazarnos de manera rápida con una nueva tecnología
+
+
+## Evaluación final de la semana 3
+
+   - Santiago Garea Cidre
+   
+     - 5
+     - Este integrante del equipo ha realizado aportaciones de calidad al diseño de la aplicación.
+  
+   - Javier Manotas Ruiz
+     - 5
+     - Este integrante del equipo ha realizado aportaciones de calidad al testeo de la aplicación.
+
+   - Daniel Queijo Seoane
+     - 5
+     - Este integrante del equipo ha realizado aportaciones de calidad al diseño de la aplicación.
+
+
+## Retrospectiva de la semana 3
+
+  a) ¿Qué ha sido lo mejor de la práctica?
+  El aprender los fundamentos básicos de programación de aplicaciones móbiles
+  
+  b) ¿Qué fue lo peor?
+  Conseguir que funcionase el entorno de desarrollo.
+
+  c) ¿Cuál fue el mejor momento de cada semana durante el trabajo del
+     equipo?
+  El momento en el que vimos como los diversos casos de uso de nuestra aplicación funcionaban
+
+  d) ¿Cuál ha sido el peor?
+  Solucionar un error con la interfaz de usuario
+
+  e) ¿Qué has aprendido?
+  Como funcionan los tests con Flutter
+
+  f) ¿Qué necesitáis conservar -como equipo- para las próximas semanas?
+  Nuestra capacidad de comunicación y coordinación a la hora de trabajar.
+
+  g) ¿Qué tenéis que mejorar -como equipo- para las próximas semanas?
+  El empezar a trabajar con más antelación.
+
+  h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
+     titulación?
+  Hemos tenido que comprobar el funcionamiento del código previamente implementado
