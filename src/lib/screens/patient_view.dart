@@ -115,70 +115,66 @@ class PatientViewState extends State<PatientView>
     final intakeConfirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
-        return /*Dialog(
+        return AlertDialog(
             insetPadding: EdgeInsets.symmetric(
-                horizontal: isWatch ? 3 : 40, vertical: isWatch ? 3 : 40),
-            child: */
-            AlertDialog(
-                insetPadding: EdgeInsets.symmetric(
-                    horizontal: isWatch ? 10 : 40, vertical: isWatch ? 13 : 40),
-                title: isWatch
-                    ? ElevatedButton.icon(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 2, vertical: 2)),
+                horizontal: isWatch ? 10 : 40, vertical: isWatch ? 13 : 40),
+            title: isWatch
+                ? ElevatedButton.icon(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 2, vertical: 2)),
+                    icon: Icon(
+                      Icons.access_time,
+                      size: 10,
+                    ),
+                    label: Text(
+                      'Añadir toma a las ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
+                      style: TextStyle(fontSize: 8),
+                    ),
+                  )
+                : Text(
+                    'Añadir Toma',
+                    style: TextStyle(fontSize: 15),
+                    textAlign: TextAlign.center,
+                  ),
+            content: isWatch
+                ? null
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          final time = await showTimePicker(
+                            context: context,
+                            initialTime:
+                                TimeOfDay.fromDateTime(selectedDateTime),
+                          );
+
+                          if (time != null) {
+                            setState(() {
+                              selectedDateTime = DateTime(
+                                selectedDateTime.year,
+                                selectedDateTime.month,
+                                selectedDateTime.day,
+                                time.hour,
+                                time.minute,
+                              );
+                            });
+                          }
+                        },
                         icon: Icon(
                           Icons.access_time,
-                          size: 10,
+                          size: 24,
                         ),
                         label: Text(
-                          'Añadir toma a las ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
-                          style: TextStyle(fontSize: 8),
+                          'Hora: ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
+                          style: TextStyle(fontSize: 16),
                         ),
-                      )
-                    : Text(
-                        'Añadir Toma',
-                        style: TextStyle(fontSize: 5),
-                        textAlign: TextAlign.center,
                       ),
-                content: isWatch
-                    ? null
-                    : Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ElevatedButton.icon(
-                            onPressed: () async {
-                              final time = await showTimePicker(
-                                context: context,
-                                initialTime:
-                                    TimeOfDay.fromDateTime(selectedDateTime),
-                              );
-
-                              if (time != null) {
-                                setState(() {
-                                  selectedDateTime = DateTime(
-                                    selectedDateTime.year,
-                                    selectedDateTime.month,
-                                    selectedDateTime.day,
-                                    time.hour,
-                                    time.minute,
-                                  );
-                                });
-                              }
-                            },
-                            icon: Icon(
-                              Icons.access_time,
-                              size: 24,
-                            ),
-                            label: Text(
-                              'Hora: ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ),
-                        ],
-                      ),
-                actions: [
+                    ],
+                  ),
+            actions: [
               TextButton(
                 style: ElevatedButton.styleFrom(
                   padding: isWatch
@@ -245,6 +241,7 @@ class PatientViewState extends State<PatientView>
         final isLandscape =
             MediaQuery.of(context).orientation == Orientation.landscape;
         final isWatch = MediaQuery.of(context).size.width < 300;
+
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.teal,
@@ -253,35 +250,81 @@ class PatientViewState extends State<PatientView>
             leading: isLandscape || isWatch
                 ? null
                 : IconButton(
-                    icon: const Icon(Icons.menu),
-                    onPressed: toggleMedicationsList,
-                  ),
+              icon: const Icon(Icons.menu),
+              onPressed: toggleMedicationsList,
+            ),
             title: isWatch
                 ? Center(
-                    child: Icon(
-                      Icons.logout,
-                      size: 16,
-                    ),
-                  )
+              child: Icon(
+                Icons.logout,
+                size: 16,
+              ),
+            )
                 : Text("Paciente: ${patient["name"]} ${patient["surname"]}"),
             actions: isWatch
                 ? null
                 : [
-                    IconButton(
-                      icon: Icon(
-                        Icons.logout,
-                        size: 24,
+              IconButton(
+                icon: Icon(
+                  Icons.logout,
+                  size: 24,
+                ),
+                onPressed: () {
+                  final loginProvider =
+                  Provider.of<LoginProvider>(context, listen: false);
+                  loginProvider.logout(context);
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              ),
+            ],
+          ),
+          body: isLandscape
+              ? Row(
+            children: [
+              Container(
+                width: 250,
+                color: Colors.teal.shade100,
+                padding: const EdgeInsets.all(16.0),
+                child: buildSlideMenuContent(allMedications),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    if (!isWatch)
+                      Container(
+                        padding: const EdgeInsets.all(16.0),
+                        child: ElevatedButton.icon(
+                          onPressed: selectDateRange,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            foregroundColor: Colors.black,
+                            padding: isWatch
+                                ? const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4)
+                                : null,
+                          ),
+                          icon: Icon(
+                            Icons.calendar_today,
+                            size: isWatch ? 12 : 24,
+                          ),
+                          label: Text(
+                            "Seleccionar Intervalo",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
                       ),
-                      onPressed: () {
-                        final loginProvider =
-                            Provider.of<LoginProvider>(context, listen: false);
-                        loginProvider.logout(context);
-                        Navigator.pushReplacementNamed(context, '/login');
-                      },
+                    Expanded(
+                      child: isLoadingFilter
+                          ? const Center(child: CircularProgressIndicator())
+                          : buildMedicationsList(filteredMedications,
+                          patientProvider, isWatch),
                     ),
                   ],
-          ),
-          body: Stack(
+                ),
+              ),
+            ],
+          )
+              : Stack(
             children: [
               Column(
                 children: [
@@ -295,7 +338,7 @@ class PatientViewState extends State<PatientView>
                           foregroundColor: Colors.black,
                           padding: isWatch
                               ? const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4)
+                              horizontal: 8, vertical: 4)
                               : null,
                         ),
                         icon: Icon(
@@ -311,35 +354,25 @@ class PatientViewState extends State<PatientView>
                   Expanded(
                     child: isLoadingFilter
                         ? const Center(child: CircularProgressIndicator())
-                        : buildMedicationsList(
-                            filteredMedications, patientProvider, isWatch),
+                        : buildMedicationsList(filteredMedications,
+                        patientProvider, isWatch),
                   ),
                 ],
               ),
-              buildSlideMenu(allMedications, isLandscape),
+              SlideTransition(
+                position: slideAnimation,
+                child: Container(
+                  width: 250,
+                  color: Colors.teal.shade100,
+                  padding: const EdgeInsets.all(16.0),
+                  child: buildSlideMenuContent(allMedications),
+                ),
+              ),
             ],
           ),
         );
       },
     );
-  }
-
-  Widget buildSlideMenu(List allMedications, bool isLandscape) {
-    if (isLandscape) {
-      return Drawer(
-        child: buildSlideMenuContent(allMedications),
-      );
-    } else {
-      return SlideTransition(
-        position: slideAnimation,
-        child: Container(
-          width: 250,
-          color: Colors.teal.shade100,
-          padding: const EdgeInsets.all(16.0),
-          child: buildSlideMenuContent(allMedications),
-        ),
-      );
-    }
   }
 
   Widget buildSlideMenuContent(List allMedications) {
