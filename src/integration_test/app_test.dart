@@ -37,12 +37,12 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(loginButton);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
       expect(find.byType(SnackBar), findsOneWidget);
     });
 
-    /*testWidgets('Login with valid code', (WidgetTester tester) async {
+    testWidgets('Login with valid code', (WidgetTester tester) async {
 
       await tester.pumpWidget(MyApp());
 
@@ -60,10 +60,10 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(loginButton);
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      await Future.delayed(Duration(seconds: 4));
+      expect(find.text('Paciente no encontrado'), findsNothing);
 
-    });*/
+    });
   });
 }
