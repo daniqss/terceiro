@@ -57,7 +57,7 @@ dev_dependencies:
     sdk: flutter
 
   # For linting and analyzing code
-  lints: ^2.0.0
+  lints: ^5.0.0
 
   # For using fake async and testing time-sensitive flows
   fake_async: ^1.3.0
