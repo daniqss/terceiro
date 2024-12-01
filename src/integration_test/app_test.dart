@@ -35,11 +35,14 @@ void main() {
 
       await tester.enterText(patientCodeInput, 'invalid_code');
       await tester.pumpAndSettle();
+      await tester.enterText(patientCodeInput, 'invalid_code');
+      await tester.pumpAndSettle();
+
 
       await tester.tap(loginButton);
       await tester.pumpAndSettle();
 
-      expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.text('Paciente no encontrado'), findsOneWidget);
     });
 
     testWidgets('Login with valid code', (WidgetTester tester) async {
@@ -56,8 +59,14 @@ void main() {
       // valid login
       final code = await getTestCode();
 
+
       await tester.enterText(patientCodeInput, code);
       await tester.pumpAndSettle();
+      await tester.enterText(patientCodeInput, code);
+      await tester.pumpAndSettle();
+
+
+      //await Future.delayed(Duration(seconds: 10));
 
       await tester.tap(loginButton);
       await tester.pumpAndSettle();
