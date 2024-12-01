@@ -40,7 +40,7 @@ Engadíronse os seguintes ficheiros:
 
 Modificáronse os ficheiros da documentación
 
-##  Registro de tareas llevadas a cabo durante la semana 1
+##  Registro de tareas llevadas a cabo durante la semana 2
 ### Descripción de la tarea
 Esta semana tivemos que desarrollar a aplicación diseñada na semana pasada, controlando errores e concurrencia
   
@@ -57,3 +57,21 @@ Na seguinte semana teremos que completar algúns aspectos do software e pulir al
 
 ## Estado del repositorio en la semama 2
 Engadiuse o proxecto de flutter
+
+##  Registro de tareas llevadas a cabo durante la semana 3
+### Descripción de la tarea
+Esta semana tivemos que desarrollar un test end2end para a nosa aplicación móbil
+  
+### Asignación de responsables
+  - Javier Manotas Ruiz: desarrollo dos tests
+  - Yago Garea Cidre: desarrollo e pulido da aplicación
+  - Daniel Queijo Seoane: desarrollo e pulido da versión para smartwatch
+  
+### Estado de completud
+Realizada a tarefa 3
+  
+### Conflictos, desviaciones, etc.
+Non se produciron conflictos nin desviaciones
+
+## Estado del repositorio en la semama 3
+Proxecto completo con todas as tarefas completadas
