@@ -43,5 +43,5 @@
 ## Otros recursos empleados en la semana 2
  - Flutter Api Docs
 
-## Otros recursos empleados en la semana 2
+## Otros recursos empleados en la semana 3
  - Flutter Testing Docs
