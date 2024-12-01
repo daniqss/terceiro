@@ -55,8 +55,6 @@ void main() {
       final loginButton = find.text('Entrar');
       expect(loginButton, findsOneWidget);
 
-
-      // valid login
       final code = await getTestCode();
 
 
@@ -66,12 +64,50 @@ void main() {
       await tester.pumpAndSettle();
 
 
-      //await Future.delayed(Duration(seconds: 10));
+      await tester.tap(loginButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Paciente no encontrado'), findsNothing);
+
+      // tests calendarios
+      expect(find.text('Seleccionar Intervalo'), findsOneWidget);
+      await tester.tap(find.text('Seleccionar Intervalo'));
+      await tester.pumpAndSettle();
+      expect(find.byType(DateRangePickerDialog), findsOneWidget);
+    });
+
+
+
+    testWidgets('Logout test', (WidgetTester tester) async {
+
+      await tester.pumpWidget(MyApp());
+
+      final patientCodeInput = find.byType(TextField);
+      expect(patientCodeInput, findsOneWidget);
+
+      final loginButton = find.text('Entrar');
+      expect(loginButton, findsOneWidget);
+      
+      final code = await getTestCode();
+
+      await tester.enterText(patientCodeInput, code);
+      await tester.pumpAndSettle();
+      await tester.enterText(patientCodeInput, code);
+      await tester.pumpAndSettle();
 
       await tester.tap(loginButton);
       await tester.pumpAndSettle();
 
       expect(find.text('Paciente no encontrado'), findsNothing);
+
+      final logoutButton = find.byIcon(Icons.logout);
+      expect(logoutButton, findsOneWidget);
+
+      await tester.tap(logoutButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bienvenido a SergasProMax'), findsOneWidget);
+      expect(find.byType(TextField), findsOneWidget);
 
     });
   });
