@@ -13,74 +13,76 @@ class PatientView extends StatefulWidget {
   PatientViewState createState() => PatientViewState();
 }
 
-class PatientViewState extends State<PatientView> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<Offset> _slideAnimation;
-  late bool _isLoadingFilter;
-  late List<Map<String, dynamic>> _filteredMedications;
-  final Set<int> _expandedMedications = {};
-  DateTimeRange? _selectedDateRange;
+class PatientViewState extends State<PatientView>
+    with SingleTickerProviderStateMixin {
+  late AnimationController animationController;
+  late Animation<Offset> slideAnimation;
+  late bool isLoadingFilter;
+  late List<Map<String, dynamic>> filteredMedications;
+  final Set<int> expandedMedications = {};
+  DateTimeRange? selectedDateRange;
 
   @override
   void initState() {
     super.initState();
-    _isLoadingFilter = false;
-    _filteredMedications = [];
+    isLoadingFilter = false;
+    filteredMedications = [];
     final today = DateTime.now();
-    _selectedDateRange = DateTimeRange(start: today, end: today);
+    selectedDateRange = DateTimeRange(start: today, end: today);
 
-    _animationController = AnimationController(
+    animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    _slideAnimation = Tween<Offset>(
+    slideAnimation = Tween<Offset>(
       begin: const Offset(-1.0, 0.0),
       end: Offset.zero,
     ).animate(CurvedAnimation(
-      parent: _animationController,
+      parent: animationController,
       curve: Curves.easeInOut,
     ));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
+      final patientProvider =
+          Provider.of<PatientProvider>(context, listen: false);
       patientProvider.loadPatientData(widget.patientId).then((_) {
         patientProvider.loadAllPosologies(widget.patientId).then((_) {
-          _applyDateRangeFilter(patientProvider);
+          applyDateRangeFilter(patientProvider);
         });
       });
     });
   }
 
   void toggleMedicationsList() {
-    if (_animationController.isDismissed) {
-      _animationController.forward();
+    if (animationController.isDismissed) {
+      animationController.forward();
     } else {
-      _animationController.reverse();
+      animationController.reverse();
     }
   }
 
-  Future<void> _applyDateRangeFilter(PatientProvider provider) async {
-    if (_selectedDateRange != null) {
-      setState(() => _isLoadingFilter = true);
+  Future<void> applyDateRangeFilter(PatientProvider provider) async {
+    if (selectedDateRange != null) {
+      setState(() => isLoadingFilter = true);
 
       await provider.filterMedicationsByDateRange(
-        _selectedDateRange!.start,
-        _selectedDateRange!.end,
+        selectedDateRange!.start,
+        selectedDateRange!.end,
       );
 
       setState(() {
-        _filteredMedications = provider.filteredMedications;
-        _isLoadingFilter = false;
+        filteredMedications = provider.filteredMedications;
+        isLoadingFilter = false;
       });
     }
   }
 
-  Future<void> _selectDateRange() async {
+  Future<void> selectDateRange() async {
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
       firstDate: DateTime.now().subtract(const Duration(days: 30)),
       lastDate: DateTime.now().add(const Duration(days: 30)),
-      initialDateRange: _selectedDateRange,
+      initialDateRange: selectedDateRange,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -97,79 +99,133 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
 
     if (picked != null) {
       setState(() {
-        _selectedDateRange = picked;
+        selectedDateRange = picked;
       });
 
-      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
-      await _applyDateRangeFilter(patientProvider);
+      final patientProvider =
+          Provider.of<PatientProvider>(context, listen: false);
+      await applyDateRangeFilter(patientProvider);
     }
   }
 
-  Future<void> _addIntake(BuildContext context, int medicationId) async {
+  Future<void> addIntake(
+      BuildContext context, int medicationId, bool isWatch) async {
     DateTime selectedDateTime = DateTime.now();
 
     final intakeConfirmed = await showDialog<bool>(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: const Text('Añadir Toma'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () async {
-                  final time = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.fromDateTime(selectedDateTime),
-                  );
+        return /*Dialog(
+            insetPadding: EdgeInsets.symmetric(
+                horizontal: isWatch ? 3 : 40, vertical: isWatch ? 3 : 40),
+            child: */
+            AlertDialog(
+                insetPadding: EdgeInsets.symmetric(
+                    horizontal: isWatch ? 10 : 40, vertical: isWatch ? 13 : 40),
+                title: isWatch
+                    ? ElevatedButton.icon(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 2, vertical: 2)),
+                        icon: Icon(
+                          Icons.access_time,
+                          size: 10,
+                        ),
+                        label: Text(
+                          'Añadir toma a las ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
+                          style: TextStyle(fontSize: 8),
+                        ),
+                      )
+                    : Text(
+                        'Añadir Toma',
+                        style: TextStyle(fontSize: 5),
+                        textAlign: TextAlign.center,
+                      ),
+                content: isWatch
+                    ? null
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              final time = await showTimePicker(
+                                context: context,
+                                initialTime:
+                                    TimeOfDay.fromDateTime(selectedDateTime),
+                              );
 
-                  if (time != null) {
-                    setState(() {
-                      selectedDateTime = DateTime(
-                        selectedDateTime.year,
-                        selectedDateTime.month,
-                        selectedDateTime.day,
-                        time.hour,
-                        time.minute,
-                      );
-                    });
-                  }
-                },
-                icon: const Icon(Icons.access_time),
-                label: Text(
-                  'Hora: ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
+                              if (time != null) {
+                                setState(() {
+                                  selectedDateTime = DateTime(
+                                    selectedDateTime.year,
+                                    selectedDateTime.month,
+                                    selectedDateTime.day,
+                                    time.hour,
+                                    time.minute,
+                                  );
+                                });
+                              }
+                            },
+                            icon: Icon(
+                              Icons.access_time,
+                              size: 24,
+                            ),
+                            label: Text(
+                              'Hora: ${TimeOfDay.fromDateTime(selectedDateTime).format(context)}',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                actions: [
+              TextButton(
+                style: ElevatedButton.styleFrom(
+                  padding: isWatch
+                      ? EdgeInsets.symmetric(horizontal: 8, vertical: 4)
+                      : null,
+                  minimumSize: isWatch ? const Size(1, 1) : null,
+                ),
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(
+                  'Cancelar',
+                  style: TextStyle(fontSize: isWatch ? 8 : 14),
                 ),
               ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Confirmar'),
-            ),
-          ],
-        );
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: isWatch
+                      ? EdgeInsets.symmetric(horizontal: 8, vertical: 4)
+                      : null,
+                  minimumSize: isWatch ? const Size(1, 1) : null,
+                ),
+                onPressed: () => Navigator.pop(context, true),
+                child: Text(
+                  'Confirmar',
+                  style: TextStyle(fontSize: isWatch ? 8 : 14),
+                ),
+              ),
+            ]) /*)*/;
       },
     );
 
     if (intakeConfirmed == true) {
-      final formattedDate = DateFormat("yyyy-MM-ddTHH:mm").format(selectedDateTime);
+      final formattedDate =
+          DateFormat("yyyy-MM-ddTHH:mm").format(selectedDateTime);
 
       final intakeData = {'date': formattedDate};
 
-      final patientProvider = Provider.of<PatientProvider>(context, listen: false);
-      await patientProvider.addMedicationIntake(widget.patientId, medicationId, intakeData);
-      await _applyDateRangeFilter(patientProvider);
+      final patientProvider =
+          Provider.of<PatientProvider>(context, listen: false);
+      await patientProvider.addMedicationIntake(
+          widget.patientId, medicationId, intakeData);
+      await applyDateRangeFilter(patientProvider);
     }
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -186,51 +242,77 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
           );
         }
 
-        final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-
+        final isLandscape =
+            MediaQuery.of(context).orientation == Orientation.landscape;
+        final isWatch = MediaQuery.of(context).size.width < 300;
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.teal,
             foregroundColor: Colors.black,
-            title: Text("Paciente: ${patient["name"]} ${patient["surname"]}"),
             centerTitle: true,
-            leading: isLandscape
+            leading: isLandscape || isWatch
                 ? null
                 : IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: toggleMedicationsList,
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.logout),
-                onPressed: () {
-                  final loginProvider = Provider.of<LoginProvider>(context, listen: false);
-                  loginProvider.logout(context);
-                  Navigator.pushReplacementNamed(context, '/login');
-                },
-              ),
-            ],
+                    icon: const Icon(Icons.menu),
+                    onPressed: toggleMedicationsList,
+                  ),
+            title: isWatch
+                ? Center(
+                    child: Icon(
+                      Icons.logout,
+                      size: 16,
+                    ),
+                  )
+                : Text("Paciente: ${patient["name"]} ${patient["surname"]}"),
+            actions: isWatch
+                ? null
+                : [
+                    IconButton(
+                      icon: Icon(
+                        Icons.logout,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        final loginProvider =
+                            Provider.of<LoginProvider>(context, listen: false);
+                        loginProvider.logout(context);
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                    ),
+                  ],
           ),
           body: Stack(
             children: [
               Column(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton.icon(
-                      onPressed: _selectDateRange,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        foregroundColor: Colors.black
+                  if (!isWatch)
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ElevatedButton.icon(
+                        onPressed: selectDateRange,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          foregroundColor: Colors.black,
+                          padding: isWatch
+                              ? const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4)
+                              : null,
+                        ),
+                        icon: Icon(
+                          Icons.calendar_today,
+                          size: isWatch ? 12 : 24,
+                        ),
+                        label: Text(
+                          "Seleccionar Intervalo",
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
-                      icon: const Icon(Icons.calendar_today),
-                      label: const Text("Seleccionar Intervalo"),
                     ),
-                  ),
                   Expanded(
-                    child: _isLoadingFilter
+                    child: isLoadingFilter
                         ? const Center(child: CircularProgressIndicator())
-                        : _buildMedicationsList(_filteredMedications, patientProvider),
+                        : buildMedicationsList(
+                            filteredMedications, patientProvider, isWatch),
                   ),
                 ],
               ),
@@ -249,7 +331,7 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
       );
     } else {
       return SlideTransition(
-        position: _slideAnimation,
+        position: slideAnimation,
         child: Container(
           width: 250,
           color: Colors.teal.shade100,
@@ -274,11 +356,13 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
             itemBuilder: (context, index) {
               final medication = allMedications[index];
               final medicationId = medication["id"];
-              final posologies = Provider.of<PatientProvider>(context, listen: false)
-                  .getPosologiesForMedication(medicationId);
-              final isExpanded = _expandedMedications.contains(medicationId);
+              final posologies =
+                  Provider.of<PatientProvider>(context, listen: false)
+                      .getPosologiesForMedication(medicationId);
+              final isExpanded = expandedMedications.contains(medicationId);
 
-              return buildMedicationItem(medication, medicationId, posologies, isExpanded);
+              return buildMedicationItem(
+                  medication, medicationId, posologies, isExpanded);
             },
           ),
         ),
@@ -286,7 +370,8 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
     );
   }
 
-  Widget buildMedicationItem(dynamic medication, int medicationId, List posologies, bool isExpanded) {
+  Widget buildMedicationItem(
+      dynamic medication, int medicationId, List posologies, bool isExpanded) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Column(
@@ -296,9 +381,9 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
             onTap: () {
               setState(() {
                 if (isExpanded) {
-                  _expandedMedications.remove(medicationId);
+                  expandedMedications.remove(medicationId);
                 } else {
-                  _expandedMedications.add(medicationId);
+                  expandedMedications.add(medicationId);
                 }
               });
             },
@@ -308,7 +393,10 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8.0),
                 boxShadow: const [
-                  BoxShadow(color: Colors.black12, blurRadius: 4.0, offset: Offset(0, 2)),
+                  BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4.0,
+                      offset: Offset(0, 2)),
                 ],
               ),
               child: Row(
@@ -331,28 +419,31 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
           if (isExpanded)
             posologies.isEmpty
                 ? const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "No hay posologías disponibles.",
-                style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
-              ),
-            )
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "No hay posologías disponibles.",
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic, color: Colors.grey),
+                    ),
+                  )
                 : Column(
-              children: posologies.map((posology) {
-                final hour = posology['hour'].toString().padLeft(2, '0');
-                final minute = posology['minute'].toString().padLeft(2, '0');
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("Posología: $hour:$minute"),
-                );
-              }).toList(),
-            ),
+                    children: posologies.map((posology) {
+                      final hour = posology['hour'].toString().padLeft(2, '0');
+                      final minute =
+                          posology['minute'].toString().padLeft(2, '0');
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("Posología: $hour:$minute"),
+                      );
+                    }).toList(),
+                  ),
         ],
       ),
     );
   }
 
-  Widget _buildMedicationsList(List filteredMedications, PatientProvider patientProvider) {
+  Widget buildMedicationsList(
+      List filteredMedications, PatientProvider patientProvider, bool isWatch) {
     return ListView.builder(
       itemCount: filteredMedications.length,
       itemBuilder: (context, index) {
@@ -364,9 +455,13 @@ class PatientViewState extends State<PatientView> with SingleTickerProviderState
           ),
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: ListTile(
+            titleTextStyle: TextStyle(
+              fontSize: isWatch ? 11 : 16,
+              color: Colors.black,
+            ),
             title: Text(medication["name"]),
             trailing: const Icon(Icons.add),
-            onTap: () => _addIntake(context, medicationId),
+            onTap: () => addIntake(context, medicationId, isWatch),
           ),
         );
       },
