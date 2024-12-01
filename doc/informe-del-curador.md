@@ -29,6 +29,11 @@
 ## Objetivos de aprendizaje de la semana 2
   El objetivo de esta semana es que el equipo de desarrollo sea capaz de 
   organizarse y de desarrollar la aplicación con una interfaz útil y sencilla.
+
+## Objetivos de aprendizaje de la semana 3
+  El objetivo de esta semana es que el equipo de desarrollo es el diseño y 
+  implementación de diferentes pruebas que den validez al trabajo de la semana
+  anterior.
  
 ## Otros recursos empleados en la semana 1
 
@@ -37,3 +42,6 @@
 
 ## Otros recursos empleados en la semana 2
  - Flutter Api Docs
+
+## Otros recursos empleados en la semana 2
+ - Flutter Testing Docs
