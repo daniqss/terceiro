@@ -48,19 +48,37 @@
 ## Retrospectiva de la semana 1
 
   a) ¿Qué ha sido lo mejor de la práctica?
+     Adquirir conocimientos sobre el uso de HTML y CSS, aunque sea a un nivel básico.
   
   b) ¿Qué fue lo peor?
+     Tuvimos un problema con un tamaño de letra que no se ajustaba a lo que queríamos 
+     en la vista móvil y nos costó encontrar la solución.
 
   c) ¿Cuál fue el mejor momento de cada semana durante el trabajo del
      equipo?
+     Cuando empezamos con la implementación de la prática, ya que en el diseño había
+     conceptos que no teníamos claros pero se fueron resolviendo sobre la marcha.
 
   d) ¿Cuál ha sido el peor?
+     La parte de diseño, ya que no teníamos claro cómo queríamos que fuese la página
+     y nos costó ponernos de acuerdo.
 
   e) ¿Qué has aprendido?
+     Aparte de ganar experiencia trabajando en equipo y el uso de git, hemos aprendido
+     HTML y CSS con un poco más de profundidad del nivel que teníamos.
 
   f) ¿Qué necesitáis conservar -como equipo- para las próximas semanas?
+     Definitivamente necesitamos conservar la actitud de los miembros del equipo, ya que
+     mantenemos siempre el respeto y establecimos una dínamica en la que todos los miembros
+     del equipo pueden aportar ideas y hacer críticas constructivas en cualquier momento del
+     proceso.
 
   g) ¿Qué tenéis que mejorar -como equipo- para las próximas semanas?
+     Creo que debemos intentar ser mas previsores y empezar a trabajar en la práctica con
+     más antelación.
 
   h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
      titulación?
+     Este contenido aparte de necesitar trabajo en equipo, cosa que es muy importante tanto
+     en el curso como en la titulación, también requiere conocimientos de HTML y CSS, que
+     son fundamentales para el desarrollo web, tarea muy común en la titulación.
