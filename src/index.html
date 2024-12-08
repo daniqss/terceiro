@@ -1,11 +1,61 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/style.css" />
     <title>Sergas Pro Max</title>
   </head>
   <body>
-    <h1>hola mundo</h1>
+    <header>
+      <h1>Sergas Pro Max</h1>
+    </header>
+    <main>
+      <section id="patientCode">
+        <form
+          id="patientCodeForm"
+          action="http://localhost:8000/patients"
+          method="GET"
+        >
+          <input
+            id="patientCodeInput"
+            type="text"
+            placeholder="Pacient code..."
+          />
+          <button type="submit" style="display: none"></button>
+        </form>
+      </section>
+      <section id="patientMedicationList">
+        <ul id="patientMedicationList">
+          <li>
+            <article class="medicationItem">
+              <h3><a href="ibupo.html">Ibuprofeno</a></h3>
+              <div>
+                <p>14 mg</p>
+                <p>14 de febrero</p>
+              </div>
+            </article>
+          </li>
+          <li>
+            <article class="medicationItem">
+              <h3><a href="ibupo.html">Ibuprofeno</a></h3>
+              <div>
+                <p>14 mg</p>
+                <p>14 de febrero</p>
+              </div>
+            </article>
+          </li>
+          <li>
+            <article class="medicationItem">
+              <h3><a href="ibupo.html">Ibuprofeno</a></h3>
+              <div>
+                <p>14 mg</p>
+                <p>14 de febrero</p>
+              </div>
+            </article>
+          </li>
+        </ul>
+      </section>
+    </main>
   </body>
 </html>
