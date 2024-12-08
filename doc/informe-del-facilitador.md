@@ -20,12 +20,14 @@
 ##  Registro de tareas llevadas a cabo durante la semana 1
 
   - Descripción de la tarea
-  
+  Decidimos y documentamos los casos de uso e implementamos la interfaz
   - Asignación de responsables
-  
+  Todo el equipo ha participado en todas las tareas que se realizaron por llamada en Discord
   - Estado de completud
-  
+  Tareas de las semana 1 completadas
   - Conflictos, desviaciones, etc.
-  
+  Tuvimos un problema para que a todos se nos actualizasen los cambios de la página, ya que estábamos empleando vscode the web y tuvimos que crear un túnel para poder ver los resultados en tiempo real.
 
 ## Estado del repositorio en la semama 1
+
+Se han incluido los distintos ficheros de documentación así como el codigo de html y css básicos.
