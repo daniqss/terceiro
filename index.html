@@ -7,27 +7,29 @@
     <title>Sergas Pro Max</title>
   </head>
   <body>
-    <header>
-      <h1>Sergas Pro Max</h1>
-    </header>
+    <a href="index.html">
+      <header>
+        <h1>Sergas Pro Max</h1>
+      </header>
+    </a>
     <main>
       <section id="patient-code">
         <form
-          id="patientCodeForm"
+          id="patient-code-form"
           action="http://localhost:8000/patients"
           method="GET"
         >
           <input
-            id="patientCodeInput"
+            id="patient-code-input"
             type="text"
-            placeholder="Pacient code..."
+            placeholder="Patient code..."
             required
           />
           <button type="submit" style="display: none"></button>
         </form>
       </section>
-      <section id="patient-medication-list">
-        <ul id="patientMedicationList">
+      <section id="patient-medication-list-container">
+        <ul id="patient-medication-list">
           <li>
             <article class="medication-item">
               <h3><a href="src/ibupro.html">Ibuprofeno</a></h3>
@@ -39,7 +41,7 @@
           </li>
           <li>
             <article class="medication-item">
-              <h3><a href="ibupo.html">Ibuprofeno</a></h3>
+              <h3><a href="ibupro.html">Ibuprofeno</a></h3>
               <div>
                 <p>14 mg</p>
                 <p>14 de febrero</p>
@@ -48,7 +50,7 @@
           </li>
           <li>
             <article class="medication-item">
-              <h3><a href="ibupo.html">Ibuprofeno</a></h3>
+              <h3><a href="ibupro.html">Ibuprofeno</a></h3>
               <div>
                 <p>14 mg</p>
                 <p>14 de febrero</p>

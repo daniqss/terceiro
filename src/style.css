@@ -1,21 +1,123 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* src/style.css */
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7f9fc;
+  color: #333;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
+a {
+  text-decoration: none;
+  color: white; 
+}
+
+header {
+  background-color: #4caf50;
+  color: white;
+  padding: 1rem 2rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+main {
+  padding: 2rem;
+}
+
+#patient-code {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+#patient-code-form {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+#patient-code-input {
+  flex: 1;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+
+#patient-code-input:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+button[type="submit"] {
+  display: none;
+}
+
+#patient-medication-list-container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#patient-medication-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.medication-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.medication-item:last-child {
+  border-bottom: none;
+}
+
+.medication-item h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #4caf50;
+}
+
+.medication-item h3 a {
+  text-decoration: none;
+  color: #4caf50;
+}
+
+.medication-item h3 a:hover {
+  text-decoration: underline;
+}
+
+.medication-item div {
+  text-align: right;
+}
+
+.medication-item div p {
+  margin: 0.2rem 0;
+}
+
+.medication-item:hover {
+  background-color: #f1f8e9;
+}
+
+.warning {
+  background-color: #ffe0e0;
+  border-left: 5px solid #ff5252;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  color: #d32f2f;
 }
