@@ -220,6 +220,12 @@ caption {
   }
 }
 
+@media (min-width: 1024px) {
+  main {
+    margin: 0 15rem 0 15rem;
+  }
+}
+
 footer {
   margin-top: 2rem;
   text-align: center;
