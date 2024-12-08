@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Ibuprofeno</title>
+  </head>
+  <body>
+    <header>
+      <h1>Sergas Pro Max</h1>
+    </header>
+    <main>
+        <article>
+            <h2>jose maria</h2>
+        </article>
+        <section class="medication-period">
+            <article class="periods">
+                <select id="period-options" name="Period Options" required>
+                    <option value="">Seleccione un periodo</option>
+                    <option value="monthly">Último mes</option>
+                    <option value="daily">Últimos <b>n</b> días</option>
+                    <option value="period">Período entre dos fechas</option>
+                </select>
+                <form>
+                    <label for="start-date">Fecha comienzo:</label>
+                    <input type="date" id="start-date" name="start-date" />
+                    
+                    <label for="end-date">Fecha fin:</label>
+                    <input type="date" id="end-date" name="end-date" />
+                </form>
+            </article>
+        </section>
+            
+        <section class="medication-schedule">
+          <h3>ibuprofeno</h3>
+
+          <table>
+            <caption>
+              Comparación de Posología e Intakes
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Posología</th>
+                <th scope="col">Tomas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><time>12:00</time></td>
+                <td><time>12:03</time></td>
+              </tr>
+              <tr>
+                <td><time>17:00</time></td>
+                <td>-</td>
+              </tr>
+              <tr>
+                <td><time>22:00</time></td>
+                <td><time>22:00</time></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <footer>
+          <p>Tiempo medio hasta toma: <span id="average-time"></span></p>
+          <p>Tomas totales: <span id="total-intakes"></span></p>
+        </footer>
+      </section>
+    </main>
+  </body>
+</html>
