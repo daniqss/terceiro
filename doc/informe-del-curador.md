@@ -17,17 +17,21 @@
   > informe que debe generar la persona encargada de este role cada
   > semana.
 
-  
 
 ## Objetivos de aprendizaje de la semana 1
 
-  - Concepto, herramienta, ...
-
-    Recursos indentificados para su estudio.
-	
+  - Documentar los casos de uso de la aplicación web a realizar
+  - Realizar la estructura y el estilado de la web, diseñados _mobile first_
+	- Utilizar _HTML semántico_ y crear una página web accesible
 	
 ## Otros recursos empleados en la semana 1
+  - [Vite](https://vite.dev)
 
-  - Descripción del recurso.
-  
-    Utilidad y aplicación a la práctica.
+    Servidor de desarrollo local que nos permitió trabajar con Hot Reload.
+  - [Live Share](https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare)
+
+    Extensión de VSCode que nos permitió trabajar sobre el mismo código todos juntos.
+  - [Port Forwarding de VSCode](https://code.visualstudio.com/docs/editor/port-forwarding)
+
+    Característica de VSCode que nos permitió compartir nuestro servidor de desarrollo local con el resto del equipo.
+
