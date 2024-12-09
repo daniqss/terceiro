@@ -20,13 +20,13 @@ public class JsonToRestCourseDtoConversor {
 
         ObjectNode courseObject = JsonNodeFactory.instance.objectNode();
 
-        courseObject.put("courseId", course.getCourseId()).
-                put("name", course.getName()).
-                put("city", course.getCity()).
-                put("startDate", course.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)). // Format LocalDateTime
-                put("price", course.getPrice()).
-                put("maxSpots", course.getMaxSpots()).
-                put("vacantSpots", course.getVacantSpots());
+        courseObject.put("courseId", course.getCourseId())
+                .put("name", course.getName())
+                .put("city", course.getCity())
+                .put("startDate", course.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)) // Format LocalDateTime
+                .put("price", course.getPrice())
+                .put("maxSpots", course.getMaxSpots())
+                .put("vacantSpots", course.getVacantSpots());
 
         return courseObject;
     }
@@ -58,7 +58,8 @@ public class JsonToRestCourseDtoConversor {
                 String name = courseObject.get("name").textValue().trim();
                 String city = courseObject.get("city").textValue().trim();
                 LocalDateTime startDate = LocalDateTime.parse(courseObject.get("startDate").textValue().trim(),
-                        DateTimeFormatter.ISO_LOCAL_DATE_TIME);int maxSpots = courseObject.get("maxSpots").intValue();
+                        DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                int maxSpots = courseObject.get("maxSpots").intValue();
                 int vacantSpots = courseObject.get("vacantSpots").intValue();
                 float price = courseObject.get("price").floatValue();
 
