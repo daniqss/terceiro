@@ -12,8 +12,7 @@ public class RestCourseDto {
     private int maxSpots;
     private int vacantSpots;
 
-    public RestCourseDto() {
-    }
+    public RestCourseDto() {}
 
     public RestCourseDto(Long courseId, String name, String city, LocalDateTime startDate, float price, int maxSpots, int vacantSpots) {
         this.courseId = courseId;
