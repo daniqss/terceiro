@@ -403,13 +403,10 @@ public class AppServiceTest {
 
             // Make inscription
             LocalDateTime beforeInscriptionDate = LocalDateTime.now().withNano(0);
-            Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+            Inscription inscription = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
             LocalDateTime afterInscriptionDate = LocalDateTime.now().withNano(0);
 
             Course courseAfter = courseService.findCourse(course.getCourseId());
-
-            // Get inserted inscription
-            Inscription inscription = findInscription(inscriptionId);
 
             // Find inscriptions by email
             List<Inscription> inscriptionList = courseService.findInscriptions(VALID_EMAIL);
@@ -420,7 +417,7 @@ public class AppServiceTest {
             assertEquals(1, courseBefore.getVacantSpots()-courseAfter.getVacantSpots());
 
             // Check inscription
-            assertEquals(inscriptionList.size(), 1);
+            assertEquals(1, inscriptionList.size());
             assertEquals(inscription, foundInscription);
 
             assertEquals(VALID_CREDIT_CARD, foundInscription.getCreditCard());
@@ -444,12 +441,12 @@ public class AppServiceTest {
         Course course = createCourse(getValidCourse3());
         try {
             assertThrows(CourseFullException.class, () -> {
-                Long inscriptionId1 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                Long inscriptionId2 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                Long inscriptionId3 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                removeInscription(inscriptionId1);
-                removeInscription(inscriptionId2);
-                removeInscription(inscriptionId3);
+                Inscription inscription1 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                Inscription inscription2 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                Inscription inscription3 = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                removeInscription(inscription1.getInscriptionId());
+                removeInscription(inscription2.getInscriptionId());
+                removeInscription(inscription3.getInscriptionId());
             });
         } finally {
             if (course != null) removeCourse(course.getCourseId());
@@ -463,8 +460,8 @@ public class AppServiceTest {
             c.setStartDate(INVALID_COURSE_START_DATE_TO_INSC);
             Course course = createCourseDao(c, LocalDateTime.now());
             try {
-                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                removeInscription(inscriptionId);
+                Inscription inscription = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                removeInscription(inscription.getInscriptionId());
             } finally {
                 if (course != null) removeCourse(course.getCourseId());
             }
@@ -474,26 +471,26 @@ public class AppServiceTest {
     @Test
     public void testAddInvalidInscription() {
         assertThrows(InputValidationException.class, () -> {
-            Long inscriptionId = courseService.addInscription(MIN_ID - 2, VALID_EMAIL, VALID_CREDIT_CARD);
-            removeInscription(inscriptionId);
+            Inscription inscription= courseService.addInscription(MIN_ID - 2, VALID_EMAIL, VALID_CREDIT_CARD);
+            removeInscription(inscription.getInscriptionId());
         });
 
         assertThrows(InputValidationException.class, () -> {
-            Long inscriptionId = courseService.addInscription(MIN_ID - 1, VALID_EMAIL, VALID_CREDIT_CARD);
-            removeInscription(inscriptionId);
+            Inscription inscription = courseService.addInscription(MIN_ID - 1, VALID_EMAIL, VALID_CREDIT_CARD);
+            removeInscription(inscription.getInscriptionId());
         });
 
         assertThrows(InstanceNotFoundException.class, () -> {
-            Long inscriptionId = courseService.addInscription(MIN_ID, VALID_EMAIL, VALID_CREDIT_CARD);
-            removeInscription(inscriptionId);
+            Inscription inscription = courseService.addInscription(MIN_ID, VALID_EMAIL, VALID_CREDIT_CARD);
+            removeInscription(inscription.getInscriptionId());
         });
 
         assertThrows(InputValidationException.class, () -> {
             Course course = null;
             try {
                 course = createCourse(getValidCourse());
-                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, INVALID_CREDIT_CARD);
-                removeInscription(inscriptionId);
+                Inscription inscription = courseService.addInscription(course.getCourseId(), VALID_EMAIL, INVALID_CREDIT_CARD);
+                removeInscription(inscription.getInscriptionId());
             } finally {
                 if (course != null) removeCourse(course.getCourseId());
             }
@@ -503,8 +500,8 @@ public class AppServiceTest {
             Course course = null;
             try {
                 course = createCourse(getValidCourse());
-                Long inscriptionId = courseService.addInscription(course.getCourseId(), "", INVALID_CREDIT_CARD);
-                removeInscription(inscriptionId);
+                Inscription inscription = courseService.addInscription(course.getCourseId(), "", INVALID_CREDIT_CARD);
+                removeInscription(inscription.getInscriptionId());
                 removeCourse(course.getCourseId());
             } finally {
                 if (course != null) removeCourse(course.getCourseId());
@@ -515,8 +512,8 @@ public class AppServiceTest {
             Course course = null;
             try {
                 course = createCourse(getValidCourse());
-                Long inscriptionId = courseService.addInscription(course.getCourseId(), INVALID_EMAIL, VALID_CREDIT_CARD);
-                removeInscription(inscriptionId);
+                Inscription inscription = courseService.addInscription(course.getCourseId(), INVALID_EMAIL, VALID_CREDIT_CARD);
+                removeInscription(inscription.getInscriptionId());
             } finally {
                 if (course != null) removeCourse(course.getCourseId());
             }
@@ -526,8 +523,8 @@ public class AppServiceTest {
             Course course = null;
             try {
                 course = createCourse(getValidCourse());
-                Long inscriptionId = courseService.addInscription(course.getCourseId(), "", VALID_CREDIT_CARD);
-                removeInscription(inscriptionId);
+                Inscription inscription = courseService.addInscription(course.getCourseId(), "", VALID_CREDIT_CARD);
+                removeInscription(inscription.getInscriptionId());
             } finally {
                 if (course != null) removeCourse(course.getCourseId());
             }
@@ -587,13 +584,11 @@ public class AppServiceTest {
         Course course = createCourse(getValidCourse());
 
         try {
-            Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-            Inscription inscription = findInscription(inscriptionId);
-
+            Inscription inscription = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
             Course courseBefore = courseService.findCourse(course.getCourseId());
 
-            courseService.cancelInscription(inscriptionId, VALID_EMAIL);
-            Inscription inscriptionAfterCancel = findInscription(inscriptionId);
+            courseService.cancelInscription(inscription.getInscriptionId(), VALID_EMAIL);
+            Inscription inscriptionAfterCancel = findInscription(inscription.getInscriptionId());
 
             Course courseAfter = courseService.findCourse(course.getCourseId());
 
@@ -613,9 +608,9 @@ public class AppServiceTest {
         Course course = createCourseDao(c, LocalDateTime.now());
         try {
             assertThrows(CancelTooCloseToCourseStartException.class, () -> {
-                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                courseService.cancelInscription(inscriptionId, VALID_EMAIL);
-                removeInscription(inscriptionId);
+                Inscription inscription = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                courseService.cancelInscription(inscription.getInscriptionId(), VALID_EMAIL);
+                removeInscription(inscription.getInscriptionId());
             });
         } finally {
             if (course != null) removeCourse(course.getCourseId());
@@ -627,9 +622,9 @@ public class AppServiceTest {
         Course course = createCourse(getValidCourse());
         try {
             assertThrows(IncorrectUserException.class, () -> {
-                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                courseService.cancelInscription(inscriptionId, VALID_EMAIL2);
-                removeInscription(inscriptionId);
+                Inscription inscription = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                courseService.cancelInscription(inscription.getInscriptionId(), VALID_EMAIL2);
+                removeInscription(inscription.getInscriptionId());
             });
         } finally {
             if (course != null) removeCourse(course.getCourseId());
@@ -642,10 +637,10 @@ public class AppServiceTest {
         try {
             assertThrows(InscriptionAlreadyCancelledException.class, () -> {
 
-                Long inscriptionId = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
-                courseService.cancelInscription(inscriptionId, VALID_EMAIL);
-                courseService.cancelInscription(inscriptionId, VALID_EMAIL);
-                removeInscription(inscriptionId);
+                Inscription inscription = courseService.addInscription(course.getCourseId(), VALID_EMAIL, VALID_CREDIT_CARD);
+                courseService.cancelInscription(inscription.getInscriptionId(), VALID_EMAIL);
+                courseService.cancelInscription(inscription.getInscriptionId(), VALID_EMAIL);
+                removeInscription(inscription.getInscriptionId());
             });
         } finally {
             removeCourse(course.getCourseId());

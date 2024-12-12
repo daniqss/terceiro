@@ -109,7 +109,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Long addInscription(Long courseId, String userEmail, String creditCard) throws InputValidationException, InstanceNotFoundException, CourseAlreadyStartedException, CourseFullException {
+    public Inscription addInscription(Long courseId, String userEmail, String creditCard) throws InputValidationException, InstanceNotFoundException, CourseAlreadyStartedException, CourseFullException {
         LocalDateTime inscriptionDate = LocalDateTime.now();
         validateInscription(courseId, inscriptionDate, userEmail, creditCard);
 
@@ -134,7 +134,7 @@ public class CourseServiceImpl implements CourseService {
                 courseDao.update(connection, course);
                 connection.commit();
 
-                return inscription.getInscriptionId();
+                return inscription;
 
             } catch (SQLException e) {
                 connection.rollback();
