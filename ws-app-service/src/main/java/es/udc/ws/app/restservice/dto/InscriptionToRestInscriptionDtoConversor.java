@@ -14,4 +14,15 @@ public class InscriptionToRestInscriptionDtoConversor {
         );
     }
 
+    public static Inscription toInscription(RestInscriptionDto inscription) {
+        return new Inscription(
+                inscription.getInscriptionId(),
+                inscription.getCourseId(),
+                inscription.getInscriptionDate(),
+                inscription.getCancelationDate(),
+                inscription.getUserEmail(),
+                inscription.getCreditCard()
+        );
+    }
+
 }
