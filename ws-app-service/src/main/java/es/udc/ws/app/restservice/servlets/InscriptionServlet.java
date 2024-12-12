@@ -3,7 +3,6 @@ package es.udc.ws.app.restservice.servlets;
 import es.udc.ws.app.model.courseservice.CourseServiceFactory;
 import es.udc.ws.app.model.courseservice.exceptions.CourseAlreadyStartedException;
 import es.udc.ws.app.model.courseservice.exceptions.CourseFullException;
-import es.udc.ws.app.model.courseservice.exceptions.CourseStartTooSoonException;
 import es.udc.ws.app.model.inscription.Inscription;
 import es.udc.ws.app.restservice.dto.RestInscriptionDto;
 import es.udc.ws.app.restservice.dto.InscriptionToRestInscriptionDtoConversor;
@@ -16,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public class InscriptionServlet extends RestHttpServletTemplate {
@@ -44,6 +44,21 @@ public class InscriptionServlet extends RestHttpServletTemplate {
                 resp, HttpServletResponse.SC_CREATED,
                 JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionDto),
                 headers
+        );
+    }
+
+    @Override
+    protected void processGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, InputValidationException {
+        ServletUtils.checkEmptyPath(req);
+        String email = req.getParameter("userEmail");
+
+        List<Inscription> inscription = CourseServiceFactory.getService().findInscriptions(email);
+        List<RestInscriptionDto> inscriptionDtos = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDtos(inscription);
+
+        ServletUtils.writeServiceResponse(
+                resp, HttpServletResponse.SC_OK,
+                JsonToRestInscriptionDtoConversor.toArrayNode(inscriptionDtos),
+                null
         );
     }
 }
