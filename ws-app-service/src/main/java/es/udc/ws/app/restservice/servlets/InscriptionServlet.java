@@ -51,6 +51,9 @@ public class InscriptionServlet extends RestHttpServletTemplate {
     protected void processGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, InputValidationException {
         ServletUtils.checkEmptyPath(req);
         String email = req.getParameter("userEmail");
+        if (email == null || email.isEmpty()) {
+            throw new InputValidationException("Invalid Request: missing or empty userEmail parameter");
+        }
 
         List<Inscription> inscription = CourseServiceFactory.getService().findInscriptions(email);
         List<RestInscriptionDto> inscriptionDtos = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDtos(inscription);
