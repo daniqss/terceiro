@@ -7,13 +7,15 @@ public class RestInscriptionDto {
     private Long inscriptionId;
     private Long courseId;
     private LocalDateTime inscriptionDate;
+    private LocalDateTime cancelationDate = null;
     private String userEmail;
     private String creditCard;
 
-    public RestInscriptionDto(Long inscriptionId, Long courseId, LocalDateTime inscriptionDate, String userEmail, String creditCard) {
+    public RestInscriptionDto(Long inscriptionId, Long courseId, LocalDateTime inscriptionDate, LocalDateTime cancelationDate, String userEmail, String creditCard) {
         this.inscriptionId = inscriptionId;
         this.courseId = courseId;
         this.inscriptionDate = (inscriptionDate != null) ? inscriptionDate.withNano(0) : null;
+        this.cancelationDate = (cancelationDate != null) ? cancelationDate.withNano(0) : null;
         this.userEmail = userEmail;
         this.creditCard = creditCard;
     }
@@ -40,6 +42,14 @@ public class RestInscriptionDto {
 
     public void setInscriptionDate(LocalDateTime inscriptionDate) {
         this.inscriptionDate = (inscriptionDate != null) ? inscriptionDate.withNano(0) : null;
+    }
+
+    public LocalDateTime getCancelationDate() {
+        return cancelationDate;
+    }
+
+    public void setCancelationDate(LocalDateTime cancelationDate) {
+        this.inscriptionDate = (cancelationDate != null) ? cancelationDate.withNano(0) : null;
     }
 
     public String getUserEmail() {

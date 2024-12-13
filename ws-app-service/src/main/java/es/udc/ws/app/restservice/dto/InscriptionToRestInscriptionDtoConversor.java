@@ -11,6 +11,7 @@ public class InscriptionToRestInscriptionDtoConversor {
                 inscription.getInscriptionId(),
                 inscription.getCourseId(),
                 inscription.getInscriptionDate(),
+                inscription.getCancelationDate(),
                 inscription.getUserEmail(),
                 inscription.getCreditCard().substring(inscription.getCreditCard().length() - 4)
         );
@@ -21,6 +22,7 @@ public class InscriptionToRestInscriptionDtoConversor {
                 inscription.getInscriptionId(),
                 inscription.getCourseId(),
                 inscription.getInscriptionDate(),
+                inscription.getCancelationDate(),
                 inscription.getUserEmail(),
                 inscription.getCreditCard()
         );
