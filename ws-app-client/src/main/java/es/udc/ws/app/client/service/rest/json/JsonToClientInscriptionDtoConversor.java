@@ -11,7 +11,7 @@ import es.udc.ws.util.json.exceptions.ParsingException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 
-public class JsonToClientInscriptionConversor {
+public class JsonToClientInscriptionDtoConversor {
 
     public static ClientInscriptionDto toClientInscriptionDto(InputStream jsonInscription) throws ParsingException {
         try {

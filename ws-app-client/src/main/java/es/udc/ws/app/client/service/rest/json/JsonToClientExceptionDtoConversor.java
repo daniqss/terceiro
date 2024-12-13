@@ -10,7 +10,7 @@ import es.udc.ws.util.json.ObjectMapperFactory;
 import es.udc.ws.util.json.exceptions.ParsingException;
 import java.io.InputStream;
 
-public class JsonToClientExceptionConversor {
+public class JsonToClientExceptionDtoConversor {
 
     public static Exception fromBadRequestErrorCode(InputStream ex) throws ParsingException {
         try {

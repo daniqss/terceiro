@@ -1,7 +1,6 @@
 package es.udc.ws.app.restservice.dto;
 
 import es.udc.ws.app.model.course.Course;
-
 import java.util.ArrayList;
 import java.util.List;
 
