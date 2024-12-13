@@ -13,7 +13,7 @@ public class InscriptionToRestInscriptionDtoConversor {
                 inscription.getInscriptionDate(),
                 inscription.getCancelationDate(),
                 inscription.getUserEmail(),
-                inscription.getCreditCard()
+                inscription.getCreditCard().substring(inscription.getCreditCard().length() - 4)
         );
     }
 
