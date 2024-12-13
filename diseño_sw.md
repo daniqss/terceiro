@@ -27,6 +27,7 @@ classDiagram
 
         +__init__(handler, *args, **kwargs)
         +do_activate()
+        +run_on_main(func: callable)
         +create_main_window() Adw.ApplicationWindow
         +create_main_layout(window) Gtk.Box
         +create_header_bar() Adw.HeaderBar
@@ -43,6 +44,7 @@ classDiagram
         +create_medication_input_row(patient_id: int, name: str, dosage: str, duration: str, start_date: str)
         +create_posology_input_row(button, container, patient_id: int, medication_id: int)
         +update_medication(patient_id: int, name: str, dosage: int, duration: int, start_date: str)
+        +show_dialog(e: Exception)
         +show_confirmation_dialog(title: str, message: str, callback: callable):
     }
 
