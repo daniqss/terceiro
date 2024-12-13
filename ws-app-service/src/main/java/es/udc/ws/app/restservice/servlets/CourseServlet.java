@@ -13,7 +13,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CourseServlet extends RestHttpServletTemplate {
@@ -38,4 +41,29 @@ public class CourseServlet extends RestHttpServletTemplate {
         ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
                 JsonToRestCourseDtoConversor.toObjectNode(courseDto), headers);
     }
+
+    @Override
+    protected void processGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, InputValidationException {
+        ServletUtils.checkEmptyPath(req);
+
+        String city = req.getParameter("city");
+
+        if (city == null || city.isEmpty()) {
+            throw new InputValidationException("Invalid Request: missing or empty city parameter");
+        }
+
+        try {
+            LocalDateTime currentDate = LocalDateTime.now();
+
+            List<Course> courses = CourseServiceFactory.getService().findCourses(city, currentDate);
+
+            List<RestCourseDto> courseDtos = CourseToRestCourseDtoConversor.toRestCourseDtos(courses);
+
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                    JsonToRestCourseDtoConversor.toArrayNode(courseDtos), null);
+        } catch (RuntimeException e) {
+            throw new IOException(e);
+        }
+    }
+
 }
