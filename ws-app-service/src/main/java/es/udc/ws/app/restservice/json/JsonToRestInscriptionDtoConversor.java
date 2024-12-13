@@ -22,7 +22,6 @@ public class JsonToRestInscriptionDtoConversor {
                 .put("courseId", inscription.getCourseId())
                 .put("userEmail", inscription.getUserEmail())
                 .put("inscriptionDate", inscription.getInscriptionDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                .put("cancelationDate", inscription.getCancelationDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .put("creditCard", inscription.getCreditCard())
                 .put("creditCardNumber", inscription.getCreditCard());
 
@@ -52,9 +51,7 @@ public class JsonToRestInscriptionDtoConversor {
                 JsonNode inscriptionIdNode = inscriptionObject.get("inscriptionId");
                 Long inscriptionId = (inscriptionIdNode != null) ? inscriptionIdNode.longValue() : null;
 
-                JsonNode courseIdNode = inscriptionObject.get("courseId");
-                Long courseId = (courseIdNode != null) ? courseIdNode.longValue() : null;
-
+                Long courseId = inscriptionObject.get("courseId").longValue();
                 String userEmail = inscriptionObject.get("userEmail").textValue().trim();
                 String creditCard = inscriptionObject.get("creditCard").textValue().trim();
 
@@ -62,12 +59,8 @@ public class JsonToRestInscriptionDtoConversor {
                         inscriptionObject.get("inscriptionDate").textValue().trim(),
                         DateTimeFormatter.ISO_LOCAL_DATE_TIME
                 );
-                LocalDateTime cancelationDate = LocalDateTime.parse(
-                        inscriptionObject.get("cancelationDate").textValue().trim(),
-                        DateTimeFormatter.ISO_LOCAL_DATE_TIME
-                );
 
-                return new RestInscriptionDto(inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail, creditCard);
+                return new RestInscriptionDto(inscriptionId, courseId, inscriptionDate, userEmail, creditCard);
             }
         } catch (ParsingException ex) {
             throw ex;
