@@ -6,6 +6,7 @@ import es.udc.ws.app.model.courseservice.exceptions.CourseFullException;
 import es.udc.ws.app.model.inscription.Inscription;
 import es.udc.ws.app.restservice.dto.RestInscriptionDto;
 import es.udc.ws.app.restservice.dto.InscriptionToRestInscriptionDtoConversor;
+import es.udc.ws.app.restservice.json.AppExceptionToJsonConversor;
 import es.udc.ws.app.restservice.json.JsonToRestInscriptionDtoConversor;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
@@ -33,8 +34,29 @@ public class InscriptionServlet extends RestHttpServletTemplate {
             );
         }
         // exceptions should perhaps be handled correctly later
-        catch (CourseAlreadyStartedException | CourseFullException | InstanceNotFoundException e) {
-            throw new RuntimeException(e);
+        catch (CourseAlreadyStartedException e) {
+            ServletUtils.writeServiceResponse(
+                    resp,
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    AppExceptionToJsonConversor.toCourseAlreadyStartedException(e),
+                    null
+            );
+        }
+        catch (CourseFullException e) {
+            ServletUtils.writeServiceResponse(
+                    resp,
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    AppExceptionToJsonConversor.toCourseFullException(e),
+                    null
+            );
+        }
+        catch (InstanceNotFoundException e) {
+            ServletUtils.writeServiceResponse(
+                    resp,
+                    HttpServletResponse.SC_NOT_FOUND,
+                    AppExceptionToJsonConversor.toCourseNotFoundException(inscription.getCourseId()),
+                    null
+            );
         }
 
         inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(inscription);

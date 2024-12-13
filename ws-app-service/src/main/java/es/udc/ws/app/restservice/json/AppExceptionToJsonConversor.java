@@ -72,4 +72,13 @@ public class AppExceptionToJsonConversor {
 
         return exceptionObject;
     }
+
+    public static ObjectNode toCourseNotFoundException(Long courseId) {
+        ObjectNode exceptionObject = JsonNodeFactory.instance.objectNode();
+
+        exceptionObject.put("errorType", "CourseNotFound");
+        exceptionObject.put("courseId", courseId);
+
+        return exceptionObject;
+    }
 }
