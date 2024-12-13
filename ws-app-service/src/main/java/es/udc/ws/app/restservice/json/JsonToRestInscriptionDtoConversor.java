@@ -39,7 +39,7 @@ public class JsonToRestInscriptionDtoConversor {
         return inscriptionsNode;
     }
 
-    public static RestInscriptionDto toRestInscription(InputStream jsonInscription) throws ParsingException {
+    public static RestInscriptionDto toRestInscriptionDto(InputStream jsonInscription) throws ParsingException {
         try {
             ObjectMapper objectMapper = ObjectMapperFactory.instance();
             JsonNode rootNode = objectMapper.readTree(jsonInscription);

@@ -7,7 +7,6 @@ import es.udc.ws.app.restservice.dto.CourseToRestCourseDtoConversor;
 import es.udc.ws.app.restservice.dto.RestCourseDto;
 import es.udc.ws.app.restservice.json.JsonToRestCourseDtoConversor;
 import es.udc.ws.util.exceptions.InputValidationException;
-import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.servlet.RestHttpServletTemplate;
 import es.udc.ws.util.servlet.ServletUtils;
 import jakarta.servlet.http.HttpServletRequest;
