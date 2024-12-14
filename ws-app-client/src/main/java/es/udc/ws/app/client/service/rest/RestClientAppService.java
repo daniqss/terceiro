@@ -40,9 +40,10 @@ public class RestClientAppService implements ClientAppService {
     }
 
     @Override
-    public List<ClientCourseDto> findCourses(String city, LocalDateTime date) throws RuntimeException, InputValidationException {
+    public List<ClientCourseDto> findCourses(String city) throws RuntimeException, InputValidationException {
         try {
             String encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8);
+            LocalDateTime date = LocalDateTime.now(); //Current Date
             String encodedDate = URLEncoder.encode(date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), StandardCharsets.UTF_8);
 
             ClassicHttpResponse response = (ClassicHttpResponse) Request.get(getEndpointAddress() + "courses?city="
@@ -142,12 +143,10 @@ public class RestClientAppService implements ClientAppService {
         }
     }
 
-
     @Override
     public List<ClientInscriptionDto> findInscriptions(String userEmail) {
         return List.of();
     }
-
 
     private synchronized String getEndpointAddress() {
         if (endpointAddress == null) {
@@ -201,8 +200,6 @@ public class RestClientAppService implements ClientAppService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
-
 }
 
