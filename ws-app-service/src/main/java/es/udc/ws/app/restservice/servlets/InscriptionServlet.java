@@ -11,12 +11,10 @@ import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.servlet.RestHttpServletTemplate;
 import es.udc.ws.util.servlet.ServletUtils;
-import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.nio.channels.ScatteringByteChannel;
 import java.util.List;
 import java.util.Map;
 
@@ -107,16 +105,7 @@ public class InscriptionServlet extends RestHttpServletTemplate {
                 );
             }
 
-            List<RestInscriptionDto> inscriptionDtos = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDtos(
-                    CourseServiceFactory.getService().findInscriptions(inscription.getUserEmail())
-            );
-            // we'll get the inscription we just cancelled by filtering the list of inscriptions by id
-            Inscription finalInscription = inscription;
-            inscriptionDto = inscriptionDtos.stream()
-                    .filter(i -> i.getInscriptionId().equals(finalInscription.getInscriptionId()))
-                    .findFirst()
-                    .orElse(null);
-
+            inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(inscription);
             String inscriptionURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + inscription.getInscriptionId();
             Map<String, String> headers = Map.of("Location", inscriptionURL);
             ServletUtils.writeServiceResponse(

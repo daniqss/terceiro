@@ -7,7 +7,7 @@ public class RestInscriptionDto {
     private Long inscriptionId;
     private Long courseId;
     private LocalDateTime inscriptionDate;
-    private LocalDateTime cancelationDate = null;
+    private LocalDateTime cancelationDate;
     private String userEmail;
     private String creditCard;
 
@@ -48,7 +48,7 @@ public class RestInscriptionDto {
         return cancelationDate;
     }
 
-    public void setCancelationDate(LocalDateTime cancelationDate) {
+    public void getCancelationDate(LocalDateTime cancelationDate) {
         this.inscriptionDate = (cancelationDate != null) ? cancelationDate.withNano(0) : null;
     }
 

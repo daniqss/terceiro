@@ -27,9 +27,7 @@ public class JsonToRestInscriptionDtoConversor {
         } else {
             inscriptionObject.putNull("cancelationDate");
         }
-        inscriptionObject
-                .put("creditCard", inscription.getCreditCard())
-                .put("creditCardNumber", inscription.getCreditCard());
+        inscriptionObject.put("creditCard", inscription.getCreditCard());
 
         return inscriptionObject;
     }
@@ -65,11 +63,14 @@ public class JsonToRestInscriptionDtoConversor {
                         inscriptionObject.get("inscriptionDate").textValue().trim(),
                         DateTimeFormatter.ISO_LOCAL_DATE_TIME
                 );
+
                 JsonNode cancelationDateNode = inscriptionObject.get("cancelationDate");
-                LocalDateTime cancelationDate = (cancelationDateNode != null) ? LocalDateTime.parse(
-                        cancelationDateNode.textValue().trim(),
-                        DateTimeFormatter.ISO_LOCAL_DATE_TIME
-                ) : null;
+                LocalDateTime cancelationDate = (inscriptionId != null) ?
+                        (cancelationDateNode != null) ? LocalDateTime.parse(
+                            cancelationDateNode.textValue().trim(),
+                            DateTimeFormatter.ISO_LOCAL_DATE_TIME
+                    ) : null
+                : null;
 
                 return new RestInscriptionDto(inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail, creditCard);
             }
