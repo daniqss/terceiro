@@ -34,7 +34,7 @@ public class RestClientAppService implements ClientAppService {
     private String endpointAddress;
 
     @Override
-    public ClientCourseDto addCourse(ClientCourseDto course) throws InputValidationException, RuntimeException, ClientCourseStartTooSoonException {
+    public ClientCourseDto addCourse(ClientCourseDto course) throws InputValidationException, RuntimeException {
         try {
             ClassicHttpResponse response = (ClassicHttpResponse) Request.post(getEndpointAddress() + "courses")
                     .bodyStream(toInputStream(course), ContentType.APPLICATION_JSON)
@@ -136,7 +136,16 @@ public class RestClientAppService implements ClientAppService {
 
     @Override
     public List<ClientInscriptionDto> findInscriptions(String userEmail) {
-        return List.of();
+        try {
+            ClassicHttpResponse response = (ClassicHttpResponse) Request.get(getEndpointAddress() + "inscriptions?userEmail=" + URLEncoder.encode(userEmail, StandardCharsets.UTF_8))
+                    .execute()
+                    .returnResponse();
+
+            validateStatusCode(HttpStatus.SC_OK, response);
+            return JsonToClientInscriptionDtoConversor.toClientInscriptionDtos(response.getEntity().getContent());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private synchronized String getEndpointAddress() {
