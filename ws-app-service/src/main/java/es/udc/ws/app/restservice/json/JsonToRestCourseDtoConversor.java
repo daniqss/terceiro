@@ -17,7 +17,6 @@ import java.util.List;
 
 public class JsonToRestCourseDtoConversor {
     public static ObjectNode toObjectNode(RestCourseDto course) {
-
         ObjectNode courseObject = JsonNodeFactory.instance.objectNode();
 
         courseObject.put("courseId", course.getCourseId())
