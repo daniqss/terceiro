@@ -35,7 +35,8 @@ public class RestClientAppService implements ClientAppService {
     }
 
     @Override
-    public List<ClientCourseDto> findCourses(String city, LocalDateTime date) throws RuntimeException, InputValidationException {
+    public List<ClientCourseDto> findCourses(String city) throws RuntimeException, InputValidationException {
+        // Buscar los posteriores a la fecha actual
         return List.of();
     }
 
@@ -92,12 +93,10 @@ public class RestClientAppService implements ClientAppService {
         }
     }
 
-
     @Override
     public List<ClientInscriptionDto> findInscriptions(String userEmail) {
         return List.of();
     }
-
 
     private synchronized String getEndpointAddress() {
         if (endpointAddress == null) {
@@ -151,8 +150,6 @@ public class RestClientAppService implements ClientAppService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
-
 }
 

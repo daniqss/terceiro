@@ -11,7 +11,7 @@ import java.util.List;
 public interface ClientAppService {
     ClientCourseDto addCourse(ClientCourseDto course) throws InputValidationException, RuntimeException, ClientCourseStartTooSoonException;
 
-    List<ClientCourseDto> findCourses(String city, LocalDateTime date) throws RuntimeException, InputValidationException;
+    List<ClientCourseDto> findCourses(String city) throws RuntimeException, InputValidationException;
 
     ClientCourseDto findCourse(Long courseId) throws InputValidationException, InstanceNotFoundException;
 
