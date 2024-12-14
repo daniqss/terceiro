@@ -1,5 +1,4 @@
 package es.udc.ws.app.client.service.rest;
-
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.udc.ws.app.client.service.ClientAppService;
