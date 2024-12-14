@@ -43,7 +43,7 @@ public class RestClientAppService implements ClientAppService {
     public List<ClientCourseDto> findCourses(String city) throws RuntimeException, InputValidationException {
         try {
             String encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8);
-            LocalDateTime date = LocalDateTime.now(); //Current Date
+            LocalDateTime date = LocalDateTime.now(); // Current Date
             String encodedDate = URLEncoder.encode(date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), StandardCharsets.UTF_8);
 
             ClassicHttpResponse response = (ClassicHttpResponse) Request.get(getEndpointAddress() + "courses?city="
@@ -53,22 +53,7 @@ public class RestClientAppService implements ClientAppService {
 
             validateStatusCode(HttpStatus.SC_OK, response);
 
-            // Parse JSON array manually
-            ObjectMapper objectMapper = ObjectMapperFactory.instance();
-            JsonNode rootNode = objectMapper.readTree(response.getEntity().getContent());
-
-            if (rootNode.getNodeType() != JsonNodeType.ARRAY) {
-                throw new ParsingException("Unrecognized JSON (array expected)");
-            }
-
-            List<ClientCourseDto> courseDtos = new ArrayList<>();
-            for (JsonNode courseNode : rootNode) {
-                // Use existing method to convert each course
-                courseDtos.add(JsonToClientCourseDtoConversor.toClientCourseDto(
-                        new ByteArrayInputStream(objectMapper.writeValueAsBytes(courseNode))));
-            }
-
-            return courseDtos;
+            return JsonToClientCourseDtoConversor.toClientCourseDtos(response.getEntity().getContent());
 
         } catch (InputValidationException e) {
             throw e;
