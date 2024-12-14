@@ -1,4 +1,5 @@
 package es.udc.ws.app.client.service.rest;
+
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.udc.ws.app.client.service.ClientAppService;
@@ -17,6 +18,7 @@ import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpStatus;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -94,10 +96,7 @@ public class RestClientAppService implements ClientAppService {
             throws InputValidationException, InstanceNotFoundException, ClientCourseAlreadyStartedException, ClientCourseFullException {
 
         try {
-
-            String url = getEndpointAddress() + "courses/" + courseId + "/inscriptions";
-
-
+            String url = getEndpointAddress() + "/inscriptions";
             ClassicHttpResponse response = (ClassicHttpResponse) Request.post(url)
                     .bodyForm(Form.form()
                             .add("courseId", Long.toString(courseId))
@@ -107,12 +106,10 @@ public class RestClientAppService implements ClientAppService {
                     .execute()
                     .returnResponse();
 
-
             validateStatusCode(HttpStatus.SC_CREATED, response);
-
             return JsonToClientInscriptionDtoConversor.toClientInscriptionDto(response.getEntity().getContent());
-
-        } catch (InputValidationException | InstanceNotFoundException | ClientCourseAlreadyStartedException | ClientCourseFullException e) {
+        } catch (InputValidationException | InstanceNotFoundException | ClientCourseAlreadyStartedException |
+                 ClientCourseFullException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error adding the inscription: " + e.getMessage(), e);
@@ -125,7 +122,7 @@ public class RestClientAppService implements ClientAppService {
 
         try {
 
-            ClassicHttpResponse response = (ClassicHttpResponse) Request.post(getEndpointAddress() + "inscriptions/cancel/" + inscriptionId + "?userEmail="+ URLEncoder.encode(userEmail, StandardCharsets.UTF_8)).execute().returnResponse();
+            ClassicHttpResponse response = (ClassicHttpResponse) Request.post(getEndpointAddress() + "inscriptions/cancel/" + inscriptionId + "?userEmail=" + URLEncoder.encode(userEmail, StandardCharsets.UTF_8)).execute().returnResponse();
 
             validateStatusCode(HttpStatus.SC_NO_CONTENT, response);
 
