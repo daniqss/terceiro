@@ -1,11 +1,10 @@
 package es.udc.ws.app.client.ui;
-
 import es.udc.ws.app.client.service.ClientAppService;
 import es.udc.ws.app.client.service.ClientAppServiceFactory;
 import es.udc.ws.app.client.service.dto.ClientCourseDto;
 import es.udc.ws.app.client.service.dto.ClientInscriptionDto;
 import es.udc.ws.util.exceptions.InputValidationException;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class AppServiceClient {
@@ -20,8 +19,14 @@ public class AppServiceClient {
             //[addCourse] CursoServiceClient -addCourse <city> <name> <startDate> <price> <maxPlaces>
 
             try {
-                Long cursoId = clientCourseService.addCourse(new ClientCourseDto(null, args[1],
-                        args[2], args[3], Double.valueOf(args[4]), Integer.valueOf(args[5])));
+                ClientCourseDto cursoId = clientCourseService.addCourse(new ClientCourseDto(
+                        null,
+                        args[1],
+                        args[2],
+                        LocalDateTime.parse(args[3]),
+                        Float.parseFloat(args[4]),
+                        Integer.parseInt(args[5])
+                ));
 
                 System.out.println("Course " + cursoId + " created sucessfully");
 
@@ -32,8 +37,6 @@ public class AppServiceClient {
         } else if ("-inscribe".equalsIgnoreCase(args[0])) {
             validateArgs(args, 4, new int[]{2});
             //[inscribe] CursoServiceClient -inscribe <userEmail> <courseId> <creditCardNumber>
-
-            //HASTA IMPLEMENTAR
 
 
         } else if ("-cancel".equalsIgnoreCase(args[0])) {
@@ -57,9 +60,9 @@ public class AppServiceClient {
                         " course(s) by city '" + args[1] + "'");
                 for (int i = 0; i < courses.size(); i++) {
                     ClientCourseDto courseDto = courses.get(i);
-                    int plazasOcupadas = courseDto.getMaxSpots() - courseDto.getAvailableSpots();
-                    System.out.println("Taken spots: " + plazasOcupadas +
-                            ", Total spots: " + courseDto.getMaxPlazas() +
+                    int reservedSpots = courseDto.getMaxSpots() - courseDto.getVacantSpots();
+                    System.out.println("Taken spots: " + reservedSpots +
+                            ", Max spots: " + courseDto.getMaxSpots() +
                             ", Price: " + courseDto.getPrice() +
                             ", Description: " + courseDto.getName() +
                             ", Startdate: " + courseDto.getStartDate());
@@ -74,9 +77,9 @@ public class AppServiceClient {
             try {
                 if (args[1].matches("\\d+")) {
                     ClientCourseDto courseDto = clientCourseService.findCourse(Long.parseLong(args[1]));
-                    int plazasOcupadas = courseDto.getMaxSpots() - courseDto.getAvailableSpots();
-                    System.out.println("Taken spots: " + plazasOcupadas +
-                            ", Total spots: " + courseDto.getMaxPlazas() +
+                    int reservedSpots = courseDto.getMaxSpots() - courseDto.getVacantSpots();
+                    System.out.println("Taken spots: " + reservedSpots +
+                            ", Max spots: " + courseDto.getMaxSpots() +
                             ", Price: " + courseDto.getPrice() +
                             ", Description: " + courseDto.getName() +
                             ", Startdate: " + courseDto.getStartDate());

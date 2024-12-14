@@ -10,16 +10,25 @@ public class ClientCourseDto {
     private LocalDateTime startDate;
     private float price;
     private int maxSpots;
-    private int reservedSpots;
+    private int vacantSpots;
 
-    public ClientCourseDto(Long courseId, String name, String city, LocalDateTime startDate, float price, int maxSpots, int reservedSpots) {
+    public ClientCourseDto(Long courseId, String name, String city, LocalDateTime startDate, float price, int maxSpots, int vacantSpots) {
         this.courseId = courseId;
         this.name = name;
         this.city = city;
         this.startDate = startDate;
         this.price = price;
         this.maxSpots = maxSpots;
-        this.reservedSpots = reservedSpots;
+        this.vacantSpots = vacantSpots;
+    }
+
+    public ClientCourseDto(Long courseId, String name, String city, LocalDateTime startDate, float price, int maxSpots) {
+        this.courseId = courseId;
+        this.name = name;
+        this.city = city;
+        this.startDate = startDate;
+        this.price = price;
+        this.maxSpots = maxSpots;
     }
 
     public Long getCourseId() {
@@ -70,18 +79,18 @@ public class ClientCourseDto {
         this.maxSpots = maxSpots;
     }
 
-    public int getReservedSpots() {
-        return reservedSpots;
+    public int getVacantSpots() {
+        return vacantSpots;
     }
 
-    public void setReservedSpots(int vacantSpots) {
-        this.reservedSpots = vacantSpots;
+    public void setVacantSpots(int vacantSpots) {
+        this.vacantSpots = vacantSpots;
     }
 
     @Override
     public String toString() {
         return "CourseDto [courseId=" + courseId + ", name=" + name
                 + ", city=" + city
-                + ", startDate=" + startDate + ", price=" + price + ", maxSpots=" + maxSpots + ", reservedSpots=" + reservedSpots + "]";
+                + ", startDate=" + startDate + ", price=" + price + ", maxSpots=" + maxSpots + ", vacantSpots=" + vacantSpots + "]";
     }
 }
