@@ -1,0 +1,46 @@
+-addCourse <city> <name> <startDate> <price> <maxPlaces>
+-addCourse 'A Coruña' 'Educación Infantil' '2025-08-15T11:00' 150 2 // courseId=1 creado
+-addCourse 'Santiago' 'Ofimática' '2025-09-25T11:00' 80 10 // courseId=2 creado
+-addCourse 'A Coruña' 'Jardinería' '2025-10-20T11:00' 100 5 // courseId=3 creado
+-addCourse 'A Coruña' 'Nutrición' '2025-10-25T11:00' 100 10 // courseId=4 creado
+-addCourse ' ' 'Celador' '2025-08-14T11:00' 100 10 // Falla (ciudad inválida)
+-addCourse 'Santiago' ' ' '2025-08-14T11:00' 100 10 // Falla (descripción inválida)
+-addCourse 'Santiago' 'Celador' '2024-08-14T11:00' 100 10 // Falla (fecha inválida)
+-addCourse 'Santiago' 'Celador' '2025-08-14T11:00' -2 10 // Falla (precio inválido)
+-addCourse 'Santiago' 'Celador' '2025-08-14T11:00' 100 0 // Falla (plazas inválidas)
+
+-inscribe <userEmail> <courseId> <creditCardNumber>
+-inscribe 'user1@udc.es' 1 '0123456789111111' // inscId=1 creada
+-inscribe 'user2@udc.es' 1 '0123456789222222' // inscId=2 creada
+-inscribe 'user1@udc.es' 3 '0123456789111111' // inscId=3 creada
+-inscribe 'user3@udc.es' 4 '0123456789333333' // inscId=4 creada
+-inscribe 'user3@udc.es' 1 '0123456789333333' // Falla (no hay plazas)
+-inscribe 'user4@udc.es' 9 '0123456789444444' // Falla (curso no existe)
+-inscribe 'user4@udc.es' 2 '0123456789' // Falla (tarjeta inválida)
+
+UPDATE Course SET startDate='2024-10-25 11:00' WHERE courseId=4;
+
+-inscribe 'user4@udc.es' 4 '0123456789333333' // Falla (fuera de plazo)
+
+-cancel <inscriptionId> <userEmail>
+-cancel 3 'user1@udc.es' // inscId=3 cancelada
+-cancel 3 'user1@udc.es' // Falla (ya cancelada)
+-cancel 4 'user3@udc.es' // Falla (fuera de plazo)
+-cancel 2 'user1@udc.es' // Falla (no pertenece al usuario)
+-cancel 9 'user2@udc.es' // Falla (curso no existe)
+
+-findCourses <city>
+-findCourses 'A Coruña' // Devuelve cursos con id 1 y 3
+-findCourses 'Santiago' // Devuelve curso con id 2
+-findCourses 'Ferrol' // Devuelve lista vacía
+-findCourses ' ' // Falla (ciudad inválida)
+
+-findCourse <courseId>
+-findCourse 4
+-findCourse 9 // Falla (curso no existe)
+
+-findInscriptions <userEmail>
+-findInscriptions 'user1@udc.es' // Devuelve inscripciones con id 1 y 3
+-findInscriptions 'user2@udc.es' // Devuelve inscripción con id 2
+-findInscriptions 'user6@udc.es' // Devuelve lista vacía
+
