@@ -93,7 +93,8 @@ public class JsonToClientExceptionDtoConversor {
     }
 
     private static ClientCourseFullException toCourseFullException(JsonNode rootNode) {
-        return new ClientCourseFullException();
+        Long courseId = rootNode.get("courseId").longValue();
+        return new ClientCourseFullException(courseId);
     }
 
     private static ClientIncorrectUserException toIncorrectUserException(JsonNode rootNode) {
@@ -147,11 +148,28 @@ public class JsonToClientExceptionDtoConversor {
     }
 
     private static ClientCourseStartTooSoonException toCourseStartTooSoonException(JsonNode rootNode) {
-        return new ClientCourseStartTooSoonException();
+        Long courseId = rootNode.get("courseId").longValue();
+        String creationDateAsString = rootNode.get("creationDate").textValue();
+        LocalDateTime creationDate = null;
+        if (creationDateAsString != null) {
+            creationDate = LocalDateTime.parse(creationDateAsString);
+        }
+        String startDateAsString = rootNode.get("startDate").textValue();
+        LocalDateTime startDate = null;
+        if (startDateAsString != null) {
+            startDate = LocalDateTime.parse(startDateAsString);
+        }
+        return new ClientCourseStartTooSoonException(courseId, creationDate, startDate);
     }
 
     private static ClientCourseAlreadyStartedException toCourseAlreadyStartedException(JsonNode rootNode) {
-        return new ClientCourseAlreadyStartedException();
+        Long courseId = rootNode.get("courseId").longValue();
+        String startDateAsString = rootNode.get("startDate").textValue();
+        LocalDateTime startDate = null;
+        if (startDateAsString != null) {
+            startDate = LocalDateTime.parse(startDateAsString);
+        }
+        return new ClientCourseAlreadyStartedException(courseId, startDate);
     }
 
     private static ClientInscriptionAlreadyCancelledException toInscriptionAlreadyCancelledException(JsonNode rootNode) {

@@ -163,7 +163,6 @@ public class RestClientAppService implements ClientAppService {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ObjectMapper objectMapper = ObjectMapperFactory.instance();
             objectMapper.writer(new DefaultPrettyPrinter()).writeValue(outputStream, JsonToClientCourseDtoConversor.toObjectNode(course));
-
             return new ByteArrayInputStream(outputStream.toByteArray());
 
         } catch (IOException e) {
