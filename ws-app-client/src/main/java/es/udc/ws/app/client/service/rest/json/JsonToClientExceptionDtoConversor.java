@@ -9,6 +9,7 @@ import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.ObjectMapperFactory;
 import es.udc.ws.util.json.exceptions.ParsingException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 
 public class JsonToClientExceptionDtoConversor {
 
@@ -96,11 +97,26 @@ public class JsonToClientExceptionDtoConversor {
     }
 
     private static ClientIncorrectUserException toIncorrectUserException(JsonNode rootNode) {
-        return new ClientIncorrectUserException();
+        Long inscriptionId = rootNode.get("inscriptionId").longValue();
+        String userEmail = rootNode.get("userEmail").textValue();
+        return new ClientIncorrectUserException(inscriptionId, userEmail);
     }
 
     private static ClientCancelTooCloseToCourseStartException toCancelTooCloseToCourseStartException(JsonNode rootNode) {
-        return new ClientCancelTooCloseToCourseStartException();
+        Long inscriptionId = rootNode.get("inscriptionId").longValue();
+        Long courseId = rootNode.get("courseId").longValue();
+        String startDateAsString = rootNode.get("startDate").textValue();
+        String cancellationDateAsString = rootNode.get("cancellationDate").textValue();
+        LocalDateTime startDate = null;
+        LocalDateTime cancellationDate = null;
+        if (startDateAsString != null) {
+            startDate = LocalDateTime.parse(startDateAsString);
+        }
+        if (cancellationDateAsString != null) {
+            cancellationDate = LocalDateTime.parse(cancellationDateAsString);
+        }
+        String userEmail = rootNode.get("userEmail").textValue();
+        return new ClientCancelTooCloseToCourseStartException(inscriptionId, courseId, startDate, cancellationDate);
     }
 
     public static Exception fromGoneErrorCode(InputStream ex) throws ParsingException {
@@ -114,8 +130,11 @@ public class JsonToClientExceptionDtoConversor {
 
                 if (errorType.equals("CourseStartTooSoon")) {
                     return toCourseStartTooSoonException(rootNode);
-                } else if (errorType.equals("CourseAlreadyStarted"))
+                } else if (errorType.equals("CourseAlreadyStarted")) {
                     return toCourseAlreadyStartedException(rootNode);
+                }
+                else if (errorType.equals("CancelTooCloseToCourseStart"))
+                    return toInscriptionAlreadyCancelledException(rootNode);
                 {
                     throw new ParsingException("Unrecognized error type: " + errorType);
                 }
@@ -133,5 +152,16 @@ public class JsonToClientExceptionDtoConversor {
 
     private static ClientCourseAlreadyStartedException toCourseAlreadyStartedException(JsonNode rootNode) {
         return new ClientCourseAlreadyStartedException();
+    }
+
+    private static ClientInscriptionAlreadyCancelledException toInscriptionAlreadyCancelledException(JsonNode rootNode) {
+        Long inscriptionId = rootNode.get("inscriptionId").longValue();
+        String userEmail = rootNode.get("userEmail").textValue();
+        String cancellationDateAsString = rootNode.get("cancellationDate").textValue();
+        LocalDateTime cancellationDate = null;
+        if (cancellationDateAsString != null) {
+            cancellationDate = LocalDateTime.parse(cancellationDateAsString);
+        }
+        return new ClientInscriptionAlreadyCancelledException(inscriptionId, userEmail, cancellationDate);
     }
 }
