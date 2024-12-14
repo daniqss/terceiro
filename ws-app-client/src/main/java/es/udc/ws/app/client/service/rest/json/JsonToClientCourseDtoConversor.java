@@ -2,17 +2,36 @@ package es.udc.ws.app.client.service.rest.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import es.udc.ws.app.client.service.dto.ClientCourseDto;
 import es.udc.ws.util.json.ObjectMapperFactory;
 import es.udc.ws.util.json.exceptions.ParsingException;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class JsonToClientCourseDtoConversor {
+    public static ObjectNode toObjectNode(ClientCourseDto course) throws IOException {
+
+        ObjectNode courseObject = JsonNodeFactory.instance.objectNode();
+
+        if (course.getCourseId() != null) {
+            courseObject.put("courseId", course.getCourseId());
+        }
+        courseObject.put("name", course.getName()).
+                put("city", course.getCity()).
+                put("startDate", course.getStartDate().toString()).
+                put("price", course.getPrice()).
+                put("maxSpots", course.getMaxSpots()).
+                put("vacantSpots", course.getVacantSpots())
+        ;
+        return courseObject;
+    }
+
     public static ClientCourseDto toClientCourseDto(InputStream jsonCourse) throws ParsingException {
         try {
             ObjectMapper objectMapper = ObjectMapperFactory.instance();
