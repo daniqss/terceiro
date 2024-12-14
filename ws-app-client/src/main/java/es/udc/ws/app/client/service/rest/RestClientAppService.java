@@ -1,8 +1,6 @@
 package es.udc.ws.app.client.service.rest;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
 import es.udc.ws.app.client.service.ClientAppService;
 import es.udc.ws.app.client.service.dto.ClientCourseDto;
 import es.udc.ws.app.client.service.dto.ClientInscriptionDto;
@@ -14,10 +12,10 @@ import es.udc.ws.util.configuration.ConfigurationParametersManager;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.ObjectMapperFactory;
-import es.udc.ws.util.json.exceptions.ParsingException;
 import org.apache.hc.client5.http.fluent.Form;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpStatus;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +25,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RestClientAppService implements ClientAppService {
@@ -36,7 +33,19 @@ public class RestClientAppService implements ClientAppService {
 
     @Override
     public ClientCourseDto addCourse(ClientCourseDto course) throws InputValidationException, RuntimeException, ClientCourseStartTooSoonException {
-        return null;
+        try {
+            ClassicHttpResponse response = (ClassicHttpResponse) Request.post(getEndpointAddress() + "courses")
+                    .bodyStream(toInputStream(course), ContentType.APPLICATION_JSON)
+                    .execute()
+                    .returnResponse();
+
+            validateStatusCode(HttpStatus.SC_CREATED, response);
+            return JsonToClientCourseDtoConversor.toClientCourseDto(response.getEntity().getContent());
+        } catch (InputValidationException | ClientCourseStartTooSoonException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -142,7 +151,6 @@ public class RestClientAppService implements ClientAppService {
     }
 
     private InputStream toInputStream(ClientCourseDto course) {
-
         try {
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
