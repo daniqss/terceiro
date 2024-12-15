@@ -8,6 +8,7 @@ import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import es.udc.ws.util.json.ObjectMapperFactory;
 import es.udc.ws.util.json.exceptions.ParsingException;
+
 import java.io.InputStream;
 import java.time.LocalDateTime;
 
@@ -78,9 +79,14 @@ public class JsonToClientExceptionDtoConversor {
                     return toCourseFullException(rootNode);
                 } else if (errorType.equals("IncorrectUser")) {
                     return toIncorrectUserException(rootNode);
+                } else if (errorType.equals("CourseStartTooSoon")) {
+                    return toCourseStartTooSoonException(rootNode);
                 } else if (errorType.equals("CancelTooCloseToCourseStart")) {
                     return toCancelTooCloseToCourseStartException(rootNode);
-                }
+                } else if (errorType.equals("CourseAlreadyStarted")) {
+                    return toCourseAlreadyStartedException(rootNode);
+                } else if (errorType.equals("InscriptionAlreadyCancelled"))
+                    return toInscriptionAlreadyCancelledException(rootNode);
                 else {
                     throw new ParsingException("Unrecognized error type: " + errorType);
                 }
@@ -118,33 +124,6 @@ public class JsonToClientExceptionDtoConversor {
         }
         String userEmail = rootNode.get("userEmail").textValue();
         return new ClientCancelTooCloseToCourseStartException(inscriptionId, courseId, startDate, cancellationDate);
-    }
-
-    public static Exception fromGoneErrorCode(InputStream ex) throws ParsingException {
-        try {
-            ObjectMapper objectMapper = ObjectMapperFactory.instance();
-            JsonNode rootNode = objectMapper.readTree(ex);
-            if (rootNode.getNodeType() != JsonNodeType.OBJECT) {
-                throw new ParsingException("Unrecognized JSON (object expected)");
-            } else {
-                String errorType = rootNode.get("errorType").textValue();
-
-                if (errorType.equals("CourseStartTooSoon")) {
-                    return toCourseStartTooSoonException(rootNode);
-                } else if (errorType.equals("CourseAlreadyStarted")) {
-                    return toCourseAlreadyStartedException(rootNode);
-                }
-                else if (errorType.equals("CancelTooCloseToCourseStart"))
-                    return toInscriptionAlreadyCancelledException(rootNode);
-                {
-                    throw new ParsingException("Unrecognized error type: " + errorType);
-                }
-            }
-        } catch (ParsingException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ParsingException(e);
-        }
     }
 
     private static ClientCourseStartTooSoonException toCourseStartTooSoonException(JsonNode rootNode) {

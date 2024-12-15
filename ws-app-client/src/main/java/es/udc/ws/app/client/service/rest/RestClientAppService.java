@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class RestClientAppService implements ClientAppService {
@@ -54,18 +52,13 @@ public class RestClientAppService implements ClientAppService {
     public List<ClientCourseDto> findCourses(String city) throws RuntimeException, InputValidationException {
         try {
             String encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8);
-            LocalDateTime date = LocalDateTime.now(); // Current Date
-            String encodedDate = URLEncoder.encode(date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME), StandardCharsets.UTF_8);
-
             ClassicHttpResponse response = (ClassicHttpResponse) Request.get(getEndpointAddress() + "courses?city="
-                            + encodedCity + "&date=" + encodedDate)
+                            + encodedCity)
                     .execute()
                     .returnResponse();
 
             validateStatusCode(HttpStatus.SC_OK, response);
-
             return JsonToClientCourseDtoConversor.toClientCourseDtos(response.getEntity().getContent());
-
         } catch (InputValidationException e) {
             throw e;
         } catch (Exception e) {
@@ -194,8 +187,6 @@ public class RestClientAppService implements ClientAppService {
                 case HttpStatus.SC_BAD_REQUEST -> throw JsonToClientExceptionDtoConversor.fromBadRequestErrorCode(
                         response.getEntity().getContent());
                 case HttpStatus.SC_FORBIDDEN -> throw JsonToClientExceptionDtoConversor.fromForbiddenErrorCode(
-                        response.getEntity().getContent());
-                case HttpStatus.SC_GONE -> throw JsonToClientExceptionDtoConversor.fromGoneErrorCode(
                         response.getEntity().getContent());
                 default -> throw new RuntimeException("HTTP error; status code = "
                         + statusCode);

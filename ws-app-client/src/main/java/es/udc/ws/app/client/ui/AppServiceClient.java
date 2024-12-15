@@ -1,9 +1,12 @@
 package es.udc.ws.app.client.ui;
+
 import es.udc.ws.app.client.service.ClientAppService;
 import es.udc.ws.app.client.service.ClientAppServiceFactory;
 import es.udc.ws.app.client.service.dto.ClientCourseDto;
 import es.udc.ws.app.client.service.dto.ClientInscriptionDto;
+import es.udc.ws.app.client.service.exceptions.ClientCourseStartTooSoonException;
 import es.udc.ws.util.exceptions.InputValidationException;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,20 +20,18 @@ public class AppServiceClient {
             validateArgs(args, 6, new int[]{5});
 
             //[addCourse] CursoServiceClient -addCourse <city> <name> <startDate> <price> <maxPlaces>
-
             try {
                 ClientCourseDto cursoId = clientCourseService.addCourse(new ClientCourseDto(
                         null,
-                        args[1],
                         args[2],
+                        args[1],
                         LocalDateTime.parse(args[3]),
                         Float.parseFloat(args[4]),
                         Integer.parseInt(args[5])
                 ));
-
                 System.out.println("Course " + cursoId + " created sucessfully");
 
-            } catch (InputValidationException ex) {
+            } catch (InputValidationException | ClientCourseStartTooSoonException ex) {
                 ex.printStackTrace(System.err);
             }
 
