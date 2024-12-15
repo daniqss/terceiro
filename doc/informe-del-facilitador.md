@@ -31,3 +31,18 @@
 ## Estado del repositorio en la semama 1
 
 Se han incluido los distintos ficheros de documentación así como el codigo de html y css básicos.
+
+##  Registro de tareas llevadas a cabo durante la semana 2
+
+  - Descripción de la tarea
+  Cumplir el requisito "crossbrowser"
+  - Asignación de responsables
+  Todo el equipo ha participado en todas las tareas que se realizaron por llamada en Discord
+  - Estado de completud
+  Tareas de las semana 2 realizadas
+  - Conflictos, desviaciones, etc.
+  No se han dado conflictos
+
+## Estado del repositorio en la semama 1
+
+Se han incluido los distintos ficheros de documentación así como el codigo de html y css básicos.
