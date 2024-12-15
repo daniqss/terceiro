@@ -24,7 +24,7 @@
   - Realizar la estructura y el estilado de la web, diseñados _mobile first_
 	- Utilizar _HTML semántico_ y crear una página web accesible
 	
-## Otros recursos empleados en la semana 1
+## Otros recursos empleados en la semana 11
   - [Vite](https://vite.dev)
 
     Servidor de desarrollo local que nos permitió trabajar con Hot Reload.
@@ -35,3 +35,17 @@
 
     Característica de VSCode que nos permitió compartir nuestro servidor de desarrollo local con el resto del equipo.
 
+
+## Objetivos de aprendizaje de la semana 2
+
+  - Esta semana tuvimos que implementar y diseñar la aplicación para tablet y desktop y comprobar su correcto funcionamiento en diferentes motores de navegador como son:
+  	- Webkit
+   	- v8
+    	- Spidermonkey 
+	
+## Otros recursos empleados en la semana 2
+Esta semana usamos los mismos recursos que la anterior, además de:
+- [Lighthouse](Lighthouse)
+- [Google Chrome](https://www.google.com/intl/es_es/chrome/)
+- [Safari](https://www.apple.com/es/safari/)
+- [Mozilla Firefox](https://www.mozilla.org/es-ES/firefox/new/)
