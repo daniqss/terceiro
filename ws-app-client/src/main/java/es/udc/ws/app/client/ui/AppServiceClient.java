@@ -19,7 +19,7 @@ public class AppServiceClient {
         if ("-addCourse".equalsIgnoreCase(args[0])) {
             validateArgs(args, 6, new int[]{5});
 
-            //[addCourse] CursoServiceClient -addCourse <city> <name> <startDate> <price> <maxPlaces>
+            //[addCourse] CursoServiceClient -addCourse <name> <city> <startDate> <price> <maxPlaces>
             try {
                 ClientCourseDto cursoId = clientCourseService.addCourse(new ClientCourseDto(
                         null,
@@ -37,7 +37,7 @@ public class AppServiceClient {
 
         } else if ("-inscribe".equalsIgnoreCase(args[0])) {
             validateArgs(args, 4, new int[]{2});
-            //[inscribe] CursoServiceClient -inscribe <userEmail> <courseId> <creditCardNumber>
+            //[inscribe] CursoServiceClient -inscribe <courseId> <userEmail> <creditCardNumber>
 
 
         } else if ("-cancel".equalsIgnoreCase(args[0])) {
