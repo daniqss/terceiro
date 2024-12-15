@@ -169,7 +169,8 @@ public class CourseServiceImpl implements CourseService {
                 // Assuming we need to check this against the course start date
                 Course course = courseDao.findById(connection, inscription.getCourseId());
                 if (course.getStartDate().minusDays(7).isBefore(LocalDateTime.now())) {
-                    throw new CancelTooCloseToCourseStartException(inscriptionId, inscription.getCourseId(), course.getStartDate(), LocalDateTime.now());
+                    LocalDateTime cancelationDate = LocalDateTime.now();
+                    throw new CancelTooCloseToCourseStartException(inscriptionId, inscription.getCourseId(), course.getStartDate(), cancelationDate);
                 }
 
                 inscription.setCancelationDate(LocalDateTime.now());

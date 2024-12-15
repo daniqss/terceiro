@@ -122,7 +122,6 @@ public class JsonToClientExceptionDtoConversor {
         if (cancellationDateAsString != null) {
             cancellationDate = LocalDateTime.parse(cancellationDateAsString);
         }
-        String userEmail = rootNode.get("userEmail").textValue();
         return new ClientCancelTooCloseToCourseStartException(inscriptionId, courseId, startDate, cancellationDate);
     }
 
