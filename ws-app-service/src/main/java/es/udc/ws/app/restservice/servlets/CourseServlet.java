@@ -72,8 +72,7 @@ public class CourseServlet extends RestHttpServletTemplate {
                     ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
                             JsonToRestCourseDtoConversor.toObjectNode(courseDto), null);
                 } catch (InstanceNotFoundException e) {
-                    ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                            AppExceptionToJsonConversor.toCourseNotFoundException(courseId), null);
+                    throw new InputValidationException("Invalid Request: not found course with id " + courseId);
                 }
             }
         } catch (InputValidationException e) {
