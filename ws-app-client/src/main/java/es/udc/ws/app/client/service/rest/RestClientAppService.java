@@ -69,7 +69,7 @@ public class RestClientAppService implements ClientAppService {
     @Override
     public ClientCourseDto findCourse(Long courseId) throws InputValidationException, InstanceNotFoundException {
         try {
-            ClassicHttpResponse response = (ClassicHttpResponse) Request.get(getEndpointAddress() + "courses/" + courseId)
+            ClassicHttpResponse response = (ClassicHttpResponse) Request.get(getEndpointAddress() + "courses?courseId=" + courseId)
                     .execute()
                     .returnResponse();
 
@@ -85,16 +85,17 @@ public class RestClientAppService implements ClientAppService {
     }
 
     @Override
-    public ClientInscriptionDto addInscription(Long courseId, String userEmail, String bankCardNumber)
+    public ClientInscriptionDto addInscription(Long courseId, String userEmail, String creditCard)
             throws InputValidationException, InstanceNotFoundException, ClientCourseAlreadyStartedException, ClientCourseFullException {
 
         try {
-            String url = getEndpointAddress() + "/inscriptions";
+            String url = getEndpointAddress() + "inscriptions";
+
             ClassicHttpResponse response = (ClassicHttpResponse) Request.post(url)
                     .bodyForm(Form.form()
                             .add("courseId", Long.toString(courseId))
                             .add("userEmail", userEmail)
-                            .add("bankCardNumber", bankCardNumber)
+                            .add("creditCard", creditCard)
                             .build())
                     .execute()
                     .returnResponse();
@@ -114,7 +115,7 @@ public class RestClientAppService implements ClientAppService {
             InstanceNotFoundException, ClientIncorrectUserException, ClientInscriptionAlreadyCancelledException, ClientCancelTooCloseToCourseStartException {
 
         try {
-            String url = getEndpointAddress() + "/inscriptions";
+            String url = getEndpointAddress() + "inscriptions";
             ClassicHttpResponse response = (ClassicHttpResponse) Request.post(url)
                     .bodyForm(Form.form()
                             .add("inscriptionId", Long.toString(inscriptionId))
