@@ -32,6 +32,13 @@ public class JsonToRestInscriptionDtoConversor {
         return inscriptionObject;
     }
 
+    public static ObjectNode toObjectNode(Long inscriptionId) {
+        ObjectNode inscriptionObject = JsonNodeFactory.instance.objectNode();
+        inscriptionObject.put("inscriptionId", inscriptionId);
+
+        return inscriptionObject;
+    }
+
     public static ArrayNode toArrayNode(List<RestInscriptionDto> inscriptions) {
         ArrayNode inscriptionsNode = JsonNodeFactory.instance.arrayNode();
         for (RestInscriptionDto inscriptionDto : inscriptions) {

@@ -19,100 +19,54 @@ import java.util.List;
 import java.util.Map;
 
 public class InscriptionServlet extends RestHttpServletTemplate {
-    @Override
     protected void processPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, InputValidationException {
         ServletUtils.checkEmptyPath(req);
-        RestInscriptionDto inscriptionDto = JsonToRestInscriptionDtoConversor.toRestInscriptionDto(req.getInputStream());
-        Inscription inscription = InscriptionToRestInscriptionDtoConversor.toInscription(inscriptionDto);
 
-        // if inscription doesn't exist, add it
-        if (inscription.getInscriptionId() == null) {
+        String inscriptionIdParam = req.getParameter("inscriptionId");
+
+        if (inscriptionIdParam == null) {
+            Long courseId = ServletUtils.getMandatoryParameterAsLong(req, "courseId");
+            String userEmail = ServletUtils.getMandatoryParameter(req, "userEmail");
+            String creditCard = ServletUtils.getMandatoryParameter(req, "creditCard");
+
             try {
-                inscription = CourseServiceFactory.getService().addInscription(
-                        inscription.getCourseId(),
-                        inscription.getUserEmail(),
-                        inscription.getCreditCard()
-                );
+                Inscription inscription = CourseServiceFactory.getService().addInscription(courseId, userEmail, creditCard);
+
+                RestInscriptionDto inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(inscription);
+
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
+                        JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionDto), null);
             } catch (CourseAlreadyStartedException e) {
-                ServletUtils.writeServiceResponse(
-                        resp,
-                        HttpServletResponse.SC_FORBIDDEN,
-                        AppExceptionToJsonConversor.toCourseAlreadyStartedException(e),
-                        null
-                );
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
+                        AppExceptionToJsonConversor.toCourseAlreadyStartedException(e), null);
             } catch (CourseFullException e) {
-                ServletUtils.writeServiceResponse(
-                        resp,
-                        HttpServletResponse.SC_FORBIDDEN,
-                        AppExceptionToJsonConversor.toCourseFullException(e),
-                        null
-                );
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
+                        AppExceptionToJsonConversor.toCourseFullException(e), null);
             } catch (InstanceNotFoundException e) {
-                ServletUtils.writeServiceResponse(
-                        resp,
-                        HttpServletResponse.SC_NOT_FOUND,
-                        AppExceptionToJsonConversor.toCourseNotFoundException(inscription.getCourseId()),
-                        null
-                );
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                        AppExceptionToJsonConversor.toCourseNotFoundException(courseId), null);
             }
+        } else {
+            Long inscriptionId = ServletUtils.getMandatoryParameterAsLong(req, "inscriptionId");
+            String userEmail = ServletUtils.getMandatoryParameter(req, "userEmail");
 
-            inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(inscription);
-            String inscriptionURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + inscription.getInscriptionId();
-            Map<String, String> headers = Map.of("Location", inscriptionURL);
-            ServletUtils.writeServiceResponse(
-                    resp, HttpServletResponse.SC_CREATED,
-                    JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionDto),
-                    headers
-            );
-        }
-
-        // if inscription exists, update it by cancelling it
-        else {
             try {
-                CourseServiceFactory.getService().cancelInscription(
-                        inscription.getInscriptionId(),
-                        inscription.getUserEmail()
-                );
+                CourseServiceFactory.getService().cancelInscription(inscriptionId, userEmail);
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                        JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionId), null);
             } catch (IncorrectUserException e) {
-                ServletUtils.writeServiceResponse(
-                        resp,
-                        // 403 Forbidden -> Entiendo lo que quieres hacer,
-                        // pero violas una de las reglas de negocio
-                        HttpServletResponse.SC_FORBIDDEN,
-                        AppExceptionToJsonConversor.toIncorrectUserException(e),
-                        null
-                );
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
+                        AppExceptionToJsonConversor.toIncorrectUserException(e), null);
             } catch (InscriptionAlreadyCancelledException e) {
-                ServletUtils.writeServiceResponse(
-                        resp,
-                        HttpServletResponse.SC_FORBIDDEN,
-                        AppExceptionToJsonConversor.toInscriptionAlreadyCancelledException(e),
-                        null
-                );
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
+                        AppExceptionToJsonConversor.toInscriptionAlreadyCancelledException(e), null);
             } catch (CancelTooCloseToCourseStartException e) {
-                ServletUtils.writeServiceResponse(
-                        resp,
-                        HttpServletResponse.SC_FORBIDDEN,
-                        AppExceptionToJsonConversor.toCancelTooCloseToCourseStartException(e),
-                        null
-                );
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
+                        AppExceptionToJsonConversor.toCancelTooCloseToCourseStartException(e), null);
             } catch (InstanceNotFoundException e) {
-                ServletUtils.writeServiceResponse(
-                        resp,
-                        HttpServletResponse.SC_NOT_FOUND,
-                        AppExceptionToJsonConversor.toCourseNotFoundException(inscription.getCourseId()),
-                        null
-                );
+                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                        AppExceptionToJsonConversor.toCourseNotFoundException(inscriptionId), null);
             }
-
-            inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(inscription);
-            String inscriptionURL = ServletUtils.normalizePath(req.getRequestURL().toString()) + "/" + inscription.getInscriptionId();
-            Map<String, String> headers = Map.of("Location", inscriptionURL);
-            ServletUtils.writeServiceResponse(
-                    resp, HttpServletResponse.SC_OK,
-                    JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionDto),
-                    headers
-            );
         }
     }
 
