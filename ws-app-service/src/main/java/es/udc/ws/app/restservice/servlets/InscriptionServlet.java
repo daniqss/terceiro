@@ -43,8 +43,7 @@ public class InscriptionServlet extends RestHttpServletTemplate {
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
                         AppExceptionToJsonConversor.toCourseFullException(e), null);
             } catch (InstanceNotFoundException e) {
-                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                        AppExceptionToJsonConversor.toCourseNotFoundException(courseId), null);
+                throw new InputValidationException("Invalid Request: not found course with id " + courseId + " to add inscription");
             }
         } else {
             Long inscriptionId = ServletUtils.getMandatoryParameterAsLong(req, "inscriptionId");
@@ -64,8 +63,7 @@ public class InscriptionServlet extends RestHttpServletTemplate {
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
                         AppExceptionToJsonConversor.toCancelTooCloseToCourseStartException(e), null);
             } catch (InstanceNotFoundException e) {
-                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
-                        AppExceptionToJsonConversor.toCourseNotFoundException(inscriptionId), null);
+                throw new InputValidationException("Invalid Request: not found inscription with id " + inscriptionId + " to cancel");
             }
         }
     }

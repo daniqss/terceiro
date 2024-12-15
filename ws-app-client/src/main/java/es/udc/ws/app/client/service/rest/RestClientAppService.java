@@ -69,7 +69,7 @@ public class RestClientAppService implements ClientAppService {
     @Override
     public ClientCourseDto findCourse(Long courseId) throws InputValidationException, InstanceNotFoundException {
         try {
-            ClassicHttpResponse response = (ClassicHttpResponse) Request.get(getEndpointAddress() + "courses?courseId=" + courseId)
+            ClassicHttpResponse response = (ClassicHttpResponse) Request.get(getEndpointAddress() + "courses/" + courseId)
                     .execute()
                     .returnResponse();
 
