@@ -50,6 +50,9 @@ public class CourseServiceImpl implements CourseService {
         PropertyValidator.validateMandatoryString("name", course.getName());
         PropertyValidator.validateDouble("price", course.getPrice(), MIN_PRICE, MAX_PRICE);
         PropertyValidator.validateNotNegativeLong("maxSpots", course.getMaxSpots());
+        if (course.getMaxSpots()<=0){
+            throw new InputValidationException("Max spots must be greater than 0");
+        }
 
         if (ChronoUnit.DAYS.between(course.getCreationDate(), course.getStartDate()) < 15) {
             throw new CourseStartTooSoonException(course.getCourseId(), course.getStartDate(), course.getCreationDate());
