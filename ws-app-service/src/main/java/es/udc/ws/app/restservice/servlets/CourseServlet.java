@@ -46,54 +46,40 @@ public class CourseServlet extends RestHttpServletTemplate {
                 JsonToRestCourseDtoConversor.toObjectNode(courseDto), headers);
     }
 
-
     @Override
     protected void processGet(HttpServletRequest req, HttpServletResponse resp)
             throws IOException, InputValidationException {
-
-        ServletUtils.checkEmptyPath(req);
-
-        String courseId = req.getParameter("courseId");
         String city = req.getParameter("city");
 
-        // Validación de parámetros
-        if ((courseId == null || courseId.isEmpty()) && (city == null || city.isEmpty())) {
-            throw new InputValidationException("Invalid Request: missing 'city' or 'courseId' parameter");
-        }
-        if (courseId != null && !courseId.isEmpty() && city != null && !city.isEmpty()) {
-            throw new InputValidationException("Invalid Request: conflict between 'courseId' and 'city' parameters");
-        }
-
         try {
-            if (courseId != null && !courseId.isEmpty()) {
-                // Procesar por courseId
-                long parsedCourseId = Long.parseLong(courseId);
-                Course course = CourseServiceFactory.getService().findCourse(parsedCourseId);
-
-                RestCourseDto courseDto = CourseToRestCourseDtoConversor.toRestCourseDto(course);
-
-                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                        JsonToRestCourseDtoConversor.toObjectNode(courseDto), null);
-
-            } else {
-                // Procesar por city
+            // search by city if there is a city query parameter
+            if (city != null && !city.isEmpty()) {
                 LocalDateTime currentDate = LocalDateTime.now();
-
                 List<Course> courses = CourseServiceFactory.getService().findCourses(city, currentDate);
-
                 List<RestCourseDto> courseDtos = CourseToRestCourseDtoConversor.toRestCourseDtos(courses);
 
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
                         JsonToRestCourseDtoConversor.toArrayNode(courseDtos), null);
+
             }
-        } catch (NumberFormatException e) {
-            throw new InputValidationException("Invalid 'courseId': must be a valid number");
-        } catch (InstanceNotFoundException e) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Course not found");
+            // get course by id in path
+            else {
+                Long courseId = ServletUtils.getIdFromPath(req, "course");
+                try {
+                    Course course = CourseServiceFactory.getService().findCourse(courseId);
+                    RestCourseDto courseDto = CourseToRestCourseDtoConversor.toRestCourseDto(course);
+
+                    ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                            JsonToRestCourseDtoConversor.toObjectNode(courseDto), null);
+                } catch (InstanceNotFoundException e) {
+                    ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_NOT_FOUND,
+                            AppExceptionToJsonConversor.toCourseNotFoundException(courseId), null);
+                }
+            }
+        } catch (InputValidationException e) {
+            throw new InputValidationException("Invalid Request: missing or empty courseId in path");
         } catch (RuntimeException e) {
             throw new IOException("Unexpected error occurred", e);
         }
     }
-
-
 }
