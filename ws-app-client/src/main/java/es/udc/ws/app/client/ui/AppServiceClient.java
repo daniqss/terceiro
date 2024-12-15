@@ -4,8 +4,11 @@ import es.udc.ws.app.client.service.ClientAppService;
 import es.udc.ws.app.client.service.ClientAppServiceFactory;
 import es.udc.ws.app.client.service.dto.ClientCourseDto;
 import es.udc.ws.app.client.service.dto.ClientInscriptionDto;
+import es.udc.ws.app.client.service.exceptions.ClientCourseAlreadyStartedException;
+import es.udc.ws.app.client.service.exceptions.ClientCourseFullException;
 import es.udc.ws.app.client.service.exceptions.ClientCourseStartTooSoonException;
 import es.udc.ws.util.exceptions.InputValidationException;
+import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,15 +39,19 @@ public class AppServiceClient {
             }
 
         } else if ("-inscribe".equalsIgnoreCase(args[0])) {
-            validateArgs(args, 4, new int[]{2});
+            validateArgs(args, 4, new int[]{3});
             //[inscribe] CursoServiceClient -inscribe <courseId> <userEmail> <creditCardNumber>
             try {
                 Long courseId = Long.parseLong(args[1]);
+                System.out.println(courseId);
                 String userEmail = args[2];
-                String creditCardNumber = args[2];
+                System.out.println(userEmail);
+                String creditCardNumber = args[3];
+                System.out.println(creditCardNumber);
                 ClientInscriptionDto inscription = clientCourseService.addInscription(courseId, userEmail, creditCardNumber);
                 System.out.println("Inscription " + inscription.getInscriptionId() + " created successfully");
-            } catch (Exception ex) {
+            } catch (InputValidationException | InstanceNotFoundException | ClientCourseAlreadyStartedException |
+                     ClientCourseFullException ex) {
                 ex.printStackTrace(System.err);
             }
 
