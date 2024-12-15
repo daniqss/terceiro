@@ -115,10 +115,9 @@ public class RestClientAppService implements ClientAppService {
             InstanceNotFoundException, ClientIncorrectUserException, ClientInscriptionAlreadyCancelledException, ClientCancelTooCloseToCourseStartException {
 
         try {
-            String url = getEndpointAddress() + "inscriptions";
+            String url = getEndpointAddress() + "inscriptions" + "/" + inscriptionId.toString();
             ClassicHttpResponse response = (ClassicHttpResponse) Request.post(url)
                     .bodyForm(Form.form()
-                            .add("inscriptionId", Long.toString(inscriptionId))
                             .add("userEmail", userEmail)
                             .build())
                     .execute()

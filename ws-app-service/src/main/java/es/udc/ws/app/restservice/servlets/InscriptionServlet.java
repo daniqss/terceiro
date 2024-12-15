@@ -20,18 +20,19 @@ import java.util.Map;
 
 public class InscriptionServlet extends RestHttpServletTemplate {
     protected void processPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, InputValidationException {
-        ServletUtils.checkEmptyPath(req);
-
-        String inscriptionIdParam = req.getParameter("inscriptionId");
-
-        if (inscriptionIdParam == null) {
+        Long inscriptionId = null;
+        try {
+            inscriptionId = ServletUtils.getIdFromPath(req, "inscription");
+        }
+        // if there is no inscriptionId in the path, then it is a new inscription
+        catch (InputValidationException ex) {
+            ServletUtils.checkEmptyPath(req);
             Long courseId = ServletUtils.getMandatoryParameterAsLong(req, "courseId");
             String userEmail = ServletUtils.getMandatoryParameter(req, "userEmail");
             String creditCard = ServletUtils.getMandatoryParameter(req, "creditCard");
 
             try {
                 Inscription inscription = CourseServiceFactory.getService().addInscription(courseId, userEmail, creditCard);
-
                 RestInscriptionDto inscriptionDto = InscriptionToRestInscriptionDtoConversor.toRestInscriptionDto(inscription);
 
                 ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_CREATED,
@@ -45,26 +46,26 @@ public class InscriptionServlet extends RestHttpServletTemplate {
             } catch (InstanceNotFoundException e) {
                 throw new InputValidationException("Invalid Request: not found course with id " + courseId + " to add inscription");
             }
-        } else {
-            Long inscriptionId = ServletUtils.getMandatoryParameterAsLong(req, "inscriptionId");
+        }
+
+        // cancel inscription if there is an inscriptionId in the path
+        try {
             String userEmail = ServletUtils.getMandatoryParameter(req, "userEmail");
 
-            try {
-                CourseServiceFactory.getService().cancelInscription(inscriptionId, userEmail);
-                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
-                        JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionId), null);
-            } catch (IncorrectUserException e) {
-                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
-                        AppExceptionToJsonConversor.toIncorrectUserException(e), null);
-            } catch (InscriptionAlreadyCancelledException e) {
-                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
-                        AppExceptionToJsonConversor.toInscriptionAlreadyCancelledException(e), null);
-            } catch (CancelTooCloseToCourseStartException e) {
-                ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
-                        AppExceptionToJsonConversor.toCancelTooCloseToCourseStartException(e), null);
-            } catch (InstanceNotFoundException e) {
-                throw new InputValidationException("Invalid Request: not found inscription with id " + inscriptionId + " to cancel");
-            }
+            CourseServiceFactory.getService().cancelInscription(inscriptionId, userEmail);
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_OK,
+                    JsonToRestInscriptionDtoConversor.toObjectNode(inscriptionId), null);
+        } catch (IncorrectUserException e) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
+                    AppExceptionToJsonConversor.toIncorrectUserException(e), null);
+        } catch (InscriptionAlreadyCancelledException e) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
+                    AppExceptionToJsonConversor.toInscriptionAlreadyCancelledException(e), null);
+        } catch (CancelTooCloseToCourseStartException e) {
+            ServletUtils.writeServiceResponse(resp, HttpServletResponse.SC_FORBIDDEN,
+                    AppExceptionToJsonConversor.toCancelTooCloseToCourseStartException(e), null);
+        } catch (InstanceNotFoundException e) {
+            throw new InputValidationException("Invalid Request: not found inscription with id " + inscriptionId + " to cancel");
         }
     }
 
