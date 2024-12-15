@@ -150,8 +150,8 @@ public class AppServiceClient {
 
     public static void printUsage() {
         System.err.println("Usage:\n" +
-                "    [addCourse]         CursoServiceClient -addCourse <city> <name> <startDate> <price> <maxPlaces>\n" +
-                "    [inscribe]          CursoServiceClient -inscribe <userEmail> <courseId> <creditCardNumber>\n" +
+                "    [addCourse]         CursoServiceClient -addCourse <name> <city> <startDate> <price> <maxPlaces>\n" +
+                "    [inscribe]          CursoServiceClient -inscribe <courseId> <userEmail> <creditCardNumber>\n" +
                 "    [cancel]            CursoServiceClient -cancel <inscriptionId> <userEmail>\n" +
                 "    [findCourses]       CursoServiceClient -findCourses <city>\n" +
                 "    [findCourse]        CursoServiceClient -findCourse <courseId>\n" +
