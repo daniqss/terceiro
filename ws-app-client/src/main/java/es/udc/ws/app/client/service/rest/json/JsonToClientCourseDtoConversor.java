@@ -75,7 +75,7 @@ public class JsonToClientCourseDtoConversor {
             int maxSpots = courseObject.get("maxSpots").intValue();
             int vacantSpots = courseObject.get("vacantSpots").intValue();
 
-            return new ClientCourseDto(courseId, name, city, startDate, price, maxSpots, maxSpots - vacantSpots);
+            return new ClientCourseDto(courseId, name, city, startDate, price, maxSpots, vacantSpots);
         }
     }
 
@@ -100,7 +100,7 @@ public class JsonToClientCourseDtoConversor {
                 int maxSpots = courseObject.get("maxSpots").intValue();
                 int vacantSpots = courseObject.get("vacantSpots").intValue();
 
-                return new ClientCourseDto(courseId, name, city, startDate, price, maxSpots, maxSpots - vacantSpots);
+                return new ClientCourseDto(courseId, name, city, startDate, price, maxSpots, vacantSpots);
             }
         } catch (ParsingException ex) {
             throw ex;
