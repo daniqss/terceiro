@@ -82,3 +82,35 @@
      Este contenido aparte de necesitar trabajo en equipo, cosa que es muy importante tanto
      en el curso como en la titulación, también requiere conocimientos de HTML y CSS, que
      son fundamentales para el desarrollo web, tarea muy común en la titulación.
+
+## Retrospectiva de la semana 2
+
+  a) ¿Qué ha sido lo mejor de la práctica?
+     Aprender ha hacer una pagina web multiplataforma y aprender a cambiar la vista del navegador 
+     simular la vista de un telefono.
+  
+  b) ¿Qué fue lo peor?
+
+
+  c) ¿Cuál fue el mejor momento de cada semana durante el trabajo del
+     equipo?
+     Cuando empezamos con la implementación de la prática, ya que en el diseño había
+     conceptos que no teníamos claros pero se fueron resolviendo sobre la marcha.
+
+  d) ¿Cuál ha sido el peor?
+     La parte de diseño, ya que no teníamos claro cómo queríamos que fuese la página
+     y nos costó ponernos de acuerdo.
+
+  e) ¿Qué has aprendido?
+     Aparte de ganar experiencia trabajando en equipo y el uso de git, hemos aprendido
+     HTML y CSS con un poco más de profundidad del nivel que teníamos.
+
+  f) ¿Qué necesitáis conservar -como equipo- para las próximas semanas?
+     Seguimos teniendo una gran dínamica de equipo que nos resulta muy eficiente
+
+  g) ¿Qué tenéis que mejorar -como equipo- para las próximas semanas?
+     Debemos empezar a ser mas previsores y intentar empezar con más tiempo las tareas
+
+  h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
+     titulación?
+     Se nos enseña buenos habitos, al obligarnos a construir la aplicación de forma generica
