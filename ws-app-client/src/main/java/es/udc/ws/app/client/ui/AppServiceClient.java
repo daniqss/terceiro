@@ -23,8 +23,8 @@ public class AppServiceClient {
             try {
                 ClientCourseDto cursoId = clientCourseService.addCourse(new ClientCourseDto(
                         null,
-                        args[2],
                         args[1],
+                        args[2],
                         LocalDateTime.parse(args[3]),
                         Float.parseFloat(args[4]),
                         Integer.parseInt(args[5])

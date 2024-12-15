@@ -1,12 +1,12 @@
-mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'A Coruña' 'Educación Infantil' '2025-08-15T11:00' 150 2"
-mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Santiago' 'Ofimática' '2025-09-25T11:00' 80 10"
-mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'A Coruña' 'Jardinería' '2025-10-20T11:00' 100 5"
-mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'A Coruña' 'Nutrición' '2025-10-25T11:00' 100 10"
-mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse ' ' 'Celador' '2025-08-14T11:00' 100 10"
-mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Santiago' ' ' '2025-08-14T11:00' 100 10"
-mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Santiago' 'Celador' '2024-08-14T11:00' 100 10"
-mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Santiago' 'Celador' '2025-08-14T11:00' -2 10"
-mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Santiago' 'Celador' '2025-08-14T11:00' 100 0"
+mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Educación Infantil' 'A Coruña' '2025-08-15T11:00' 150 2
+mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Ofimática' 'Santiago' '2025-09-25T11:00' 80 10
+mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Jardinería' 'A Coruña' '2025-10-20T11:00' 100 5
+mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Nutrición' 'A Coruña' '2025-10-25T11:00' 100 10
+mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Celador' ' ' '2025-08-14T11:00' 100 10
+mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse ' ' 'Santiago' '2025-08-14T11:00' 100 10
+mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Celador' 'Santiago' '2024-08-14T11:00' 100 10
+mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Celador' 'Santiago' '2025-08-14T11:00' -2 10
+mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-addCourse 'Celador' 'Santiago' '2025-08-14T11:00' 100 0
 
 mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-inscribe 1 'user1@udc.es' '0123456789111111'"
 mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-inscribe 1 'user2@udc.es' '0123456789222222'"
