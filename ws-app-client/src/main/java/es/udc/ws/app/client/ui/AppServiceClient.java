@@ -43,11 +43,8 @@ public class AppServiceClient {
             //[inscribe] CursoServiceClient -inscribe <courseId> <userEmail> <creditCardNumber>
             try {
                 Long courseId = Long.parseLong(args[1]);
-                System.out.println(courseId);
                 String userEmail = args[2];
-                System.out.println(userEmail);
                 String creditCardNumber = args[3];
-                System.out.println(creditCardNumber);
                 ClientInscriptionDto inscription = clientCourseService.addInscription(courseId, userEmail, creditCardNumber);
                 System.out.println("Inscription " + inscription.getInscriptionId() + " created successfully");
             } catch (InputValidationException | InstanceNotFoundException | ClientCourseAlreadyStartedException |
