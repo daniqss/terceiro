@@ -29,7 +29,7 @@ public class AppServiceClient {
                         Float.parseFloat(args[4]),
                         Integer.parseInt(args[5])
                 ));
-                System.out.println("Course " + cursoId + " created sucessfully");
+                System.out.println("Course " + cursoId + " created successfully");
 
             } catch (InputValidationException | ClientCourseStartTooSoonException ex) {
                 ex.printStackTrace(System.err);
@@ -38,7 +38,15 @@ public class AppServiceClient {
         } else if ("-inscribe".equalsIgnoreCase(args[0])) {
             validateArgs(args, 4, new int[]{2});
             //[inscribe] CursoServiceClient -inscribe <courseId> <userEmail> <creditCardNumber>
-
+            try {
+                Long courseId = Long.parseLong(args[1]);
+                String userEmail = args[2];
+                String creditCardNumber = args[2];
+                ClientInscriptionDto inscription = clientCourseService.addInscription(courseId, userEmail, creditCardNumber);
+                System.out.println("Inscription " + inscription.getInscriptionId() + " created successfully");
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
+            }
 
         } else if ("-cancel".equalsIgnoreCase(args[0])) {
             validateArgs(args, 3, new int[]{1});
