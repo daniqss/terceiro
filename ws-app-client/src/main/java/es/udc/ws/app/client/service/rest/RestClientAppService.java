@@ -85,7 +85,7 @@ public class RestClientAppService implements ClientAppService {
     }
 
     @Override
-    public ClientInscriptionDto addInscription(Long courseId, String userEmail, String bankCardNumber)
+    public ClientInscriptionDto addInscription(Long courseId, String userEmail, String creditCard)
             throws InputValidationException, InstanceNotFoundException, ClientCourseAlreadyStartedException, ClientCourseFullException {
 
         try {
@@ -95,7 +95,7 @@ public class RestClientAppService implements ClientAppService {
                     .bodyForm(Form.form()
                             .add("courseId", Long.toString(courseId))
                             .add("userEmail", userEmail)
-                            .add("bankCardNumber", bankCardNumber)
+                            .add("creditCard", creditCard)
                             .build())
                     .execute()
                     .returnResponse();
