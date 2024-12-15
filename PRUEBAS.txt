@@ -36,4 +36,3 @@ mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.
 mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-findInscriptions 'user1@udc.es'"
 mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-findInscriptions 'user2@udc.es'"
 mvn exec:java -Dexec.mainClass=es.udc.ws.app.client.ui.AppServiceClient "-Dexec.args=-findInscriptions 'user6@udc.es'"
-

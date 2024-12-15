@@ -4,9 +4,7 @@ import es.udc.ws.app.client.service.ClientAppService;
 import es.udc.ws.app.client.service.ClientAppServiceFactory;
 import es.udc.ws.app.client.service.dto.ClientCourseDto;
 import es.udc.ws.app.client.service.dto.ClientInscriptionDto;
-import es.udc.ws.app.client.service.exceptions.ClientCourseAlreadyStartedException;
-import es.udc.ws.app.client.service.exceptions.ClientCourseFullException;
-import es.udc.ws.app.client.service.exceptions.ClientCourseStartTooSoonException;
+import es.udc.ws.app.client.service.exceptions.*;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 
@@ -60,7 +58,8 @@ public class AppServiceClient {
                 String userEmail = args[2];
                 clientCourseService.cancelInscription(inscriptionId, userEmail);
                 System.out.println("Inscription " + inscriptionId + " cancelled");
-            } catch (Exception ex) {
+            } catch (InstanceNotFoundException | InputValidationException | ClientIncorrectUserException |
+                     ClientInscriptionAlreadyCancelledException | ClientCancelTooCloseToCourseStartException ex) {
                 ex.printStackTrace(System.err);
             }
 
@@ -71,8 +70,7 @@ public class AppServiceClient {
                 List<ClientCourseDto> courses = clientCourseService.findCourses(args[1]);
                 System.out.println("Found " + courses.size() +
                         " course(s) by city '" + args[1] + "'");
-                for (int i = 0; i < courses.size(); i++) {
-                    ClientCourseDto courseDto = courses.get(i);
+                for (ClientCourseDto courseDto : courses) {
                     int reservedSpots = courseDto.getMaxSpots() - courseDto.getVacantSpots();
                     System.out.println("Taken spots: " + reservedSpots +
                             ", Max spots: " + courseDto.getMaxSpots() +
@@ -80,7 +78,7 @@ public class AppServiceClient {
                             ", Description: " + courseDto.getName() +
                             ", Startdate: " + courseDto.getStartDate());
                 }
-            } catch (Exception ex) {
+            } catch (InputValidationException ex) {
                 ex.printStackTrace(System.err);
             }
 
@@ -97,7 +95,7 @@ public class AppServiceClient {
                             ", Description: " + courseDto.getName() +
                             ", Startdate: " + courseDto.getStartDate());
                 }
-            } catch (Exception ex) {
+            } catch (InstanceNotFoundException | InputValidationException ex) {
                 ex.printStackTrace(System.err);
             }
 
@@ -117,7 +115,7 @@ public class AppServiceClient {
                             ", Fecha de cancelación: " + ((inscription.getCancelationDate()) != (null) ?
                             inscription.getCancelationDate().toString() : "No se ha cancelado"));
                 }
-            } catch (Exception ex) {
+            } catch (InputValidationException  ex) {
                 ex.printStackTrace(System.err);
             }
 

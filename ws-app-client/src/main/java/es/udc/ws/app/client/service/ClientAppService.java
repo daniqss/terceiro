@@ -9,15 +9,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ClientAppService {
-    ClientCourseDto addCourse(ClientCourseDto course) throws InputValidationException, RuntimeException, ClientCourseStartTooSoonException;
+    ClientCourseDto addCourse(ClientCourseDto course) throws InputValidationException, ClientCourseStartTooSoonException;
 
-    List<ClientCourseDto> findCourses(String city) throws RuntimeException, InputValidationException;
+    List<ClientCourseDto> findCourses(String city) throws InputValidationException;
 
     ClientCourseDto findCourse(Long courseId) throws InputValidationException, InstanceNotFoundException;
 
     ClientInscriptionDto addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException, ClientCourseAlreadyStartedException, ClientCourseFullException;
 
-    void cancelInscription(Long inscriptionId, String userEmail) throws RuntimeException, InstanceNotFoundException, InputValidationException, ClientIncorrectUserException, ClientInscriptionAlreadyCancelledException, ClientCancelTooCloseToCourseStartException;
+    void cancelInscription(Long inscriptionId, String userEmail) throws InstanceNotFoundException, InputValidationException, ClientIncorrectUserException, ClientInscriptionAlreadyCancelledException, ClientCancelTooCloseToCourseStartException;
 
-    List<ClientInscriptionDto> findInscriptions(String userEmail);
+    List<ClientInscriptionDto> findInscriptions(String userEmail) throws InputValidationException ;
 }
