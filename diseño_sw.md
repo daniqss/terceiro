@@ -28,51 +28,60 @@ classDiagram
 ## Diseño estático
 ```mermaid
 classDiagram
-    class MedicationInterface {
-        +showMedications() List
-        +showMedicationDetails(medicationId: int) void
-        +confirmIntake(posologyId: int) void
+    %% Models
+    class PatientModel {
+        +getPatient(patientId: int): Future<Map<String, dynamic>?>
+        +getPatientByCode(patientCode: String): Future<Map<String, dynamic>?>
     }
 
-    class MedicationProvider {
-        -medications: List
-        +getMedications() List
-        +getPosologies(medicationId: int) List
-        +getIntakes(medicationId: int) List
-        +logIntake(posologyId: int) void
+    %% Providers
+    class LoginProvider {
+        -isLoading: bool
+        -errorMessage: String
+        -patient: Map<String, dynamic>?
+        +isLoading: bool
+        +errorMessage: String
+        +patient: Map<String, dynamic>?
+        +login(patientCode: String): Future<Map<String, dynamic>?>
+        +logout(context: BuildContext): void
     }
 
-    class Medication {
-        +id: int
-        +name: String
-        +dosage: float
-        +startDate: Date
-        +treatmentDuration: int
-        +patientId: int
+    class PatientProvider {
+        -patient: Map<String, dynamic>?
+        -isLoading: bool
+        +isLoading: bool
+        +patient: Map<String, dynamic>?
+        +loadPatientData(patientId: int): Future<void>
+        +clearData(): void
     }
 
-    class Posology {
-        +id: int
-        +hour: int
-        +minute: int
-        +medication_id: int
+    %% Views
+    class LoginView {
+        +build(context: BuildContext): Widget
+        +logInto(loginProvider: LoginProvider, patientCodeController: TextEditingController, context: BuildContext, isWatch: bool): Future<void>
+        +showErrorMessage(context: BuildContext, message: String, color: Color, isWatch: bool): void
+        +watchLoginView(TextEditingController, bool): Widget
+        +loginView(TextEditingController, bool): Widget
+        +PatientCodeInput(TextEditingController, bool): Widget
+        +LoginButton(isWatch: bool, onPressed: VoidCallback): Widget
     }
 
-    class Intake {
-        +id: int
-        +date: String
-        +medication_id: int
+    class PatientView {
+        +build(context: BuildContext): Widget
+        +loadPatientData(patientProvider: PatientProvider): Future<void>
+        +applyDateFilter(startDate: DateTime, endDate: DateTime): void
+        +clearData(): void
+        +applyDateRangeFilter(PatientProvider): Future<void>
+        +selectDateRange(): Future<void>
+        +toggleMedicationsList(): void
     }
 
-    class ReminderService {
-        +sendReminder(medication: Medication, posology: Posology) bool
-    }
+    %% Relationships
+    LoginProvider <|-- PatientModel
+    PatientProvider <|-- PatientModel
+    LoginView <|-- LoginProvider
+    PatientView <|-- PatientProvider
 
-    MedicationInterface --> MedicationProvider : interacts
-    MedicationProvider --o Medication : provides
-    MedicationProvider --o Posology : manages
-    MedicationProvider --o Intake : logs
-    MedicationProvider --> ReminderService : uses
 ```
 
 ## Diseño dinámico
@@ -80,23 +89,32 @@ classDiagram
 ```mermaid
 
 sequenceDiagram
-    
     participant User
     participant MI as MedicationInterface
     participant MP as MedicationProvider
     participant RS as ReminderService
 
-    User->>MI: showMedications()
-    MI->>MP: getMedications()
-    MP-->>MI: List of Medications
-    
+    User->>MI: login(username, password)
+    MI->>MP: validateCredentials(username, password)
+    MP-->>MI: true/false
+    alt Login successful
+        MI-->>User: Welcome
+        User->>MI: showMedications()
+        MI->>MP: getMedications()
+        MP-->>MI: List of Medications
+
+        User->>MI: filterMedicationsByHour(hour)
+        MI->>MP: getMedicationsFilteredByHour(hour)
+        MP-->>MI: Filtered List
+    else Login failed
+        MI-->>User: Invalid credentials
+    end
+
     User->>MI: showMedicationDetails(medicationId)
     MI->>MP: getPosologies(medicationId)
     MP-->>MI: List of Posologies
-    
+
     User->>MI: confirmIntake(posologyId)
     MI->>MP: logIntake(posologyId)
-    MP->>RS: sendReminder(medication, posology)
-    RS-->>MP: Reminder sent (bool)
 
 ```
