@@ -255,9 +255,17 @@ class PatientViewState extends State<PatientView>
             ),
             title: isWatch
                 ? Center(
-              child: Icon(
-                Icons.logout,
-                size: 16,
+              child: IconButton(
+                icon: Icon(
+                  Icons.logout,
+                  size: 24,
+                ),
+                onPressed: () {
+                  final loginProvider =
+                  Provider.of<LoginProvider>(context, listen: false);
+                  loginProvider.logout(context);
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
               ),
             )
                 : Text("Paciente: ${patient["name"]} ${patient["surname"]}"),
