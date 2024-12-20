@@ -32,6 +32,22 @@ classDiagram
     class PatientModel {
         +getPatient(patientId: int): Future<Map<String, dynamic>?>
         +getPatientByCode(patientCode: String): Future<Map<String, dynamic>?>
+        +getPatients(): Future<List<Map<String, dynamic>>>
+    }
+    class MedicationModel {
+        +getMedications(patientId: int): Future<List<Map<String, dynamic>>>
+        +getMedication(patientId: int, medicationId: int): Future<Map<String, dynamic>>
+    }
+    class PosologyModel {
+        +getPosologies(patientId: int, medicationId: int): Future<List<Map<String, dynamic>>>
+        +addPosology(patientId: int, medicationId: int, minute: int, hour: int): Future<Map<String, dynamic>>
+        +deletePosology(patientId: int, medicationId: int, posologyId: int): void
+    }
+    class IntakeModel {
+        +addIntake(patientId: int, medicationId: int, intakeData: Map<String, dynamic>): Future<void>
+        +getIntakesByPatientAndMedication(patientId: int, medicationId: int): Future<List<Map<String, dynamic>>>
+        +getIntakesByPatient(patientId: int): Future<List<Map<String, dynamic>>>
+        +deleteIntake(patientId: int, medicationId: int, intakeId: int): void
     }
 
     %% Providers
@@ -45,7 +61,6 @@ classDiagram
         +login(patientCode: String): Future<Map<String, dynamic>?>
         +logout(context: BuildContext): void
     }
-
     class PatientProvider {
         -patient: Map<String, dynamic>?
         -isLoading: bool
@@ -65,7 +80,6 @@ classDiagram
         +PatientCodeInput(TextEditingController, bool): Widget
         +LoginButton(isWatch: bool, onPressed: VoidCallback): Widget
     }
-
     class PatientView {
         +build(context: BuildContext): Widget
         +loadPatientData(patientProvider: PatientProvider): Future<void>
@@ -77,11 +91,13 @@ classDiagram
     }
 
     %% Relationships
-    LoginProvider <|-- PatientModel
-    PatientProvider <|-- PatientModel
+    PatientModel <|-- LoginProvider
+    PatientModel <|-- PatientProvider
+    MedicationModel <|-- PatientProvider
+    PosologyModel <|-- PatientProvider
+    IntakeModel <|-- PatientProvider
     LoginView <|-- LoginProvider
     PatientView <|-- PatientProvider
-
 ```
 
 ## Diseño dinámico
@@ -92,29 +108,37 @@ sequenceDiagram
     participant User
     participant MI as MedicationInterface
     participant MP as MedicationProvider
-    participant RS as ReminderService
+    participant PM as PatientModel
+    participant MM as MedicationModel
+    participant PSM as PosologyModel
+    participant IM as IntakeModel
 
-    User->>MI: login(username, password)
-    MI->>MP: validateCredentials(username, password)
-    MP-->>MI: true/false
+    User->>MI: login(patient_code)
+    MI->>PM: validatePatientCode(patient_code)
+    PM-->>MI: true/false
     alt Login successful
-        MI-->>User: Welcome
         User->>MI: showMedications()
         MI->>MP: getMedications()
+        MP->>MM: fetchMedications(patientId)
+        MM-->>MP: List of Medications
         MP-->>MI: List of Medications
 
         User->>MI: filterMedicationsByHour(hour)
         MI->>MP: getMedicationsFilteredByHour(hour)
         MP-->>MI: Filtered List
-    else Login failed
-        MI-->>User: Invalid credentials
-    end
-
     User->>MI: showMedicationDetails(medicationId)
     MI->>MP: getPosologies(medicationId)
+    MP->>PSM: fetchPosologies(patientId, medicationId)
+    PSM-->>MP: List of Posologies
     MP-->>MI: List of Posologies
 
     User->>MI: confirmIntake(posologyId)
     MI->>MP: logIntake(posologyId)
+    MP->>IM: addIntake(patientId, medicationId, intakeData)
+    IM-->>MP: Confirmation
+    MP-->>MI: Confirmation
+    else Login failed
+        MI-->>User: Patient not found
+    end
 
 ```
