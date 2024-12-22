@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const dailyInput = document.getElementById("daily-input");
   const daysInput = document.getElementById("days-input");
   dailyInput.onkeydown = (e) => {
-    if (event.key === "Enter" || event.keyCode === 13) e.preventDefault();
+    if (e.key === "Enter") e.preventDefault();
   };
   const rangeInput = document.getElementById("range-input");
   const startDateInput = document.getElementById("start-date");
