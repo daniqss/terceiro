@@ -33,7 +33,7 @@ header h1 {
 }
 
 main {
-  padding: 2rem;
+  padding: 1rem;
 }
 
 #patient-code {
@@ -85,7 +85,8 @@ button[type="submit"] {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 20px solid #555555;
+  font-size: 0.9em;
 }
 
 .medication-item:last-child {
