@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const periodOptions = document.getElementById("period-options");
   const dailyInput = document.getElementById("daily-input");
   const daysInput = document.getElementById("days-input");
+  dailyInput.onkeydown = preventFormSubmit;
   const rangeInput = document.getElementById("range-input");
   const startDateInput = document.getElementById("start-date");
   const endDateInput = document.getElementById("end-date");
@@ -24,6 +25,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     averageTime,
     totalIntakes
   );
+
+  function preventFormSubmit(event) {
+    if (event.key === "Enter" || event.keyCode === 13) {
+      // Previene el comportamiento por defecto (envío del formulario/recarga)
+      event.preventDefault();
+
+      // Aquí puedes agregar el código que quieras ejecutar cuando se presione Enter
+      console.log("Valor ingresado:", event.target.value);
+    }
+  }
 
   const urlParams = new URLSearchParams(window.location.search);
   const patientId = urlParams.get("patientId");
@@ -69,8 +80,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
-    daysInput.addEventListener("input", async () => {
+    daysInput.addEventListener("input", async (e) => {
+      e.preventDefault();
       const days = parseInt(daysInput.value, 10);
+      console.log(days);
 
       if (days > 0) {
         await loadMedicationsForLastNDays(patientId, medicationId, days);
