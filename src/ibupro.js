@@ -120,25 +120,33 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function loadMedicationsForLastNDays(patientId, medicationId, days) {
+    if (!days || days <= 0) {
+      console.error("Invalid number of days");
+      return;
+    }
+
     const today = new Date();
     const nDaysAgo = new Date();
     nDaysAgo.setDate(today.getDate() - days);
 
-    model
-      .getMedicationIntakes(patientId, medicationId, nDaysAgo, today)
-      .then(async (intakes) => {
-        return model
-          .getPosologies(patientId, medicationId)
-          .then((posologies) => {
-            medicationView.renderIntakes(intakes, posologies);
-          });
-      })
-      .catch((error) => {
-        console.error(
-          `Error loading intakes for the last ${days} days:`,
-          error
-        );
+    try {
+      const intakes = await model.getMedicationIntakes(
+        patientId,
+        medicationId,
+        nDaysAgo,
+        today
+      );
+
+      const filteredIntakes = intakes.filter((intake) => {
+        const intakeDate = new Date(intake.date);
+        return intakeDate >= nDaysAgo && intakeDate <= today;
       });
+
+      const posologies = await model.getPosologies(patientId, medicationId);
+      medicationView.renderIntakes(filteredIntakes, posologies);
+    } catch (error) {
+      console.error(`Error loading intakes for the last ${days} days:`, error);
+    }
   }
 
   async function loadMedicationsForDateRange(
