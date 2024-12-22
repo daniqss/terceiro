@@ -29,10 +29,12 @@ document.addEventListener("DOMContentLoaded", () => {
   patientCodeInput.addEventListener("input", async (event) => {
     const query = event.target.value.trim();
     if (query === "") {
+      suggestionsContainer.style.display = "none";
       patientListView.clearSuggestions();
       return;
     }
 
+    suggestionsContainer.style.display = "block";
     model
       .getPatients()
       .then((patients) => {
@@ -68,6 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .catch(() => {
         medicationsListContainer.style.display = "none";
+      })
+      .finally(() => {
+        suggestionsContainer.style.display = "none";
       });
   });
 
