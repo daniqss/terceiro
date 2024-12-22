@@ -1,10 +1,12 @@
 import { Model } from "./model.js";
 import { MedicationView } from "./view.js";
 
-(async function init() {
+document.addEventListener("DOMContentLoaded", async () => {
   const model = new Model();
 
-  const medicationScheduleBody = document.getElementById("medication-schedule-body");
+  const medicationScheduleBody = document.getElementById(
+    "medication-schedule-body"
+  );
   const averageTime = document.getElementById("average-time");
   const totalIntakes = document.getElementById("total-intakes");
   const medicationNameElement = document.getElementById("medication-name");
@@ -23,7 +25,6 @@ import { MedicationView } from "./view.js";
     totalIntakes
   );
 
-
   const urlParams = new URLSearchParams(window.location.search);
   const patientId = urlParams.get("patientId");
   const medicationId = urlParams.get("medicationId");
@@ -34,25 +35,27 @@ import { MedicationView } from "./view.js";
     return;
   }
 
-  try {
+  model
+    .getMedication(patientId, medicationId)
+    .then(async (medication) => {
+      document.title = medication.name;
+      medicationNameElement.textContent = medication.name;
 
-    const medication = await model.getMedication(patientId, medicationId);
+      const today = new Date();
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setMonth(today.getMonth() - 1);
 
-    document.title = medication.name;
-    medicationNameElement.textContent = medication.name;
-
-    const today = new Date();
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(today.getMonth() - 1);
-    const intakes = await model.getMedicationIntakes(patientId, medicationId, oneMonthAgo, today);
-    const posologies = await model.getPosologies(patientId, medicationId);
-    medicationView.renderIntakes(intakes, posologies);
-
-    setupPeriodSelection(patientId, medicationId);
-  } catch (error) {
-    console.error("Error loading medication details:", error);
-    document.title = "Error - Medicamento";
-  }
+      const [intakes, posologies] = await Promise.all([
+        model.getMedicationIntakes(patientId, medicationId, oneMonthAgo, today),
+        model.getPosologies(patientId, medicationId),
+      ]);
+      medicationView.renderIntakes(intakes, posologies);
+      setupPeriodSelection(patientId, medicationId);
+    })
+    .catch((error) => {
+      console.error("Error loading medication details:", error);
+      document.title = "Error - Medicamento";
+    });
 
   function setupPeriodSelection(patientId, medicationId) {
     periodOptions.addEventListener("change", async () => {
@@ -82,7 +85,12 @@ import { MedicationView } from "./view.js";
       const endDate = endDateInput.value;
 
       if (startDate && endDate) {
-        await loadMedicationsForDateRange(patientId, medicationId, startDate, endDate);
+        await loadMedicationsForDateRange(
+          patientId,
+          medicationId,
+          startDate,
+          endDate
+        );
       }
     }
   }
@@ -93,7 +101,12 @@ import { MedicationView } from "./view.js";
     oneMonthAgo.setMonth(today.getMonth() - 1);
 
     try {
-      const intakes = await model.getMedicationIntakes(patientId, medicationId, oneMonthAgo, today);
+      const intakes = await model.getMedicationIntakes(
+        patientId,
+        medicationId,
+        oneMonthAgo,
+        today
+      );
       const posologies = await model.getPosologies(patientId, medicationId);
       medicationView.renderIntakes(intakes, posologies);
     } catch (error) {
@@ -106,22 +119,40 @@ import { MedicationView } from "./view.js";
     const nDaysAgo = new Date();
     nDaysAgo.setDate(today.getDate() - days);
 
-    try {
-      const intakes = await model.getMedicationIntakes(patientId, medicationId, nDaysAgo, today);
-      const posologies = await model.getPosologies(patientId, medicationId);
-      medicationView.renderIntakes(intakes, posologies);
-    } catch (error) {
-      console.error(`Error loading intakes for the last ${days} days:`, error);
-    }
+    model
+      .getMedicationIntakes(patientId, medicationId, nDaysAgo, today)
+      .then(async (intakes) => {
+        return model
+          .getPosologies(patientId, medicationId)
+          .then((posologies) => {
+            medicationView.renderIntakes(intakes, posologies);
+          });
+      })
+      .catch((error) => {
+        console.error(
+          `Error loading intakes for the last ${days} days:`,
+          error
+        );
+      });
   }
 
-  async function loadMedicationsForDateRange(patientId, medicationId, startDate, endDate) {
+  async function loadMedicationsForDateRange(
+    patientId,
+    medicationId,
+    startDate,
+    endDate
+  ) {
     try {
-      const intakes = await model.getMedicationIntakes(patientId, medicationId, new Date(startDate), new Date(endDate));
+      const intakes = await model.getMedicationIntakes(
+        patientId,
+        medicationId,
+        new Date(startDate),
+        new Date(endDate)
+      );
       const posologies = await model.getPosologies(patientId, medicationId);
       medicationView.renderIntakes(intakes, posologies);
     } catch (error) {
       console.error("Error loading intakes for the date range:", error);
     }
   }
-})();
+});
