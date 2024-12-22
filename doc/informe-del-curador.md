@@ -49,3 +49,12 @@ Esta semana usamos los mismos recursos que la anterior, además de:
 - [Google Chrome](https://www.google.com/intl/es_es/chrome/)
 - [Safari](https://www.apple.com/es/safari/)
 - [Mozilla Firefox](https://www.mozilla.org/es-ES/firefox/new/)
+
+
+## Objetivos de aprendizaje de la semana 3
+
+  - Esta semana tuvimos que implementar las funcionalidades que abarcaban nuestros casos de uso, siguiendo las reglas WAI-ARIA.
+
+## Otros recursos empleados en la semana 3
+Esta semana usamos los mismos recursos que las anteriores, además de esta documentación:
+- [WAI-ARIA](https://www.w3.org/WAI/standards-guidelines/aria/)
