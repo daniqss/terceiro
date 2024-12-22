@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Patient medication's posologies and intakes page"
+    />
     <link rel="stylesheet" href="style.css" />
     <script type="module" src="ibupro.js" defer></script>
     <title>Ibuprofeno</title>
@@ -26,11 +30,11 @@
             <option value="range">Período entre dos fechas</option>
           </select>
           <form id="period-form">
-            <div id="daily-input" style="display: none;">
+            <div id="daily-input" style="display: none">
               <label for="days-input">Últimos n días:</label>
               <input type="number" id="days-input" min="1" />
             </div>
-            <div id="range-input" style="display: none;">
+            <div id="range-input" style="display: none">
               <label for="start-date">Fecha comienzo:</label>
               <input type="date" id="start-date" />
               <label for="end-date">Fecha fin:</label>
@@ -42,7 +46,9 @@
       <section class="medication-schedule">
         <h3 id="medication-name"></h3>
         <table>
-          <caption>Comparación de Posología e Intakes</caption>
+          <caption>
+            Comparación de Posología e Intakes
+          </caption>
           <thead>
             <tr>
               <th scope="col">Posología</th>
