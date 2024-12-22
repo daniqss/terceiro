@@ -276,3 +276,10 @@ footer {
   text-align: center;
 }
 
+.page-footer {
+  margin-top: auto;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555555;
+}
