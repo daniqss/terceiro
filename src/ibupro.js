@@ -4,9 +4,7 @@ import { MedicationView } from "./view.js";
 document.addEventListener("DOMContentLoaded", async () => {
   const model = new Model();
 
-  const medicationScheduleBody = document.getElementById(
-    "medication-schedule-body"
-  );
+  const medicationScheduleBody = document.getElementById("medication-schedule-body");
   const averageTime = document.getElementById("average-time");
   const totalIntakes = document.getElementById("total-intakes");
   const medicationNameElement = document.getElementById("medication-name");
@@ -104,7 +102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const today = new Date();
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(today.getMonth() - 1);
-
+  
     try {
       const intakes = await model.getMedicationIntakes(
         patientId,
@@ -112,8 +110,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         oneMonthAgo,
         today
       );
+  
       const posologies = await model.getPosologies(patientId, medicationId);
-      medicationView.renderIntakes(intakes, posologies);
+  
+      const filteredIntakes = intakes.filter((intake) => {
+        const intakeDate = new Date(intake.date);
+        return intakeDate >= oneMonthAgo && intakeDate <= today;
+      });
+  
+      const filteredPosologies = posologies.filter((posology) => {
+        const posologyDate = new Date(today);
+        posologyDate.setHours(posology.hour);
+        posologyDate.setMinutes(posology.minute);
+  
+        return posologyDate >= oneMonthAgo && posologyDate <= today;
+      });
+  
+      medicationView.renderIntakes(filteredIntakes, filteredPosologies);
+  
     } catch (error) {
       console.error("Error loading last month's intakes:", error);
     }
@@ -155,17 +169,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     startDate,
     endDate
   ) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+  
+    if (start > end) {
+      console.error("La fecha de inicio no puede ser posterior a la fecha de fin.");
+      return;
+    }
+  
     try {
       const intakes = await model.getMedicationIntakes(
         patientId,
         medicationId,
-        new Date(startDate),
-        new Date(endDate)
+        start,
+        end
       );
+  
+      const filteredIntakes = intakes.filter((intake) => {
+        const intakeDate = new Date(intake.date);
+        return intakeDate >= start && intakeDate <= end;
+      });
+  
       const posologies = await model.getPosologies(patientId, medicationId);
-      medicationView.renderIntakes(intakes, posologies);
+  
+      const filteredPosologies = posologies.filter((posology) => {
+        const posologyDate = new Date(start);
+        posologyDate.setHours(posology.hour);
+        posologyDate.setMinutes(posology.minute);
+  
+        return posologyDate >= start && posologyDate <= end;
+      });
+  
+      medicationView.renderIntakes(filteredIntakes, filteredPosologies);
+  
     } catch (error) {
       console.error("Error loading intakes for the date range:", error);
     }
-  }
+  }  
 });
