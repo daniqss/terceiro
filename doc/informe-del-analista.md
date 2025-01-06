@@ -114,3 +114,31 @@
   h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
      titulación?
      Se nos enseña buenos habitos, al obligarnos a construir la aplicación de forma generica
+
+## Retrospectiva de la semana 3
+
+  a) ¿Qué ha sido lo mejor de la práctica?
+     Aprender sobre WAI-ARIA y aplicarlo al proyecto.
+  
+  b) ¿Qué fue lo peor?
+     Ponernos a buscar información sobre el tema sin tener casi conocimientos previos sobre el.
+
+  c) ¿Cuál fue el mejor momento de cada semana durante el trabajo del
+     equipo?
+
+  d) ¿Cuál ha sido el peor?
+
+  e) ¿Qué has aprendido?
+     Nociones básicas sobre WAI-ARIA y buenas prácticas a la hora de hacer el frontend de 
+     aplicaciones.
+
+  f) ¿Qué necesitáis conservar -como equipo- para las próximas semanas?
+     Seguimos teniendo una gran dínamica de equipo que nos resulta muy eficiente
+
+  g) ¿Qué tenéis que mejorar -como equipo- para las próximas semanas?
+     Seguimos teniendo que ser mas previsores y intentar empezar con más tiempo las tareas
+
+  h) ¿Cómo se relaciona ESTE contenido con otros del curso y con tu
+     titulación?
+     Se nos enseña conocimientos útiles para buenas implementaciones web, las cuales son las
+     mas númerosas en nuestra titulación.
