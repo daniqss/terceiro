@@ -84,46 +84,28 @@ export class MedicationView {
       this.totalIntakesElement.textContent = "0";
       return;
     }
-    let timeDifferenceInMinutes = (h1, m1, h2, m2) => {
-      return Math.abs(h1 * 60 + m1 - (h2 * 60 + m2));
-    };
-    console.log(posologies.map((p) => p.hour));
+
+    const timeDiffs = [];
     this.scheduleBody.innerHTML = intakes
       .map((intake) => {
-        // Extract the hour and minute from the intake date
-        const intakeDate = new Date(intake.date);
-        const intakeHour = intakeDate.getHours();
-        const intakeMinute = intakeDate.getMinutes();
+        const nearestPosology = this.findNearestPosology(intake, posologies);
 
-        // Find the posology with the nearest time to the intake time
-        const nearestPosology = posologies.reduce((nearest, posology) => {
-          const posologyHour = posology.hour; // Assuming posology.hour is the hour
-          const posologyMinute = posology.minute || 0; // Assuming posology has an optional minute property
-          const currentDifference = timeDifferenceInMinutes(
-            intakeHour,
-            intakeMinute,
-            posologyHour,
-            posologyMinute
-          );
-
-          // Compare with the nearest found so far
-          if (!nearest || currentDifference < nearest.difference) {
-            return {
-              posology,
-              difference: currentDifference,
-            };
-          }
-          return nearest;
-        }, null);
+        if (!nearestPosology) return '';
 
         const nearestTime = nearestPosology.posology;
 
-        // Format the nearest posology time as HH:mm
         const nearestTimeFormatted = `${nearestTime.hour
           .toString()
           .padStart(2, "0")}:${(nearestTime.minute || 0)
           .toString()
           .padStart(2, "0")}`;
+
+        const intakeDate = new Date(intake.date);
+        const intakeHour = intakeDate.getHours();
+        const intakeMinute = intakeDate.getMinutes();
+        const nearestPosologyTimeInMinutes = nearestTime.hour * 60 + nearestTime.minute;
+        const intakeTimeInMinutes = intakeHour * 60 + intakeMinute;
+        timeDiffs.push(Math.abs(intakeTimeInMinutes - nearestPosologyTimeInMinutes));
 
         return `
             <tr>
@@ -140,7 +122,7 @@ export class MedicationView {
       .join("");
 
     const totalIntakesCount = intakes.length;
-    const averageTimeBetweenIntakes = this.calculateAverageTime(intakes);
+    const averageTimeBetweenIntakes = this.calculateAverageTime(timeDiffs);
 
     this.totalIntakesElement.textContent = totalIntakesCount;
     this.averageTimeElement.textContent = averageTimeBetweenIntakes
@@ -148,14 +130,25 @@ export class MedicationView {
       : "N/A";
   }
 
-  calculateAverageTime(intakes) {
-    if (intakes.length < 2) return null;
+  findNearestPosology(intake, posologies) {
+    const intakeDate = new Date(intake.date);
+    const intakeHour = intakeDate.getHours();
+    const intakeMinute = intakeDate.getMinutes();
 
-    const timeDiffs = [];
-    for (let i = 1; i < intakes.length; i++) {
-      const diff = new Date(intakes[i].date) - new Date(intakes[i - 1].date);
-      timeDiffs.push(diff / (1000 * 60)); // Convertir a minutos
-    }
+    return posologies.reduce((nearest, posology) => {
+      const posologyHour = posology.hour;
+      const posologyMinute = posology.minute || 0;
+      const currentDifference = Math.abs(intakeHour * 60 + intakeMinute - (posologyHour * 60 + posologyMinute));
+
+      if (!nearest || currentDifference < nearest.difference) {
+        return { posology, difference: currentDifference };
+      }
+      return nearest;
+    }, null);
+  }
+
+  calculateAverageTime(timeDiffs) {
+    if (timeDiffs.length < 1) return null;
 
     const totalDiff = timeDiffs.reduce((acc, diff) => acc + diff, 0);
     return Math.round(totalDiff / timeDiffs.length);
