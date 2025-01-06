@@ -43,6 +43,21 @@ Se han incluido los distintos ficheros de documentación así como el codigo de 
   - Conflictos, desviaciones, etc.
   No se han dado conflictos
 
-## Estado del repositorio en la semama 1
+## Estado del repositorio en la semama 2
 
 Se han incluido los distintos ficheros de documentación así como el codigo de html y css básicos.
+
+##  Registro de tareas llevadas a cabo durante la semana 3
+
+  - Descripción de la tarea
+  Ajustar nuestra web a las pautas de accesibilidad de WAI-AIRA
+  - Asignación de responsables
+  Todo el equipo ha participado en todas las tareas que se realizaron presencialmente en conjunto.
+  - Estado de completud
+  Tareas de las semana 3 realizadas y la práctica completada.
+  - Conflictos, desviaciones, etc.
+  No se han dado conflictos
+
+## Estado del repositorio en la semama 3
+
+Todos los ficheros de documentación y de códigos finalizados y listos para la entrega.
