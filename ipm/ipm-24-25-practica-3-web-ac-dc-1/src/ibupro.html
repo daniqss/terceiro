@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Comparación de tomas y posología del medicamento"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="ibupro.js" defer></script>
+    <title>Ibuprofeno</title>
+  </head>
+  <body>
+    <a href="index.html" aria-label="Volver a la página principal">
+      <header role="banner">
+        <h1>Sergas Pro Max</h1>
+      </header>
+    </a>
+    <main role="main">
+      <article aria-live="polite">
+        <h2 id="patient-name"></h2>
+      </article>
+      <section class="medication-period" aria-label="Selección de período">
+        <article class="periods">
+          <label for="period-options">Selecciona un periodo</label>
+          <select
+            id="period-options"
+            name="Period Options"
+            required
+            aria-controls="period-form"
+          >
+            <option value="monthly">Último mes</option>
+            <option value="daily">Últimos n días</option>
+            <option value="range">Período entre dos fechas</option>
+          </select>
+          <form id="period-form" aria-live="polite">
+            <div id="daily-input" style="display: none">
+              <label for="days-input">Últimos n días:</label>
+              <input
+                type="number"
+                id="days-input"
+                min="1"
+                aria-label="Número de días a consultar"
+              />
+            </div>
+            <div id="range-input" style="display: none">
+              <label for="start-date">Fecha comienzo:</label>
+              <input
+                type="date"
+                id="start-date"
+                aria-label="Fecha de inicio del período"
+              />
+              <label for="end-date">Fecha fin:</label>
+              <input
+                type="date"
+                id="end-date"
+                aria-label="Fecha de fin del período"
+              />
+            </div>
+          </form>
+        </article>
+      </section>
+      <section class="medication-schedule" aria-labelledby="medication-name">
+        <h3 id="medication-name"></h3>
+        <table aria-label="Comparación de Posología e Intakes">
+          <caption>
+            Comparación de Posología e Intakes
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Posología</th>
+              <th scope="col">Tomas</th>
+            </tr>
+          </thead>
+          <tbody id="medication-schedule-body"></tbody>
+        </table>
+      </section>
+      <footer role="complementary" aria-label="Estadísticas de tomas">
+        <p>
+          Tiempo medio hasta toma:
+          <span id="average-time" aria-live="polite"></span>
+        </p>
+        <p>
+          Tomas totales: <span id="total-intakes" aria-live="polite"></span>
+        </p>
+      </footer>
+    </main>
+    <footer
+      class="page-footer"
+      role="contentinfo"
+      aria-label="Información de copyright"
+    >
+      <p>&copy; 2024 Sergas Pro Max. Todos los derechos reservados.</p>
+    </footer>
+  </body>
+</html>

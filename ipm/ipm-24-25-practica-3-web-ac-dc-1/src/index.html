@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Sergas Pro Max web - Consulta de toma de los pacientes"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module" src="./index.js"></script>
+    <title>Sergas Pro Max</title>
+  </head>
+  <body>
+    <a href="" aria-label="Ir a la página principal de Sergas Pro Max">
+      <header role="banner">
+        <h1>Sergas Pro Max</h1>
+      </header>
+    </a>
+    <main role="main" aria-label="Contenido principal">
+      <section
+        id="patient-code"
+        style="position: relative"
+        aria-label="Búsqueda de pacientes"
+      >
+        <form
+          id="patient-code-form"
+          aria-label="Formulario de búsqueda de pacientes"
+          role="search"
+        >
+          <input
+            id="patient-code-input"
+            type="text"
+            placeholder="Buscar pacientes..."
+            autocomplete="off"
+            required
+            aria-label="Ingrese código o nombre del paciente"
+            aria-describedby="search-description"
+          />
+        </form>
+        <ul
+          id="suggestions-list"
+          class="suggestions-list"
+          style="display: none"
+          role="listbox"
+          aria-label="Sugerencias de búsqueda"
+          aria-live="polite"
+        ></ul>
+      </section>
+      <section
+        id="patient-medication-list-container"
+        style="display: none"
+        aria-label="Lista de medicamentos"
+      >
+        <h2 id="medications-title">Medicamentos del Paciente</h2>
+        <ul
+          id="patient-medication-list"
+          role="list"
+          aria-labelledby="medications-title"
+          aria-live="polite"
+        >
+          <!-- Lista dinámica de medicamentos -->
+        </ul>
+      </section>
+    </main>
+    <footer
+      class="page-footer"
+      role="contentinfo"
+      aria-label="Información de copyright"
+    >
+      <p>&copy; 2024 Sergas Pro Max. Todos los derechos reservados.</p>
+    </footer>
+  </body>
+</html>
