@@ -1,0 +1,15 @@
+    A[INICIO] -->|pulsar inicio| B[LOGIN]
+    B --> |login incorrecto| B
+    B-->|Login correcto|C[Menu principal]
+    C -->|logout| A
+    C -->|Seleccionas un paciente| D[Paciente]
+    D--> |Pinchas en los medicamentos|E[Medicamentos Paciente]
+    D -->|Pinchas en ajustes| F[Ajustes de datos del paciente]
+    D-->|Pinchas regreso|C
+    E --> |pulsar regreso|D
+    F-->|Confirmas ajustes nuevos|D
+    F-->|Cancelas ajustes nuevos|D
+    B & C & D & E & F-->|Error de servidor o conexión|Fail1
+    Fail1-->|confirmas el fallo|A
+    B & C & D & E & F-->|Tiempo de carga Larga|Fail2-->|Una vez haya cargado|B & C & D & E & F
+    
