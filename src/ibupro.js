@@ -12,12 +12,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const periodOptions = document.getElementById("period-options");
   const dailyInput = document.getElementById("daily-input");
   const daysInput = document.getElementById("days-input");
-  dailyInput.onkeydown = (e) => {
-    if (e.key === "Enter") e.preventDefault();
-  };
   const rangeInput = document.getElementById("range-input");
   const startDateInput = document.getElementById("start-date");
   const endDateInput = document.getElementById("end-date");
+
+  // Ocultar inputs inicialmente
+  dailyInput.style.display = "none";
+  rangeInput.style.display = "none";
 
   const medicationView = new MedicationView(
     null,
@@ -36,44 +37,45 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  model
-    .getMedication(patientId, medicationId)
-    .then(async (medication) => {
-      document.title = medication.name;
-      medicationNameElement.textContent = medication.name;
+  try {
+    const medication = await model.getMedication(patientId, medicationId);
+    document.title = medication.name;
+    medicationNameElement.textContent = medication.name;
 
-      const today = new Date();
-      const oneMonthAgo = new Date();
-      oneMonthAgo.setMonth(today.getMonth() - 1);
+    periodOptions.value = "monthly";  // Selección predeterminada: "monthly"
 
-      const [intakes, posologies] = await Promise.all([
-        model.getMedicationIntakes(patientId, medicationId, oneMonthAgo, today),
-        model.getPosologies(patientId, medicationId),
-      ]);
-      medicationView.renderIntakes(intakes, posologies);
-      setupPeriodSelection(patientId, medicationId);
-    })
-    .catch((error) => {
-      console.error("Error loading medication details:", error);
-      document.title = "Error - Medicamento";
-    });
+    // Cargar medicamentos para el último mes al cargar la página
+    await loadMedicationsForLastMonth(patientId, medicationId);
+
+    setupPeriodSelection(patientId, medicationId);
+  } catch (error) {
+    console.error("Error loading medication details:", error);
+    document.title = "Error - Medicamento";
+  }
 
   function setupPeriodSelection(patientId, medicationId) {
     periodOptions.addEventListener("change", async () => {
       const selectedOption = periodOptions.value;
 
+      // Mostrar/Ocultar inputs según la opción seleccionada
       dailyInput.style.display = selectedOption === "daily" ? "block" : "none";
       rangeInput.style.display = selectedOption === "range" ? "block" : "none";
 
       if (selectedOption === "monthly") {
         await loadMedicationsForLastMonth(patientId, medicationId);
+      } else if (selectedOption === "range") {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+
+        if (startDate && endDate) {
+          await loadMedicationsForDateRange(patientId, medicationId, startDate, endDate);
+        }
       }
     });
 
     daysInput.addEventListener("input", async (e) => {
       e.preventDefault();
       const days = parseInt(daysInput.value, 10);
-      console.log(days);
 
       if (days > 0) {
         await loadMedicationsForLastNDays(patientId, medicationId, days);
@@ -102,7 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const today = new Date();
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(today.getMonth() - 1);
-  
+
     try {
       const intakes = await model.getMedicationIntakes(
         patientId,
@@ -110,35 +112,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         oneMonthAgo,
         today
       );
-  
       const posologies = await model.getPosologies(patientId, medicationId);
-  
+
       const filteredIntakes = intakes.filter((intake) => {
         const intakeDate = new Date(intake.date);
         return intakeDate >= oneMonthAgo && intakeDate <= today;
       });
-  
+
       const filteredPosologies = posologies.filter((posology) => {
-        const posologyDate = new Date(today);
-        posologyDate.setHours(posology.hour);
-        posologyDate.setMinutes(posology.minute);
-  
+        const posologyDate = new Date();
+        posologyDate.setHours(posology.hour, posology.minute, 0, 0);
         return posologyDate >= oneMonthAgo && posologyDate <= today;
       });
-  
+
       medicationView.renderIntakes(filteredIntakes, filteredPosologies);
-  
     } catch (error) {
       console.error("Error loading last month's intakes:", error);
     }
   }
 
   async function loadMedicationsForLastNDays(patientId, medicationId, days) {
-    if (!days || days <= 0) {
-      console.error("Invalid number of days");
-      return;
-    }
-
     const today = new Date();
     const nDaysAgo = new Date();
     nDaysAgo.setDate(today.getDate() - days);
@@ -150,14 +143,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         nDaysAgo,
         today
       );
+      const posologies = await model.getPosologies(patientId, medicationId);
 
       const filteredIntakes = intakes.filter((intake) => {
         const intakeDate = new Date(intake.date);
         return intakeDate >= nDaysAgo && intakeDate <= today;
       });
 
-      const posologies = await model.getPosologies(patientId, medicationId);
-      medicationView.renderIntakes(filteredIntakes, posologies);
+      const filteredPosologies = posologies.filter((posology) => {
+        const posologyDate = new Date();
+        posologyDate.setHours(posology.hour, posology.minute, 0, 0);
+        return posologyDate >= nDaysAgo && posologyDate <= today;
+      });
+
+      medicationView.renderIntakes(filteredIntakes, filteredPosologies);
     } catch (error) {
       console.error(`Error loading intakes for the last ${days} days:`, error);
     }
@@ -200,10 +199,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         return posologyDate >= start && posologyDate <= end;
       });
   
-      medicationView.renderIntakes(filteredIntakes, filteredPosologies);
+      if (filteredIntakes.length > 0 || filteredPosologies.length > 0) {
+        medicationView.renderIntakes(filteredIntakes, filteredPosologies);
+      } else {
+        medicationScheduleBody.innerHTML = "<p>No medication data found for this period.</p>";
+      }
   
     } catch (error) {
       console.error("Error loading intakes for the date range:", error);
     }
-  }  
+  }
+  
 });
