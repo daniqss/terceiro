@@ -70,7 +70,7 @@ service ThriftCourseService {
 
     ThriftCourseDto addCourse(1: ThriftCourseDto courseDto) throws (1: ThriftInputValidationException e, 2: ThriftCourseStartTooSoonException ee);
 
-    List<ThriftCourseDto> findCourses(1: string city) throws (1: ThriftInputValidationException e);
+    list<ThriftCourseDto> findCourses(1: string city) throws (1: ThriftInputValidationException e);
 
     ThriftCourseDto findCourse(1: i64 courseId) throws (1: ThriftInputValidationException e, 2: ThriftInstanceNotFoundException ee);
 
@@ -78,5 +78,5 @@ service ThriftCourseService {
 
     void cancelInscription(1: i64 inscriptionId, 2: string userEmail) throws (1: ThriftInstanceNotFoundException e, 2: ThriftInputValidationException ee, 3: ThriftIncorrectUserException eee, 4: ThriftInscriptionAlreadyCancelledException eeee, 5: ThriftCancelTooCloseToCourseStartException eeeee);
 
-    List<ThriftInscriptionDto> findInscriptions(1: string userEmail) throws (1: ThriftInputValidationException e);
+    list<ThriftInscriptionDto> findInscriptions(1: string userEmail) throws (1: ThriftInputValidationException e);
 }

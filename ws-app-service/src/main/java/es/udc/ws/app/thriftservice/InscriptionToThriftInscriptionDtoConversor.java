@@ -1,14 +1,13 @@
 package es.udc.ws.app.thriftservice;
-
 import es.udc.ws.app.model.inscription.Inscription;
-import es.udc.ws.app.thrift.ThriftInscriptionDto;
+import es.udc.ws.app.thrift.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class InscriptionToThriftInscriptionDtoConversor {
-    public static ThriftInscriptionDto toThriftInscriptionDto(Inscription inscription) {
+   public static ThriftInscriptionDto toThriftInscriptionDto(Inscription inscription) {
 
-        return new ThriftInscriptionDto(inscription.getInscriptionId(), inscription.getCourseId(), inscription.getInscriptionDate(), inscription.getCancelationDate(),inscription.getUserEmail(),inscription.getCreditCard());
+        return new ThriftInscriptionDto(inscription.getInscriptionId(), inscription.getCourseId(), inscription.getInscriptionDate().toString(), inscription.getCancelationDate().toString(),inscription.getUserEmail(),inscription.getCreditCard());
 
     }
 
