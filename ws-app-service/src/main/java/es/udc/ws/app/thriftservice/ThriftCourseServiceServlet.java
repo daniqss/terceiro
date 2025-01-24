@@ -1,5 +1,6 @@
 package es.udc.ws.app.thriftservice;
 
+import es.udc.ws.app.thrift.ThriftCourseService;
 import es.udc.ws.util.servlet.ThriftHttpServletTemplate;
 
 import org.apache.thrift.TProcessor;
@@ -14,11 +15,8 @@ public class ThriftCourseServiceServlet extends ThriftHttpServletTemplate {
     }
 
     private static TProcessor createProcessor() {
-    /*
         return new ThriftCourseService.Processor<ThriftCourseService.Iface>(
                 new ThriftCourseServiceImpl());
-    */
-        return null;
     }
 
     private static TProtocolFactory createProtocolFactory() {
