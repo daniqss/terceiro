@@ -21,9 +21,9 @@ public class JsonToRestInscriptionDtoConversor {
         inscriptionObject.put("inscriptionId", inscription.getInscriptionId())
                 .put("courseId", inscription.getCourseId())
                 .put("userEmail", inscription.getUserEmail())
-                .put("inscriptionDate", inscription.getInscriptionDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                .put("inscriptionDate", inscription.getInscriptionDate());
         if (inscription.getCancelationDate() != null) {
-            inscriptionObject.put("cancelationDate", inscription.getCancelationDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+            inscriptionObject.put("cancelationDate", inscription.getCancelationDate());
         } else {
             inscriptionObject.putNull("cancelationDate");
         }
@@ -65,19 +65,10 @@ public class JsonToRestInscriptionDtoConversor {
                 Long courseId = inscriptionObject.get("courseId").longValue();
                 String userEmail = inscriptionObject.get("userEmail").textValue().trim();
                 String creditCard = inscriptionObject.get("creditCard").textValue().trim();
+                String inscriptionDate = inscriptionObject.get("inscriptionDate").textValue().trim();
 
-                LocalDateTime inscriptionDate = LocalDateTime.parse(
-                        inscriptionObject.get("inscriptionDate").textValue().trim(),
-                        DateTimeFormatter.ISO_LOCAL_DATE_TIME
-                );
-
-                JsonNode cancelationDateNode = inscriptionObject.get("cancelationDate");
-                LocalDateTime cancelationDate = (inscriptionId != null) ?
-                        (cancelationDateNode != null) ? LocalDateTime.parse(
-                            cancelationDateNode.textValue().trim(),
-                            DateTimeFormatter.ISO_LOCAL_DATE_TIME
-                    ) : null
-                : null;
+                String cancelationDateNode = inscriptionObject.get("cancelationDate").textValue().trim();
+                String cancelationDate = (inscriptionId != null) ? cancelationDateNode : null;
 
                 return new RestInscriptionDto(inscriptionId, courseId, inscriptionDate, cancelationDate, userEmail, creditCard);
             }

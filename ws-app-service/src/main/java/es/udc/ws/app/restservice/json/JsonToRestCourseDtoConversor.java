@@ -22,7 +22,7 @@ public class JsonToRestCourseDtoConversor {
         courseObject.put("courseId", course.getCourseId())
                 .put("name", course.getName())
                 .put("city", course.getCity())
-                .put("startDate", course.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)) // Format LocalDateTime
+                .put("startDate", course.getStartDate()) // Format LocalDateTime
                 .put("price", course.getPrice())
                 .put("maxSpots", course.getMaxSpots())
                 .put("vacantSpots", course.getVacantSpots());
@@ -56,8 +56,7 @@ public class JsonToRestCourseDtoConversor {
 
                 String name = courseObject.get("name").textValue().trim();
                 String city = courseObject.get("city").textValue().trim();
-                LocalDateTime startDate = LocalDateTime.parse(courseObject.get("startDate").textValue().trim(),
-                        DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                String startDate = courseObject.get("startDate").textValue().trim();
                 int maxSpots = courseObject.get("maxSpots").intValue();
                 int vacantSpots = courseObject.get("vacantSpots").intValue();
                 float price = courseObject.get("price").floatValue();

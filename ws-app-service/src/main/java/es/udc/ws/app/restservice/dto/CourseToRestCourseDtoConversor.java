@@ -1,6 +1,9 @@
 package es.udc.ws.app.restservice.dto;
 
 import es.udc.ws.app.model.course.Course;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +19,10 @@ public class CourseToRestCourseDtoConversor {
 
 
     public static RestCourseDto toRestCourseDto(Course course) {
-        return new RestCourseDto(course.getCourseId(), course.getName(), course.getCity(), course.getStartDate(), course.getPrice(), course.getMaxSpots(), course.getVacantSpots());
+        return new RestCourseDto(course.getCourseId(), course.getName(), course.getCity(), course.getStartDate().toString(), course.getPrice(), course.getMaxSpots(), course.getVacantSpots());
     }
 
     public static Course toCourse(RestCourseDto course) {
-        return new Course(course.getName(), course.getCity(), course.getStartDate(), course.getPrice(), course.getMaxSpots());
+        return new Course(course.getName(), course.getCity(), LocalDateTime.parse(course.getStartDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME), course.getPrice(), course.getMaxSpots());
     }
 }

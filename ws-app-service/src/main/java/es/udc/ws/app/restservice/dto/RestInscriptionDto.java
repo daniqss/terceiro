@@ -1,21 +1,19 @@
 package es.udc.ws.app.restservice.dto;
 
-import java.time.LocalDateTime;
-
 public class RestInscriptionDto {
 
     private Long inscriptionId;
     private Long courseId;
-    private LocalDateTime inscriptionDate;
-    private LocalDateTime cancelationDate;
+    private String inscriptionDate;
+    private String cancelationDate;
     private String userEmail;
     private String creditCard;
 
-    public RestInscriptionDto(Long inscriptionId, Long courseId, LocalDateTime inscriptionDate, LocalDateTime cancelationDate, String userEmail, String creditCard) {
+    public RestInscriptionDto(Long inscriptionId, Long courseId, String inscriptionDate, String cancelationDate, String userEmail, String creditCard) {
         this.inscriptionId = inscriptionId;
         this.courseId = courseId;
-        this.inscriptionDate = (inscriptionDate != null) ? inscriptionDate.withNano(0) : null;
-        this.cancelationDate = (cancelationDate != null) ? cancelationDate.withNano(0) : null;
+        this.inscriptionDate = inscriptionDate;
+        this.cancelationDate = cancelationDate;
         this.userEmail = userEmail;
         this.creditCard = creditCard;
     }
@@ -36,20 +34,20 @@ public class RestInscriptionDto {
         this.courseId = courseId;
     }
 
-    public LocalDateTime getInscriptionDate() {
+    public String getInscriptionDate() {
         return inscriptionDate;
     }
 
-    public void setInscriptionDate(LocalDateTime inscriptionDate) {
-        this.inscriptionDate = (inscriptionDate != null) ? inscriptionDate.withNano(0) : null;
+    public void setInscriptionDate(String inscriptionDate) {
+        this.inscriptionDate = inscriptionDate;
     }
 
-    public LocalDateTime getCancelationDate() {
+    public String getCancelationDate() {
         return cancelationDate;
     }
 
-    public void getCancelationDate(LocalDateTime cancelationDate) {
-        this.inscriptionDate = (cancelationDate != null) ? cancelationDate.withNano(0) : null;
+    public void getCancelationDate(String cancelationDate) {
+        this.cancelationDate = cancelationDate;
     }
 
     public String getUserEmail() {

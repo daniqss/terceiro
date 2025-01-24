@@ -2,6 +2,8 @@ package es.udc.ws.app.restservice.dto;
 
 import es.udc.ws.app.model.inscription.Inscription;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +12,8 @@ public class InscriptionToRestInscriptionDtoConversor {
         return new RestInscriptionDto(
                 inscription.getInscriptionId(),
                 inscription.getCourseId(),
-                inscription.getInscriptionDate(),
-                inscription.getCancelationDate(),
+                inscription.getInscriptionDate().toString(),
+                inscription.getCancelationDate().toString(),
                 inscription.getUserEmail(),
                 inscription.getCreditCard().substring(inscription.getCreditCard().length() - 4)
         );
@@ -21,8 +23,8 @@ public class InscriptionToRestInscriptionDtoConversor {
         return new Inscription(
                 inscription.getInscriptionId(),
                 inscription.getCourseId(),
-                inscription.getInscriptionDate(),
-                inscription.getCancelationDate(),
+                LocalDateTime.parse(inscription.getInscriptionDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                LocalDateTime.parse(inscription.getCancelationDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 inscription.getUserEmail(),
                 inscription.getCreditCard()
         );

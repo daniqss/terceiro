@@ -1,18 +1,16 @@
 package es.udc.ws.app.restservice.dto;
 
-import java.time.LocalDateTime;
-
 public class RestCourseDto {
 
     private Long courseId;
     private String name;
     private String city;
-    private LocalDateTime startDate;
+    private String startDate;
     private float price;
     private int maxSpots;
     private int vacantSpots;
 
-    public RestCourseDto(Long courseId, String name, String city, LocalDateTime startDate, float price, int maxSpots, int vacantSpots) {
+    public RestCourseDto(Long courseId, String name, String city, String startDate, float price, int maxSpots, int vacantSpots) {
         this.courseId = courseId;
         this.name = name;
         this.city = city;
@@ -46,11 +44,9 @@ public class RestCourseDto {
         this.name = name;
     }
 
-    public LocalDateTime getStartDate() {
-        return startDate.withNano(0);
-    }
+    public String getStartDate() { return this.startDate; }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 

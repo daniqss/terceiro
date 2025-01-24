@@ -69,8 +69,7 @@ public class JsonToClientCourseDtoConversor {
 
             String name = courseObject.get("name").textValue().trim();
             String city = courseObject.get("city").textValue().trim();
-            LocalDateTime startDate = LocalDateTime.parse(courseObject.get("startDate").textValue().trim(),
-                    DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            LocalDateTime startDate = LocalDateTime.parse(courseObject.get("startDate").textValue().trim(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             float price = (float) courseObject.get("price").doubleValue();
             int maxSpots = courseObject.get("maxSpots").intValue();
             int vacantSpots = courseObject.get("vacantSpots").intValue();
@@ -94,8 +93,7 @@ public class JsonToClientCourseDtoConversor {
 
                 String name = courseObject.get("name").textValue().trim();
                 String city = courseObject.get("city").textValue().trim();
-                LocalDateTime startDate = LocalDateTime.parse(courseObject.get("startDate").textValue().trim(),
-                        DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                LocalDateTime startDate = LocalDateTime.parse(courseObject.get("startDate").textValue().trim(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
                 float price = (float) courseObject.get("price").doubleValue();
                 int maxSpots = courseObject.get("maxSpots").intValue();
                 int vacantSpots = courseObject.get("vacantSpots").intValue();
