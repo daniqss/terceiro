@@ -7,7 +7,6 @@ import es.udc.ws.app.thrift.*;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import org.apache.thrift.TException;
-
 import java.util.List;
 
 public class ThriftCourseServiceImpl implements ThriftCourseService.Iface {
@@ -34,11 +33,11 @@ public class ThriftCourseServiceImpl implements ThriftCourseService.Iface {
             } catch (InputValidationException e) {
                 throw new ThriftInputValidationException(e.getMessage());
             } catch (InstanceNotFoundException e) {
-                throw new ThriftInstanceNotFoundException();
+                throw new ThriftInstanceNotFoundException(e.getInstanceId().toString(), e.getInstanceType().substring(e.getInstanceType().lastIndexOf('.') + 1));
             } catch (CourseAlreadyStartedException e) {
-                throw new ThriftCourseAlreadyStartedException();
+                throw new ThriftCourseAlreadyStartedException(e.getCourseId(), e.getStartDate().toString());
             } catch (CourseFullException e) {
-                throw new ThriftCourseFullException();
+                throw new ThriftCourseFullException(e.getCourseId());
             }
     }
 
@@ -47,14 +46,13 @@ public class ThriftCourseServiceImpl implements ThriftCourseService.Iface {
         try {
             CourseServiceFactory.getService().cancelInscription(inscriptionId, userEmail);
         } catch (InstanceNotFoundException e) {
-            throw new ThriftInstanceNotFoundException(e.getInstanceId().toString(),
-                    e.getInstanceType().substring(e.getInstanceType().lastIndexOf('.') + 1));
+            throw new ThriftInstanceNotFoundException(e.getInstanceId().toString(), e.getInstanceType().substring(e.getInstanceType().lastIndexOf('.') + 1));
         } catch (InscriptionAlreadyCancelledException e) {
-            throw new ThriftInscriptionAlreadyCancelledException();
+            throw new ThriftInscriptionAlreadyCancelledException(e.getInscriptionId(), e.getUserEmail(), e.getCancelationDate().toString());
         } catch (CancelTooCloseToCourseStartException e) {
-            throw new ThriftCancelTooCloseToCourseStartException();
+            throw new ThriftCancelTooCloseToCourseStartException(e.getInscriptionId(), e.getCourseId(), e.getStartDate().toString(), e.getCancellationDate().toString());
         } catch (InputValidationException e) {
-            throw new ThriftInputValidationException();
+            throw new ThriftInputValidationException(e.getMessage());
         } catch (IncorrectUserException e) {
             throw new ThriftIncorrectUserException(e.getInscriptionId(), e.getUserEmail());
         }
