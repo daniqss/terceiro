@@ -28,7 +28,26 @@ public class ThriftClientAppService implements ClientAppService {
 
     @Override
     public ClientCourseDto addCourse(ClientCourseDto course) throws InputValidationException, ClientCourseStartTooSoonException {
-        return null;
+        ThriftCourseService.Client client = getClient();
+
+        try (TTransport transport = client.getInputProtocol().getTransport()) {
+            transport.open();
+            return ClientCourseDtoToThriftCourseDtoConversor.toClientCourseDto(
+                    client.addCourse(ClientCourseDtoToThriftCourseDtoConversor.toThriftCourseDto(course))
+            );
+        } catch (ThriftInputValidationException e) {
+            throw new InputValidationException(e.getMessage());
+        }
+        catch (ThriftCourseStartTooSoonException e) {
+            throw new ClientCourseStartTooSoonException(
+                    e.getCourseId(),
+                    LocalDateTime.parse(e.getCreationDate(), DateTimeFormatter.ISO_DATE_TIME),
+                    LocalDateTime.parse(e.getStartDate(), DateTimeFormatter.ISO_DATE_TIME)
+            );
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -41,7 +60,7 @@ public class ThriftClientAppService implements ClientAppService {
         return null;
     }
 
-    public ClientInscriptionDto addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException, ClientCourseAlreadyStartedException, ClientCourseFullException{
+    public ClientInscriptionDto addInscription(Long courseId, String userEmail, String bankCardNumber) throws InputValidationException, InstanceNotFoundException, ClientCourseAlreadyStartedException, ClientCourseFullException {
         ThriftCourseService.Client client = getClient();
 
         try (TTransport transport = client.getInputProtocol().getTransport()) {
@@ -63,7 +82,7 @@ public class ThriftClientAppService implements ClientAppService {
         }
     }
 
-    public void cancelInscription(Long inscriptionId, String userEmail) throws InstanceNotFoundException, InputValidationException, ClientIncorrectUserException, ClientInscriptionAlreadyCancelledException, ClientCancelTooCloseToCourseStartException{
+    public void cancelInscription(Long inscriptionId, String userEmail) throws InstanceNotFoundException, InputValidationException, ClientIncorrectUserException, ClientInscriptionAlreadyCancelledException, ClientCancelTooCloseToCourseStartException {
 
         ThriftCourseService.Client client = getClient();
 
@@ -74,7 +93,7 @@ public class ThriftClientAppService implements ClientAppService {
         } catch (ThriftInputValidationException e) {
             throw new InputValidationException(e.getMessage());
         } catch (ThriftInscriptionAlreadyCancelledException e) {
-            throw new ClientInscriptionAlreadyCancelledException(e.getInscriptionId(), e.getUserEmail(), LocalDateTime.parse(e.getCancellationDate(),DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+            throw new ClientInscriptionAlreadyCancelledException(e.getInscriptionId(), e.getUserEmail(), LocalDateTime.parse(e.getCancellationDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         } catch (ThriftCancelTooCloseToCourseStartException e) {
             throw new ClientCancelTooCloseToCourseStartException(e.getInscriptionId(), e.getCourseId(), LocalDateTime.parse(e.getStartDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME), LocalDateTime.parse(e.getCancellationDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         } catch (ThriftInstanceNotFoundException e) {
