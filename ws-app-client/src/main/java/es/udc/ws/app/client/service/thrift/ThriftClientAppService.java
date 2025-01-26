@@ -21,7 +21,7 @@ import java.util.List;
 public class ThriftClientAppService implements ClientAppService {
 
     private final static String ENDPOINT_ADDRESS_PARAMETER =
-            "ThriftClientCourseService.endpointAddress";
+            "ThriftClientAppService.endpointAddress";
 
     private final static String endpointAddress =
             ConfigurationParametersManager.getParameter(ENDPOINT_ADDRESS_PARAMETER);
