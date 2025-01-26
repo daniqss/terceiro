@@ -57,6 +57,8 @@ public class ThriftClientAppService implements ClientAppService {
         try (TTransport transport = client.getInputProtocol().getTransport()) {
             transport.open();
             return ClientCourseDtoToThriftCourseDtoConversor.toClientCourseDtos(client.findCourses(city));
+        } catch (ThriftInputValidationException e) {
+            throw new InputValidationException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
