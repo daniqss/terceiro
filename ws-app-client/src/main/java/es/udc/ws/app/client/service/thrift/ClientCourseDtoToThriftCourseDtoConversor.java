@@ -18,8 +18,9 @@ public class ClientCourseDtoToThriftCourseDtoConversor {
                 null,
                 clientCourseDto.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 clientCourseDto.getPrice(),
-                clientCourseDto.getVacantSpots(),
-                clientCourseDto.getMaxSpots()
+                clientCourseDto.getMaxSpots(),
+                clientCourseDto.getVacantSpots()
+
         );
     }
 
@@ -30,8 +31,8 @@ public class ClientCourseDtoToThriftCourseDtoConversor {
                 course.getCity(),
                 LocalDateTime.parse(course.getStartDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
                 (float) course.getPrice(),
-                course.getVacantSpots(),
-                course.getMaxSpots()
+                course.getMaxSpots(),
+                course.getVacantSpots()
         );
     }
 
