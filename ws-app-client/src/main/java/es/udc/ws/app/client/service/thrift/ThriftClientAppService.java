@@ -52,7 +52,14 @@ public class ThriftClientAppService implements ClientAppService {
 
     @Override
     public List<ClientCourseDto> findCourses(String city) throws InputValidationException {
-        return List.of();
+        ThriftCourseService.Client client = getClient();
+
+        try (TTransport transport = client.getInputProtocol().getTransport()) {
+            transport.open();
+            return ClientCourseDtoToThriftCourseDtoConversor.toClientCourseDtos(client.findCourses(city));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

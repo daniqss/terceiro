@@ -5,6 +5,8 @@ import es.udc.ws.app.thrift.ThriftCourseDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientCourseDtoToThriftCourseDtoConversor {
     public static ClientCourseDto toClientCourseDto(ThriftCourseDto course) {
@@ -13,7 +15,7 @@ public class ClientCourseDtoToThriftCourseDtoConversor {
                 course.getName(),
                 course.getCity(),
                 LocalDateTime.parse(course.getStartDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-                (float)course.getPrice(),
+                (float) course.getPrice(),
                 course.getVacantSpots(),
                 course.getMaxSpots()
         );
@@ -30,6 +32,15 @@ public class ClientCourseDtoToThriftCourseDtoConversor {
                 clientCourseDto.getVacantSpots(),
                 clientCourseDto.getMaxSpots()
         );
+    }
+
+    public static List<ClientCourseDto> toClientCourseDtos(List<ThriftCourseDto> courses) {
+        List<ClientCourseDto> clientCourseDtos = new ArrayList<>(courses.size());
+
+        for (ThriftCourseDto course : courses) {
+            clientCourseDtos.add(toClientCourseDto(course));
+        }
+        return clientCourseDtos;
     }
 
 }
