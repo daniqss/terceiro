@@ -7,8 +7,16 @@ import java.util.List;
 public class InscriptionToThriftInscriptionDtoConversor {
    public static ThriftInscriptionDto toThriftInscriptionDto(Inscription inscription) {
 
-        return new ThriftInscriptionDto(inscription.getInscriptionId(), inscription.getCourseId(), inscription.getInscriptionDate().toString(), inscription.getCancelationDate().toString(),inscription.getUserEmail(),inscription.getCreditCard());
-
+       return new ThriftInscriptionDto(
+                inscription.getInscriptionId(),
+                inscription.getCourseId(),
+                inscription.getInscriptionDate().toString(),
+               inscription.getCancelationDate() != null
+                       ? inscription.getCancelationDate().toString()
+                       : null,
+                inscription.getUserEmail(),
+                inscription.getCreditCard()
+        );
     }
 
     public static List<ThriftInscriptionDto> toThriftInscriptionDtos(List<Inscription> inscriptions) {
@@ -20,6 +28,5 @@ public class InscriptionToThriftInscriptionDtoConversor {
         }
 
         return dtos;
-
     }
 }
