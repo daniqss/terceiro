@@ -1,5 +1,6 @@
 package es.udc.ws.app.thriftservice;
 
+import es.udc.ws.app.model.course.Course;
 import es.udc.ws.app.model.courseservice.CourseServiceFactory;
 import es.udc.ws.app.model.courseservice.exceptions.*;
 import es.udc.ws.app.model.inscription.Inscription;
@@ -11,8 +12,15 @@ import java.util.List;
 
 public class ThriftCourseServiceImpl implements ThriftCourseService.Iface {
     @Override
-    public ThriftCourseDto addCourse(ThriftCourseDto courseDto) throws ThriftInputValidationException, ThriftCourseStartTooSoonException, TException {
-        return null;
+    public ThriftCourseDto addCourse(ThriftCourseDto courseDto) throws ThriftInputValidationException, ThriftCourseStartTooSoonException {
+        try {
+            Course addedCourse = CourseServiceFactory.getService().addCourse(CourseToThriftCourseDtoConversor.toCourse(courseDto));
+            return CourseToThriftCourseDtoConversor.toThriftCourseDto(addedCourse);
+        } catch (InputValidationException e) {
+            throw new ThriftInputValidationException(e.getMessage());
+        } catch (CourseStartTooSoonException e) {
+            throw new ThriftCourseStartTooSoonException(e.getCourseId(), e.getStartDate().toString(), e.getCreationDate().toString());
+        }
     }
 
     @Override
