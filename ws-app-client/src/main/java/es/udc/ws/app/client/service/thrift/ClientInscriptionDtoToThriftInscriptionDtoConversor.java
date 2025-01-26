@@ -9,15 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientInscriptionDtoToThriftInscriptionDtoConversor {
-
-    public static ClientInscriptionDto toClientInscriptionDto(ThriftInscriptionDto inscription) {
-        return new ClientInscriptionDto(inscription.getInscriptionId(), inscription.getCourseId(), LocalDateTime.parse(inscription.getInscriptionDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME), inscription.getUserEmail(), inscription.getCreditCard());
-    }
-
     public static ThriftInscriptionDto toThriftInscriptionDto(ThriftInscriptionDto clientInscriptionDto) {
         return new ThriftInscriptionDto(
                 clientInscriptionDto.getInscriptionId(), clientInscriptionDto.getCourseId(), clientInscriptionDto.getInscriptionDate(), clientInscriptionDto.getCancelationDate(), clientInscriptionDto.getUserEmail(), clientInscriptionDto.getCreditCard()
         );
+    }
+
+    public static ClientInscriptionDto toClientInscriptionDto(ThriftInscriptionDto inscription) {
+        return new ClientInscriptionDto(inscription.getInscriptionId(), inscription.getCourseId(), LocalDateTime.parse(inscription.getInscriptionDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME), inscription.getUserEmail(), inscription.getCreditCard());
     }
 
     public static List<ClientInscriptionDto> toClientInscriptionDtos(List<ThriftInscriptionDto> thriftList) {
