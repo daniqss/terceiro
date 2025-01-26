@@ -156,7 +156,6 @@ public class CourseServiceImpl implements CourseService {
             try {
                 connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
                 connection.setAutoCommit(false);
-
                 Inscription inscription = inscriptionDao.findById(connection, inscriptionId);
                 if(inscription.getCancelationDate()!=null) {
                     throw new InscriptionAlreadyCancelledException(inscriptionId, userEmail, inscription.getCancelationDate());
