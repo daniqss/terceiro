@@ -9,6 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientCourseDtoToThriftCourseDtoConversor {
+    public static ThriftCourseDto toThriftCourseDto(ClientCourseDto clientCourseDto) {
+        Long courseId = clientCourseDto.getCourseId();
+        return new ThriftCourseDto(
+                courseId == null ? -1 : courseId.longValue(),
+                clientCourseDto.getName(),
+                clientCourseDto.getCity(),
+                null,
+                clientCourseDto.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                clientCourseDto.getPrice(),
+                clientCourseDto.getVacantSpots(),
+                clientCourseDto.getMaxSpots()
+        );
+    }
+
     public static ClientCourseDto toClientCourseDto(ThriftCourseDto course) {
         return new ClientCourseDto(
                 course.getCourseId(),
@@ -18,19 +32,6 @@ public class ClientCourseDtoToThriftCourseDtoConversor {
                 (float) course.getPrice(),
                 course.getVacantSpots(),
                 course.getMaxSpots()
-        );
-    }
-
-    public static ThriftCourseDto toThriftCourseDto(ClientCourseDto clientCourseDto) {
-        return new ThriftCourseDto(
-                clientCourseDto.getCourseId(),
-                clientCourseDto.getName(),
-                clientCourseDto.getCity(),
-                null,
-                clientCourseDto.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-                clientCourseDto.getPrice(),
-                clientCourseDto.getVacantSpots(),
-                clientCourseDto.getMaxSpots()
         );
     }
 
