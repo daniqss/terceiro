@@ -1,4 +1,4 @@
-package es.udc.ws.app.client.thrift;
+package es.udc.ws.app.client.service.thrift;
 
 import es.udc.ws.app.client.service.dto.ClientInscriptionDto;
 import es.udc.ws.app.thrift.ThriftInscriptionDto;
