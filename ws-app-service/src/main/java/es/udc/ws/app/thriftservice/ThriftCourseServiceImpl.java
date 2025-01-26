@@ -8,6 +8,8 @@ import es.udc.ws.app.thrift.*;
 import es.udc.ws.util.exceptions.InputValidationException;
 import es.udc.ws.util.exceptions.InstanceNotFoundException;
 import org.apache.thrift.TException;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ThriftCourseServiceImpl implements ThriftCourseService.Iface {
@@ -25,7 +27,13 @@ public class ThriftCourseServiceImpl implements ThriftCourseService.Iface {
 
     @Override
     public List<ThriftCourseDto> findCourses(String city) throws ThriftInputValidationException, TException {
-        return List.of();
+        LocalDateTime currentDate = LocalDateTime.now();
+        try {
+            List<Course> courses = CourseServiceFactory.getService().findCourses(city, currentDate);
+            return CourseToThriftCourseDtoConversor.toThriftCourseDtos(courses);
+        } catch (InputValidationException e) {
+            throw new ThriftInputValidationException(e.getMessage());
+        }
     }
 
     @Override
