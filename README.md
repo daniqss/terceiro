@@ -12,3 +12,6 @@
 **[Segunda iteración](https://github.com/daniqss/terceiro/tree/59fe80998487182cdeff17cbf4a3c3fee6e0c53c)**: 4.1/5
 
 **[Traballo tutelado](https://github.com/daniqss/terceiro/tree/7680b3212557a9d0306bf355182f1d42897dee82)**: 9/10
+
+## pdi
+**[p1](pdi/p1)**: 10/10, necesita explayarse más
