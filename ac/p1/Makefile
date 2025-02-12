@@ -9,11 +9,9 @@ TARGET = bin/main
 
 all: $(TARGET)
 
-# create bin directory if it doesn't exist
 bin:
 	mkdir -p bin
 
-# object files from 
 bin/%.o: src/%.c | bin
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -21,7 +19,7 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
 run: $(TARGET)
-	$(RUNNER) -np $(PROCS) --oversubscribe $(TARGET) 8 5 6
+	$(RUNNER) -np $(PROCS) --oversubscribe $(TARGET) 4 4 4 1
 
 clean:
 	rm -f $(OBJS) $(TARGET)
