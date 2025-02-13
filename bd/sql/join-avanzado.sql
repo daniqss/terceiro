@@ -19,6 +19,7 @@ GROUP BY d.deptno, dname;
 -- hay q añadir left o rigth(exterior) join segun tengamos en el join el el Dept a la derecha o a la izquierda
 -- como en este caso el Dept esta a la izquierda, ponemos left join
 -- el left join fuerza a q se muestren las filas de la tabla de la izquierda
+-- si le pones count(*) en vez de count(empno) cuanta filas en vez de los valores de empno, por lo tanto en OPERATIONS saldria 1
 -- 
 -- +------------+--------------+
 -- | dname      | COUNT(empno) |
@@ -36,6 +37,8 @@ SELECT ename, COALESCE(SUM(hours), 0)
 FROM Emp e LEFT JOIN Emppro ep ON e.empno = ep.empno
 GROUP BY e.empno, ename;
 -- wtf porque ahora si hace falta coalesce, sino sale null
+-- count funciona contando filas q no sean null
+-- sum funciona sumando valores, si encuentra un null devuelve null, la suma de elementos nulos es null
 -- +--------+-------------------------+
 -- | ename  | COALESCE(SUM(hours), 0) |
 -- +--------+-------------------------+
