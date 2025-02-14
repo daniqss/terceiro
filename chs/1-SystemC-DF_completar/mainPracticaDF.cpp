@@ -9,7 +9,6 @@
 // OJO! no se ha incluido todos los m�dulos, hazlo aqu�
 
 
-
 class top : public sc_module
 {
 	public:
@@ -37,8 +36,6 @@ class top : public sc_module
 		Qval2 = new fifo_T<sc_int<12>>("Qval2", 1);
 		Qsuma = new fifo_T<sc_int<12>>("Qsuma", 1);
 		Qresta = new fifo_T<sc_int<12>>("Qresta", 1);
-		// OJO! instancia la cola que falta
-
 
 		instProductor1->dataOut( *Qval1 );
 		instProductor2->dataOut( *Qval2 );

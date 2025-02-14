@@ -18,10 +18,6 @@ void producir(){
 	while(true){
 		dataOut->write(i++);
 	}
-
-	// termina aqu�
-	
-	sc_stop();
 }
 
 

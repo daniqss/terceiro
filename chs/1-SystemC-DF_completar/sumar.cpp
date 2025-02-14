@@ -7,9 +7,10 @@ void sumar::procSumar() {
 
 
 	while (true) {
+		sumar::dataIn->read(dIn1);
+		sumar::dataIn->read(dIn2);
 
-		// OJO! escribe el código para sumar 
-
+		sumar::dataOut->write(dIn1 + dIn2);
 	}
 }
 

@@ -9,10 +9,6 @@ void restar::procRestar() {
 		dataIn1->read(dIn1);
 		dataIn2->read(dIn2);
 
-	
-		 // OJO! emite el resultado
-
+		dataOut->write(dIn1 - dIn2);
 	}
 }
-
-
