@@ -10,7 +10,6 @@
 -- +------------+---------------------------+
 -- | ACCOUNTING |                        14 |
 -- +------------+---------------------------+
-
 SELECT dname, COUNT(empno)
 FROM Dept d LEFT JOIN Emp e ON d.deptno = e.deptno
 GROUP BY d.deptno, dname;
@@ -57,6 +56,7 @@ GROUP BY e.empno, ename;
 -- | FORD   |                       0 |
 -- | MILLER |                       4 |
 -- +--------+-------------------------+
+
 
 -- 3. Para cada empleado muestra su nombre, el nombre de su jefe, y el departamento
 -- para el que trabaja su jefe. Si el empleado no tiene jefe, debe aparecer con nulos
@@ -107,6 +107,7 @@ FROM Emp e LEFT JOIN Emp j ON e.mgr = j.empno
 -- | MILLER | CLARK | ACCOUNTING |
 -- +--------+-------+------------+
 
+
 -- 4. Para cada empleado muestra en cuántas ciudades distintas ha trabajado. Si no ha
 -- trabajado en ninguna, debe mostrar un cero. Muestra el nombre del empleado.
 SELECT ename, count(DISTINCT loc)
@@ -132,6 +133,7 @@ GROUP BY e.empno, ename;
 -- | MILLER |                   1 |
 -- +--------+---------------------+
 
+
 -- 5. Considerando los proyectos controlados por los departamentos 30 y 40, muestra
 -- cuántos empleados distintos han trabajado en cada departamento. Si no han
 -- trabajado empleados, debe mostrar un cero. Muestra el nombre del
@@ -153,3 +155,102 @@ HAVING d.deptno = 30 or d.deptno = 40
 -- | SALES      |                        4 |
 -- | OPERATIONS |                        0 |
 -- +------------+--------------------------+
+-- para poder hacer q aparezcan todos los departamentos pero siguiendo con la condicion de 30 y 40, pasamos la condicion al ON
+SELECT d.dname, count(DISTINCT ep.empno)
+FROM Dept d LEFT JOIN Pro p on d.deptno = p.deptno AND d.deptno IN (30, 40)
+    LEFT JOIN Emppro ep on ep.prono = p.prono
+GROUP BY d.deptno, d.dname;
+
+
+-- 1. Muestra cuántos empleados subordinados tiene cada jefe, que fueran contratados
+-- el mismo año. Si no tiene ninguno debe mostrar un cero.
+SELECT j.ename, count(e.empno)
+FROM Emp e RIGHT JOIN Emp j ON j.empno = e.mgr
+    AND to_char(e.hiredate, "YYYY") = to_char(j.hiredate, "YYYY")
+WHERE j.empno IN (SELECT mgr FROM Emp) 
+GROUP BY j.empno, j.ename
+ORDER BY 1;
+-- +-------+----------------+
+-- | ename | count(e.empno) |
+-- +-------+----------------+
+-- | BLAKE |              5 |
+-- | CLARK |              0 |
+-- | FORD  |              0 |
+-- | JONES |              1 |
+-- | KING  |              3 |
+-- | SCOTT |              1 |
+-- +-------+----------------+
+
+
+-- 2. Muestra los empleados que han trabajado en proyectos ubicados en la misma
+-- localidad donde está su departamento.
+SELECT DISTINCT e.ename, d.loc
+FROM Emp e JOIN Dept d ON e.deptno = d.deptno
+    JOIN Emppro ep ON e.empno = ep.empno
+    JOIN Pro p ON ep.prono = p.prono
+WHERE p.loc = d.loc;
+-- MAL
+-- hay q acordarse del DISTINCT
+-- Lo q estaba mal es q estaba pillando Pro segun el departamente, y no segun q su numero de proyecto fuera el mismo q el de Emppro
+-- +--------+
+-- | ename  |
+-- +--------+
+-- | MARTIN |
+-- | ALLEN  |
+-- | WARD   |
+-- | TURNER |
+-- +--------+
+SELECT DISTINCT ename, d.loc
+FROM Pro p JOIN Emppro ep ON ep.prono = p.prono
+    JOIN Emp e ON ep.empno = e.empno
+    JOIN Dept d ON d.deptno = e.deptno
+WHERE p.loc = d.loc
+-- +--------+--------------+
+-- | ename  | departamento |
+-- +--------+--------------+
+-- | ALLEN  | CHICAGO      |
+-- | WARD   | CHICAGO      |
+-- | TURNER | CHICAGO      |
+-- +--------+--------------+
+
+-- 3. Para cada empleado mostrar cuántas veces trabajó en proyectos ubicados en la
+-- misma ciudad donde está su departamento.
+SELECT ename, d.loc, count(e.empno) -- o cualquier cosa realmente, o asterisco
+FROM Pro p JOIN Emppro ep ON ep.prono = p.prono
+    JOIN Emp e ON ep.empno = e.empno
+    JOIN Dept d ON d.deptno = e.deptno
+WHERE p.loc = d.loc
+GROUP BY e.empno, e.ename;
+-- +--------+---------+----------------+
+-- | ename  | loc     | count(e.empno) |
+-- +--------+---------+----------------+
+-- | ALLEN  | CHICAGO |              2 |
+-- | WARD   | CHICAGO |              1 |
+-- | TURNER | CHICAGO |              1 |
+-- +--------+---------+----------------+
+
+
+-- 4. Idem anterior, pero mostrando un cero cuando nunca ocurrió.
+SELECT ename, d.loc, count(d.deptno)
+FROM Pro p JOIN Emppro ep ON ep.prono = p.prono
+    RIGHT JOIN Emp e ON ep.empno = e.empno
+    LEFT JOIN Dept d ON d.deptno = e.deptno AND p.loc = d.loc
+GROUP BY e.empno, e.ename;
+-- +--------+---------+-----------------+
+-- | ename  | loc     | count(d.deptno) |
+-- +--------+---------+-----------------+
+-- | SMITH  | NULL    |               0 |
+-- | ALLEN  | CHICAGO |               2 |
+-- | WARD   | CHICAGO |               1 |
+-- | JONES  | NULL    |               0 |
+-- | MARTIN | NULL    |               0 |
+-- | BLAKE  | NULL    |               0 |
+-- | CLARK  | NULL    |               0 |
+-- | SCOTT  | NULL    |               0 |
+-- | KING   | NULL    |               0 |
+-- | TURNER | CHICAGO |               1 |
+-- | ADAMS  | NULL    |               0 |
+-- | JAMES  | NULL    |               0 |
+-- | FORD   | NULL    |               0 |
+-- | MILLER | NULL    |               0 |
+-- +--------+---------+-----------------+
