@@ -26,6 +26,8 @@ void consumir() {
 		dataIn->read(dIn);
 		fscanf(fichero, "%d ", &ref);
 
+		// cout << "hemos consumido " << dIn << endl;
+
 		if (ref != dIn.to_int()) {
 			printf("Error. Se esperaba %d, se ha recibido %d\n", ref, dIn.to_int());
 		}
