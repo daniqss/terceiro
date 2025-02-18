@@ -4,7 +4,7 @@ CFLAGS = -Wall -g -Wextra
 test_CFLAGS = $(CFLAGS) -DDEBUG=0
 SRCS = src/main.c src/sec.c
 OBJS = bin/main.o bin/sec.o
-PROCS = 8
+PROCS = 16
 
 TARGET = bin/main
 SEQUENTIAL_TARGET = bin/sec
@@ -38,10 +38,10 @@ test_sec: bin/sec_test.o
 
 # run rules
 run: $(TARGET)
-	$(RUNNER) -np $(PROCS) --oversubscribe $(TARGET) 8 8 8 1
+	$(RUNNER) -np $(PROCS) --oversubscribe $(TARGET) 27 20 36 3
 
 sec: $(SEQUENTIAL_TARGET)
-	./$(SEQUENTIAL_TARGET) 8 8 8 1
+	./$(SEQUENTIAL_TARGET) 27 20 36 3
 
 test: test_main test_sec
 	./test.sh $(RUNNER) 4 4
@@ -52,6 +52,7 @@ test: test_main test_sec
 	./test.sh $(RUNNER) 8 32
 	./test.sh $(RUNNER) 16 16
 	./test.sh $(RUNNER) 32 32
+	./test.sh $(RUNNER) 16 27
 
 clean:
 	rm -f $(OBJS) $(TARGET) $(SEQUENTIAL_TARGET) bin/*_test* bin/*_test.o

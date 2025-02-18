@@ -45,7 +45,7 @@ int32_t main(int32_t argc, char *argv[]) {
     // end timer
     time = (double)(clock() - start) / CLOCKS_PER_SEC;
     if (DEBUG)
-        printf("time used -> %f\n", time);
+        printf("time used -> %f\n\n", time);
 
     // debug print
     print_matrix(c_matrix, m, n);

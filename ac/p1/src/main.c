@@ -23,6 +23,7 @@ int32_t main(int32_t argc, char *argv[]) {
     int mpi_size, mpi_rank;
     float *a_matrix, *b_matrix, *c_matrix;
     float *local_a, *local_c;
+    int *a_sendcounts, *a_displs, *c_sendcounts, *c_displs;
     int a_section_size, c_section_size, common_section_size;
     double time;
 
@@ -52,49 +53,91 @@ int32_t main(int32_t argc, char *argv[]) {
 
         fill_matrix(a_matrix, m, k);
         fill_matrix(b_matrix, k, n);
-        // } else {
     } else {
         b_matrix = (float *)malloc(k * n * sizeof(float));
     }
 
-    common_section_size = m / mpi_size;
-    a_section_size = k * common_section_size;
-    c_section_size = n * common_section_size;
-    local_a = (float *)malloc(a_section_size * sizeof(float));
-    local_c = (float *)malloc(c_section_size * sizeof(float));
+    // calculate displacements and sendcounts for a and c matrices distribution
+    // how much data each process will receive
+    a_sendcounts = (int *)malloc(mpi_size * sizeof(int));
+    c_sendcounts = (int *)malloc(mpi_size * sizeof(int));
 
-    // start timer, after allocations and before communications
+    // offset for each process from which it will receive data
+    a_displs = (int *)malloc(mpi_size * sizeof(int));
+    c_displs = (int *)malloc(mpi_size * sizeof(int));
+
+    // calculate the remainder
+    int remainder_a = m % mpi_size;
+    int remainder_c = m % mpi_size;
+    // calculate the base size(in rows) for each process
+    int a_base_size = m / mpi_size;
+    int c_base_size = m / mpi_size;
+
+    if (mpi_rank == MASTER) {
+        int disp_a = 0;
+        int disp_c = 0;
+
+        // for each process calculate how much data it will receive
+        for (int i = 0; i < mpi_size; i++) {
+            // if remainder is greater or equal to i then process i will receive
+            // one more row (+ k elements)
+            a_sendcounts[i] = a_base_size * k + (i < remainder_a ? k : 0);
+            a_displs[i] = disp_a;
+            // update the offset
+            disp_a += a_sendcounts[i];
+
+            // same for c matrix but with n colunms
+            c_sendcounts[i] = c_base_size * n + (i < remainder_c ? n : 0);
+            c_displs[i] = disp_c;
+            disp_c += c_sendcounts[i];
+        }
+    }
+
     MPI_Barrier(MPI_COMM_WORLD);
     time = MPI_Wtime();
 
-    // distribute matrices between processes
-    MPI_Scatter(a_matrix, a_section_size, MPI_FLOAT, local_a, a_section_size,
-                MPI_FLOAT, MASTER, MPI_COMM_WORLD);
-    MPI_Scatter(c_matrix, c_section_size, MPI_FLOAT, local_c, c_section_size,
-                MPI_FLOAT, MASTER, MPI_COMM_WORLD);
+    // send section sizes to all processes
+    MPI_Scatter(a_sendcounts, 1, MPI_INT, &a_section_size, 1, MPI_INT, MASTER,
+                MPI_COMM_WORLD);
+    MPI_Scatter(c_sendcounts, 1, MPI_INT, &c_section_size, 1, MPI_INT, MASTER,
+                MPI_COMM_WORLD);
+
+    local_a = (float *)malloc(a_section_size * sizeof(float));
+    local_c = (float *)malloc(c_section_size * sizeof(float));
+
+    // distribute matrices between processes using Scatterv
+    // with sendcount and displs depending on the process mpi_rank
+    MPI_Scatterv(a_matrix, a_sendcounts, a_displs, MPI_FLOAT, local_a,
+                 a_section_size, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
+    MPI_Scatterv(c_matrix, c_sendcounts, c_displs, MPI_FLOAT, local_c,
+                 c_section_size, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
     MPI_Bcast(b_matrix, k * n, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
 
     // matrix multiplication of a_matrix and b_matrix, stored in c_matrix
-    multiply_matrix(local_a, b_matrix, local_c, common_section_size, k, n,
+    multiply_matrix(local_a, b_matrix, local_c, a_section_size / k, k, n,
                     alpha);
 
-    // gather results
-    MPI_Gather(local_c, c_section_size, MPI_FLOAT, c_matrix, c_section_size,
-               MPI_FLOAT, MASTER, MPI_COMM_WORLD);
+    // send results to process 0
+    MPI_Gatherv(local_c, c_section_size, MPI_FLOAT, c_matrix, c_sendcounts,
+                c_displs, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
     time = MPI_Wtime() - time;
 
-    // debug print
     if (DEBUG)
         printf("time used by proccess %d -> %f\n", mpi_rank, time);
     fflush(NULL);
     MPI_Barrier(MPI_COMM_WORLD);
 
     if (mpi_rank == MASTER) {
-        puts("");
+        if (DEBUG)
+            puts("");
         print_matrix(c_matrix, m, n);
         free(a_matrix);
         free(c_matrix);
         free(b_matrix);
+        free(a_sendcounts);
+        free(a_displs);
+        free(c_sendcounts);
+        free(c_displs);
     } else {
         free(local_a);
         free(local_c);
@@ -117,7 +160,7 @@ int32_t manage_args(int32_t argc, char *argv[], int32_t *m, int32_t *k,
     *alpha = atof(argv[4]);
 
     // success if m is greater than 0 and divisible by mpi_size
-    // return (*m <= 0) || (*m % mpi_size);
+    // return (*m <= 0)
     return 0;
 }
 
