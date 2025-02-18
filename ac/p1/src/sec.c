@@ -48,9 +48,6 @@ int32_t main(int32_t argc, char *argv[]) {
         printf("time used -> %f\n", time);
 
     // debug print
-
-    print_matrix(a_matrix, m, k);
-    print_matrix(b_matrix, k, n);
     print_matrix(c_matrix, m, n);
 
     free(a_matrix);

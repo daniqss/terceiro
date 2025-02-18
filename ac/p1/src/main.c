@@ -75,31 +75,23 @@ int32_t main(int32_t argc, char *argv[]) {
     MPI_Bcast(b_matrix, k * n, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
 
     // matrix multiplication of a_matrix and b_matrix, stored in c_matrix
-    if (mpi_rank == MASTER) {
-        multiply_matrix(a_matrix, b_matrix, c_matrix, common_section_size, k, n,
-                        alpha);
-    } else {
-        multiply_matrix(local_a, b_matrix, local_c, common_section_size, k, n,
-                        alpha);
-    }
+    multiply_matrix(local_a, b_matrix, local_c, common_section_size, k, n,
+                    alpha);
 
     // gather results
     MPI_Gather(local_c, c_section_size, MPI_FLOAT, c_matrix, c_section_size,
                MPI_FLOAT, MASTER, MPI_COMM_WORLD);
     time = MPI_Wtime() - time;
-    if (DEBUG)
-        printf("time used by proccess %d -> %f\n", mpi_rank, time);
 
     // debug print
+    if (DEBUG)
+        printf("time used by proccess %d -> %f\n", mpi_rank, time);
     fflush(NULL);
     MPI_Barrier(MPI_COMM_WORLD);
-    if (mpi_rank == MASTER) {
-        print_matrix(a_matrix, m, k);
-        print_matrix(b_matrix, k, n);
-        print_matrix(c_matrix, m, n);
-    }
 
     if (mpi_rank == MASTER) {
+        puts("");
+        print_matrix(c_matrix, m, n);
         free(a_matrix);
         free(c_matrix);
         free(b_matrix);
@@ -142,6 +134,7 @@ void multiply_matrix(float *a_matrix, float *b_matrix, float *c_matrix,
 
     for (int32_t i = 0; i < m; i++) {
         for (int32_t j = 0; j < n; j++) {
+            c_matrix[i * n + j] = 0;
             for (int32_t l = 0; l < k; l++) {
                 c_matrix[i * n + j] +=
                     alpha * a_matrix[i * k + l] * b_matrix[l * n + j];
