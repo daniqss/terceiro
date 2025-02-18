@@ -5,7 +5,9 @@
 
 #define MAX 100
 #define MASTER 0
+#ifndef DEBUG
 #define DEBUG 1
+#endif
 
 int32_t manage_args(int32_t argc, char *argv[], int32_t *m, int32_t *k,
                     int32_t *n, float *alpha, int32_t mpi_size);
@@ -85,12 +87,13 @@ int32_t main(int32_t argc, char *argv[]) {
     MPI_Gather(local_c, c_section_size, MPI_FLOAT, c_matrix, c_section_size,
                MPI_FLOAT, MASTER, MPI_COMM_WORLD);
     time = MPI_Wtime() - time;
-    printf("time used by proccess %d -> %f\n", mpi_rank, time);
+    if (DEBUG)
+        printf("time used by proccess %d -> %f\n", mpi_rank, time);
 
     // debug print
     fflush(NULL);
     MPI_Barrier(MPI_COMM_WORLD);
-    if (mpi_rank == MASTER && DEBUG) {
+    if (mpi_rank == MASTER) {
         print_matrix(a_matrix, m, k);
         print_matrix(b_matrix, k, n);
         print_matrix(c_matrix, m, n);
