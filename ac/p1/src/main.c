@@ -10,7 +10,7 @@
 #endif
 
 int32_t manage_args(int32_t argc, char *argv[], int32_t *m, int32_t *k,
-                    int32_t *n, float *alpha, int32_t mpi_size);
+                    int32_t *n, float *alpha);
 void fill_matrix(float *matrix, int32_t rows, int32_t cols);
 void multiply_matrix(float *a_matrix, float *b_matrix, float *c_matrix,
                      int32_t m, int32_t k, int32_t n, float alpha);
@@ -24,7 +24,7 @@ int32_t main(int32_t argc, char *argv[]) {
     float *a_matrix, *b_matrix, *c_matrix;
     float *local_a, *local_c;
     int *a_sendcounts, *a_displs, *c_sendcounts, *c_displs;
-    int a_section_size, c_section_size, common_section_size;
+    int a_section_size, c_section_size;
     double time;
 
     MPI_Init(&argc, &argv);
@@ -32,7 +32,7 @@ int32_t main(int32_t argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
     if (mpi_rank == MASTER) {
-        if (manage_args(argc, argv, &m, &k, &n, &alpha, mpi_size)) {
+        if (manage_args(argc, argv, &m, &k, &n, &alpha)) {
             fprintf(stderr, "usage: mpirun -np %d ./%s <m> <n> <k> <alpha>\n",
                     mpi_size, argv[0]);
             MPI_Finalize();
@@ -129,7 +129,7 @@ int32_t main(int32_t argc, char *argv[]) {
 
     if (mpi_rank == MASTER) {
         if (DEBUG)
-            puts("");
+            printf("\n");
         print_matrix(c_matrix, m, n);
         free(a_matrix);
         free(c_matrix);
@@ -149,7 +149,7 @@ int32_t main(int32_t argc, char *argv[]) {
 }
 
 int32_t manage_args(int32_t argc, char *argv[], int32_t *m, int32_t *k,
-                    int32_t *n, float *alpha, int32_t mpi_size) {
+                    int32_t *n, float *alpha) {
     if (argc != 5)
         return 1;
 
@@ -157,17 +157,17 @@ int32_t manage_args(int32_t argc, char *argv[], int32_t *m, int32_t *k,
     *m = atoi(argv[1]);
     *k = atoi(argv[2]);
     *n = atoi(argv[3]);
+    // parse string to float
     *alpha = atof(argv[4]);
 
-    // success if m is greater than 0 and divisible by mpi_size
-    // return (*m <= 0)
-    return 0;
+    return (*m <= 0) || (*k <= 0) || (*n <= 0);
 }
 
 void fill_matrix(float *matrix, int32_t rows, int32_t cols) {
     for (int32_t i = 0; i < rows; i++) {
         for (int32_t j = 0; j < cols; j++) {
-            matrix[i * cols + j] = (float)(i);
+            // matrix[i * cols + j] = (float)(i);
+            matrix[i * cols + j] = (float)(i + 4.0);
         }
     }
 }

@@ -76,7 +76,8 @@ int32_t manage_args(int32_t argc, char *argv[], int32_t *m, int32_t *k,
 void fill_matrix(float *matrix, int32_t rows, int32_t cols) {
     for (int32_t i = 0; i < rows; i++) {
         for (int32_t j = 0; j < cols; j++) {
-            matrix[i * cols + j] = (float)(i);
+            // matrix[i * cols + j] = (float)(i);
+            matrix[i * cols + j] = (float)(i + 4.0);
         }
     }
 }
