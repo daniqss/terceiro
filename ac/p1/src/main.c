@@ -20,11 +20,11 @@ int32_t main(int32_t argc, char *argv[]) {
     // matrix dimensions
     int32_t m, k, n;
     float alpha;
-    int mpi_size, mpi_rank;
+    int32_t mpi_size, mpi_rank;
     float *a_matrix, *b_matrix, *c_matrix;
     float *local_a, *local_c;
-    int *a_sendcounts, *a_displs, *c_sendcounts, *c_displs;
-    int a_section_size, c_section_size;
+    int32_t *a_sendcounts, *a_displs, *c_sendcounts, *c_displs;
+    int32_t a_section_size, c_section_size;
     double time;
 
     MPI_Init(&argc, &argv);
@@ -59,26 +59,26 @@ int32_t main(int32_t argc, char *argv[]) {
 
     // calculate displacements and sendcounts for a and c matrices distribution
     // how much data each process will receive
-    a_sendcounts = (int *)malloc(mpi_size * sizeof(int));
-    c_sendcounts = (int *)malloc(mpi_size * sizeof(int));
+    a_sendcounts = (int32_t *)malloc(mpi_size * sizeof(int32_t));
+    c_sendcounts = (int32_t *)malloc(mpi_size * sizeof(int32_t));
 
     // offset for each process from which it will receive data
-    a_displs = (int *)malloc(mpi_size * sizeof(int));
-    c_displs = (int *)malloc(mpi_size * sizeof(int));
+    a_displs = (int32_t *)malloc(mpi_size * sizeof(int32_t));
+    c_displs = (int32_t *)malloc(mpi_size * sizeof(int32_t));
 
     // calculate the remainder
-    int remainder_a = m % mpi_size;
-    int remainder_c = m % mpi_size;
+    int32_t remainder_a = m % mpi_size;
+    int32_t remainder_c = m % mpi_size;
     // calculate the base size(in rows) for each process
-    int a_base_size = m / mpi_size;
-    int c_base_size = m / mpi_size;
+    int32_t a_base_size = m / mpi_size;
+    int32_t c_base_size = m / mpi_size;
 
     if (mpi_rank == MASTER) {
-        int disp_a = 0;
-        int disp_c = 0;
+        int32_t disp_a = 0;
+        int32_t disp_c = 0;
 
         // for each process calculate how much data it will receive
-        for (int i = 0; i < mpi_size; i++) {
+        for (int32_t i = 0; i < mpi_size; i++) {
             // if remainder is greater or equal to i then process i will receive
             // one more row (+ k elements)
             a_sendcounts[i] = a_base_size * k + (i < remainder_a ? k : 0);
