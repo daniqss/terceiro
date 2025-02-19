@@ -81,6 +81,7 @@ int32_t main(int32_t argc, char *argv[]) {
         for (int32_t i = 0; i < mpi_size; i++) {
             // if remainder is greater or equal to i then process i will receive
             // one more row (+ k elements)
+            // the i first processes will receive one more row
             a_sendcounts[i] = a_base_size * k + (i < remainder_a ? k : 0);
             a_displs[i] = disp_a;
             // update the offset
