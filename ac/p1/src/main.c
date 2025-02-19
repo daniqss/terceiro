@@ -110,8 +110,6 @@ int32_t main(int32_t argc, char *argv[]) {
     // with sendcount and displs depending on the process mpi_rank
     MPI_Scatterv(a_matrix, a_sendcounts, a_displs, MPI_FLOAT, local_a,
                  a_section_size, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
-    MPI_Scatterv(c_matrix, c_sendcounts, c_displs, MPI_FLOAT, local_c,
-                 c_section_size, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
     MPI_Bcast(b_matrix, k * n, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
 
     // matrix multiplication of a_matrix and b_matrix, stored in c_matrix
@@ -132,6 +130,7 @@ int32_t main(int32_t argc, char *argv[]) {
         if (DEBUG)
             printf("\n");
         print_matrix(c_matrix, m, n);
+
         free(a_matrix);
         free(c_matrix);
         free(b_matrix);
