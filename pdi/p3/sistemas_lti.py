@@ -5,9 +5,9 @@ from scipy import signal
 import sounddevice as sd
 import time
 
-fs, x  = read('hola_22050.wav')
+fs, x = read('hola_22050.wav')
 amplitude = np.iinfo(np.int16).max
-x =  x/amplitude
+x = x/amplitude
 
 "================================================="
 " Convolución de señales "
@@ -36,15 +36,14 @@ elif tipoh == 3:
 
 elif tipoh == 4:
     "código generación h tipo 4"
-    fh, h  = read('golpe.wav')
-    h =  h/amplitude
+    fh, h = read('golpe.wav')
+    h = h/amplitude
     Lh = len(h)
 elif tipoh == 5:
     "código generación h tipo 5"
-    fh, h  = read('golpe_eco.wav')
-    h =  h/amplitude
+    fh, h = read('golpe_eco.wav')
+    h = h/amplitude
     Lh = len(h)
-
 
 
 nh = np.arange(0,Lh)/fs
