@@ -15,9 +15,12 @@ void fill_matrix(float *matrix, int32_t rows, int32_t cols);
 void multiply_matrix(float *a_matrix, float *b_matrix, float *c_matrix,
                      int32_t m, int32_t k, int32_t n, float alpha);
 void print_matrix(float *matrix, int32_t rows, int32_t cols);
+void calculate_distribution(int32_t total_size, int32_t elements_per_row,
+                            int32_t mpi_size, int32_t mpi_rank,
+                            int32_t *section_size, int32_t *displacement);
 
 int32_t main(int32_t argc, char *argv[]) {
-    // matrix dimensions
+    int32_t params[3];
     int32_t m, k, n;
     float alpha;
     int32_t mpi_size, mpi_rank;
@@ -25,6 +28,7 @@ int32_t main(int32_t argc, char *argv[]) {
     float *local_a, *local_c;
     int32_t *a_sendcounts, *a_displs, *c_sendcounts, *c_displs;
     int32_t a_section_size, c_section_size;
+    int32_t a_displacement, c_displacement;
     double time;
 
     MPI_Init(&argc, &argv);
@@ -32,7 +36,8 @@ int32_t main(int32_t argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
     if (mpi_rank == MASTER) {
-        if (manage_args(argc, argv, &m, &k, &n, &alpha)) {
+        if (manage_args(argc, argv, &params[0], &params[1], &params[2],
+                        &alpha)) {
             fprintf(stderr, "usage: mpirun -np %d ./%s <m> <n> <k> <alpha>\n",
                     mpi_size, argv[0]);
             MPI_Finalize();
@@ -40,10 +45,9 @@ int32_t main(int32_t argc, char *argv[]) {
         };
     }
 
-    MPI_Bcast(&m, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&k, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&alpha, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(params, 3, MPI_INT, MASTER, MPI_COMM_WORLD);
+    MPI_Bcast(&alpha, 1, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
+    m = params[0], k = params[1], n = params[2];
 
     // alloc and initialize matrices
     if (mpi_rank == MASTER) {
@@ -53,27 +57,23 @@ int32_t main(int32_t argc, char *argv[]) {
 
         fill_matrix(a_matrix, m, k);
         fill_matrix(b_matrix, k, n);
-    } else {
-        b_matrix = (float *)malloc(k * n * sizeof(float));
-    }
 
-    // calculate displacements and sendcounts for a and c matrices distribution
-    // how much data each process will receive
-    a_sendcounts = (int32_t *)malloc(mpi_size * sizeof(int32_t));
-    c_sendcounts = (int32_t *)malloc(mpi_size * sizeof(int32_t));
+        // calculate displacements and sendcounts for a and c matrices
+        // distribution how much data each process will receive
+        a_sendcounts = (int32_t *)malloc(mpi_size * sizeof(int32_t));
+        c_sendcounts = (int32_t *)malloc(mpi_size * sizeof(int32_t));
 
-    // offset for each process from which it will receive data
-    a_displs = (int32_t *)malloc(mpi_size * sizeof(int32_t));
-    c_displs = (int32_t *)malloc(mpi_size * sizeof(int32_t));
+        // offset for each process from which it will receive data
+        a_displs = (int32_t *)malloc(mpi_size * sizeof(int32_t));
+        c_displs = (int32_t *)malloc(mpi_size * sizeof(int32_t));
 
-    // calculate the remainder
-    int32_t remainder_a = m % mpi_size;
-    int32_t remainder_c = m % mpi_size;
-    // calculate the base size(in rows) for each process
-    int32_t a_base_size = m / mpi_size;
-    int32_t c_base_size = m / mpi_size;
+        // calculate the remainder
+        int32_t remainder_a = m % mpi_size;
+        int32_t remainder_c = m % mpi_size;
+        // calculate the base size(in rows) for each process
+        int32_t a_base_size = m / mpi_size;
+        int32_t c_base_size = m / mpi_size;
 
-    if (mpi_rank == MASTER) {
         int32_t disp_a = 0;
         int32_t disp_c = 0;
 
@@ -92,24 +92,28 @@ int32_t main(int32_t argc, char *argv[]) {
             c_displs[i] = disp_c;
             disp_c += c_sendcounts[i];
         }
+    } else {
+        b_matrix = (float *)malloc(k * n * sizeof(float));
     }
+
+    // each process calculates its own section size and displacement
+    calculate_distribution(m, k, mpi_size, mpi_rank, &a_section_size,
+                           &a_displacement);
+    calculate_distribution(m, n, mpi_size, mpi_rank, &c_section_size,
+                           &c_displacement);
 
     MPI_Barrier(MPI_COMM_WORLD);
     time = MPI_Wtime();
-
-    // send section sizes to all processes
-    MPI_Scatter(a_sendcounts, 1, MPI_INT, &a_section_size, 1, MPI_INT, MASTER,
-                MPI_COMM_WORLD);
-    MPI_Scatter(c_sendcounts, 1, MPI_INT, &c_section_size, 1, MPI_INT, MASTER,
-                MPI_COMM_WORLD);
 
     local_a = (float *)malloc(a_section_size * sizeof(float));
     local_c = (float *)malloc(c_section_size * sizeof(float));
 
     // distribute matrices between processes using Scatterv
-    // with sendcount and displs depending on the process mpi_rank
-    MPI_Scatterv(a_matrix, a_sendcounts, a_displs, MPI_FLOAT, local_a,
+    MPI_Scatterv((mpi_rank == MASTER) ? a_matrix : NULL,
+                 (mpi_rank == MASTER) ? a_sendcounts : NULL,
+                 (mpi_rank == MASTER) ? a_displs : NULL, MPI_FLOAT, local_a,
                  a_section_size, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
+
     MPI_Bcast(b_matrix, k * n, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
 
     // matrix multiplication of a_matrix and b_matrix, stored in c_matrix
@@ -117,8 +121,12 @@ int32_t main(int32_t argc, char *argv[]) {
                     alpha);
 
     // send results to process 0
-    MPI_Gatherv(local_c, c_section_size, MPI_FLOAT, c_matrix, c_sendcounts,
-                c_displs, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
+    MPI_Gatherv(local_c, c_section_size, MPI_FLOAT,
+                (mpi_rank == MASTER) ? c_matrix : NULL,
+                (mpi_rank == MASTER) ? c_sendcounts : NULL,
+                (mpi_rank == MASTER) ? c_displs : NULL, MPI_FLOAT, MASTER,
+                MPI_COMM_WORLD);
+
     time = MPI_Wtime() - time;
 
     if (DEBUG)
@@ -146,6 +154,26 @@ int32_t main(int32_t argc, char *argv[]) {
 
     MPI_Finalize();
     return EXIT_SUCCESS;
+}
+
+// calculate which section of the matrix each process will use
+void calculate_distribution(int32_t total_size, int32_t elements_per_row,
+                            int32_t mpi_size, int32_t mpi_rank,
+                            int32_t *section_size, int32_t *displacement) {
+    int32_t remainder = total_size % mpi_size;
+    int32_t base_size = total_size / mpi_size;
+
+    int32_t rows = base_size + (mpi_rank < remainder ? 1 : 0);
+
+    *section_size = rows * elements_per_row;
+
+    int32_t disp_rows = 0;
+
+    for (int32_t i = 0; i < mpi_rank; i++) {
+        disp_rows += base_size + (i < remainder ? 1 : 0);
+    }
+
+    *displacement = disp_rows * elements_per_row;
 }
 
 int32_t manage_args(int32_t argc, char *argv[], int32_t *m, int32_t *k,
