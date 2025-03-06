@@ -109,10 +109,12 @@ int32_t main(int32_t argc, char *argv[]) {
     local_c = (float *)malloc(c_section_size * sizeof(float));
 
     // distribute matrices between processes using Scatterv
-    MPI_Scatterv((mpi_rank == MASTER) ? a_matrix : NULL,
-                 (mpi_rank == MASTER) ? a_sendcounts : NULL,
-                 (mpi_rank == MASTER) ? a_displs : NULL, MPI_FLOAT, local_a,
-                 a_section_size, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
+    if (mpi_rank == MASTER)
+        MPI_Scatterv(a_matrix, a_sendcounts, a_displs, MPI_FLOAT, local_a,
+                     a_section_size, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
+    else
+        MPI_Scatterv(NULL, NULL, NULL, MPI_FLOAT, local_a, a_section_size,
+                     MPI_FLOAT, MASTER, MPI_COMM_WORLD);
 
     MPI_Bcast(b_matrix, k * n, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
 
@@ -121,11 +123,12 @@ int32_t main(int32_t argc, char *argv[]) {
                     alpha);
 
     // send results to process 0
-    MPI_Gatherv(local_c, c_section_size, MPI_FLOAT,
-                (mpi_rank == MASTER) ? c_matrix : NULL,
-                (mpi_rank == MASTER) ? c_sendcounts : NULL,
-                (mpi_rank == MASTER) ? c_displs : NULL, MPI_FLOAT, MASTER,
-                MPI_COMM_WORLD);
+    if (mpi_rank == MASTER)
+        MPI_Gatherv(local_c, c_section_size, MPI_FLOAT, c_matrix, c_sendcounts,
+                    c_displs, MPI_FLOAT, MASTER, MPI_COMM_WORLD);
+    else
+        MPI_Gatherv(local_c, c_section_size, MPI_FLOAT, NULL, NULL, NULL,
+                    MPI_FLOAT, MASTER, MPI_COMM_WORLD);
 
     time = MPI_Wtime() - time;
 
