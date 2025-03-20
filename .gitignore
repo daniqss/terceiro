@@ -10,5 +10,5 @@ target/
 .idea/
 *.iml
 
-# Visual Studio Code
-.vscode/
+*.zip
+*.rar
