@@ -1,5 +1,6 @@
 % Simulación de Modulaciones Digitales sobre Canales AWGN
 % Práctica 1 - Software de Comunicaciones
+
 clear;
 close all;
 
@@ -13,6 +14,7 @@ linestyles = {'-', '--'};
 
 BER_normal = zeros(length(modulations), length(EbN0dB));
 BER_gray = zeros(length(modulations), length(EbN0dB));
+BER_theoretical = zeros(length(modulations), length(EbN0dB));
 
 for mod_idx = 1:length(modulations)
     M = M_values(mod_idx);
@@ -52,6 +54,14 @@ for mod_idx = 1:length(modulations)
     
     for ebn0_idx = 1:length(EbN0dB)
         ebn0 = 10^(EbN0dB(ebn0_idx)/10);
+        
+        if M == 2
+            BER_theoretical(mod_idx, ebn0_idx) = 0.5 * erfc(sqrt(ebn0));
+        elseif M == 4
+            BER_theoretical(mod_idx, ebn0_idx) = erfc(sqrt(ebn0));
+        elseif M == 16 || M == 64
+            BER_theoretical(mod_idx, ebn0_idx) = 2 * ((sqrt(M) - 1) / sqrt(M)) * erfc(sqrt((3 * log2(M) / (2*M - 2)) * ebn0));
+        end
         
         % SIMULACIÓN PARA CONSTELACIÓN NORMAL
         N0_normal = Eb_normal / ebn0;
@@ -107,11 +117,10 @@ for mod_idx = 1:length(modulations)
         
         errors_gray = sum(bits ~= demod_bits_gray);
         BER_gray(mod_idx, ebn0_idx) = errors_gray / N_adjusted;
-    end
-    
-    fprintf('Completada la simulación para %s (normal y Gray)\n', modulations{mod_idx});
+    end    
 end
 
+% Gráfica BER Binario
 figure;
 for mod_idx = 1:length(modulations)
     semilogy(EbN0dB, BER_normal(mod_idx, :), colors{mod_idx}, 'LineWidth', 1.5, 'MarkerSize', 6);
@@ -125,6 +134,7 @@ legend(modulations, 'Location', 'southwest');
 axis([min(EbN0dB) max(EbN0dB) 1e-6 1]);
 set(gca, 'FontSize', 12);
 
+% Gráfica BER Gray
 figure;
 for mod_idx = 1:length(modulations)
     semilogy(EbN0dB, BER_gray(mod_idx, :), colors{mod_idx}, 'LineWidth', 1.5, 'MarkerSize', 6);
@@ -138,6 +148,7 @@ legend(modulations, 'Location', 'southwest');
 axis([min(EbN0dB) max(EbN0dB) 1e-6 1]);
 set(gca, 'FontSize', 12);
 
+% Gráfica comparativa Binario vs Gray
 figure;
 for mod_idx = 1:length(modulations)
     semilogy(EbN0dB, BER_normal(mod_idx, :), [colors{mod_idx}(1) linestyles{1} colors{mod_idx}(3:end)], 'LineWidth', 1.5, 'MarkerSize', 6);
@@ -153,6 +164,28 @@ title('Comparación de BER: Binaria vs Gray');
 legend_entries = {};
 for i = 1:length(modulations)
     legend_entries = [legend_entries, [modulations{i} ' Binario'], [modulations{i} ' Gray']];
+end
+legend(legend_entries, 'Location', 'southwest');
+axis([min(EbN0dB) max(EbN0dB) 1e-6 1]);
+set(gca, 'FontSize', 12);
+
+% Gráfica comparativa Experimental vs Teórico
+figure;
+markers = {'o', 's', 'd', '^'};
+for mod_idx = 1:length(modulations)
+    semilogy(EbN0dB, BER_gray(mod_idx, :), [colors{mod_idx}(1) '-' markers{mod_idx}], 'LineWidth', 1.5, 'MarkerSize', 6);
+    hold on;
+    
+    semilogy(EbN0dB, BER_theoretical(mod_idx, :), [colors{mod_idx}(1) ':'], 'LineWidth', 2);
+end
+
+grid on;
+xlabel('E_b/N_0 (dB)');
+ylabel('BER');
+title('Comparación de BER: Experimental (Gray) vs Teórico');
+legend_entries = {};
+for i = 1:length(modulations)
+    legend_entries = [legend_entries, [modulations{i} ' Experimental'], [modulations{i} ' Teórico']];
 end
 legend(legend_entries, 'Location', 'southwest');
 axis([min(EbN0dB) max(EbN0dB) 1e-6 1]);
