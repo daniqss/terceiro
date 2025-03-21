@@ -2,7 +2,6 @@
 % Práctica 1 - Software de Comunicaciones
 clear;
 close all;
-clc;
 
 N = 10000;
 EbN0dB = 0:1:10;
@@ -57,16 +56,18 @@ for mod_idx = 1:length(modulations)
         % SIMULACIÓN PARA CONSTELACIÓN NORMAL
         N0_normal = Eb_normal / ebn0;
         
-        noise_real = sqrt(N0_normal/2) * randn(size(symbols_normal));
-        noise_imag = sqrt(N0_normal/2) * randn(size(symbols_normal));
-        noise_normal = noise_real + 1i*noise_imag;
-        
+        if M == 2 || M == 4
+            noise_normal = sqrt(N0_normal/2) * randn(1, length(symbols_normal));
+        else
+            noise_normal = sqrt(N0_normal/2) * (randn(1, length(symbols_normal)) + 1j*randn(1, length(symbols_normal)));
+        end
         received_normal = symbols_normal + noise_normal;
 
+
         demod_indices_normal = zeros(1, length(received_normal));
-        for i = 1:length(received_normal)
-            [~, idx] = min(abs(received_normal(i) - constellation_normal));
-            demod_indices_normal(i) = idx - 1;
+        for ii = 1:length(received_normal)
+            [~, idx] = min(abs(received_normal(ii) - constellation_normal));
+            demod_indices_normal(ii) = idx - 1;
         end
         
         % Convertir índices a bits
@@ -82,11 +83,15 @@ for mod_idx = 1:length(modulations)
         % SIMULACIÓN PARA CONSTELACIÓN GRAY
         N0_gray = Eb_gray / ebn0;
         
-        noise_real = sqrt(N0_gray/2) * randn(size(symbols_gray));
-        noise_imag = sqrt(N0_gray/2) * randn(size(symbols_gray));
-        noise_gray = noise_real + 1i*noise_imag;
         
+        if M == 2 || M == 4
+            noise_gray = sqrt(N0_gray/2) * randn(1, length(symbols_gray));
+        else
+            noise_gray = sqrt(N0_gray/2) * (randn(1, length(symbols_gray)) + 1j*randn(1, length(symbols_gray)));
+        end
+
         received_gray = symbols_gray + noise_gray;
+
         
         demod_indices_gray = zeros(1, length(received_gray));
         for i = 1:length(received_gray)
@@ -115,7 +120,7 @@ end
 grid on;
 xlabel('E_b/N_0 (dB)');
 ylabel('BER');
-title('BER vs Eb/N0 para Modulaciones con Mapeo Binario');
+title('BER vs Eb/N0 usando binario');
 legend(modulations, 'Location', 'southwest');
 axis([min(EbN0dB) max(EbN0dB) 1e-6 1]);
 set(gca, 'FontSize', 12);
@@ -128,7 +133,7 @@ end
 grid on;
 xlabel('E_b/N_0 (dB)');
 ylabel('BER');
-title('BER vs Eb/N0 para Modulaciones con Mapeo Gray');
+title('BER vs Eb/N0 usando mapeo graymapping');
 legend(modulations, 'Location', 'southwest');
 axis([min(EbN0dB) max(EbN0dB) 1e-6 1]);
 set(gca, 'FontSize', 12);
@@ -144,7 +149,7 @@ end
 grid on;
 xlabel('E_b/N_0 (dB)');
 ylabel('BER');
-title('Comparación de BER: Codificación Binaria vs Gray');
+title('Comparación de BER: Binaria vs Gray');
 legend_entries = {};
 for i = 1:length(modulations)
     legend_entries = [legend_entries, [modulations{i} ' Binario'], [modulations{i} ' Gray']];
