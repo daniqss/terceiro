@@ -18,16 +18,16 @@ BER_theoretical = zeros(length(modulations), length(EbN0dB));
 
 for mod_idx = 1:length(modulations)
     M = M_values(mod_idx);
-    k = log2(M);
+    b = log2(M);
     
-    N_adjusted = floor(N/k)*k;
+    N_adjusted = floor(N/b)*b;
     
     % generar N bits de forma aleatoria con probabilidad p(0) = p(1) = 0.5
     bits = randn(1, N_adjusted) > 0.5;
     
-    % reshape bits para procesar k bits a la vez
-    bits_reshaped = reshape(bits, k, []);
-    indices = bit2int(bits_reshaped, k);
+    % reshape bits para procesar b bits a la vez
+    bits_reshaped = reshape(bits, b, []);
+    indices = bit2int(bits_reshaped, b);
 
     
     if M == 2 % BPSK
@@ -46,11 +46,11 @@ for mod_idx = 1:length(modulations)
     
     symbols_normal = constellation_normal(indices + 1);
     Es_normal = mean(abs(constellation_normal).^2);
-    Eb_normal = Es_normal / k;
+    Eb_normal = Es_normal / b;
     
     symbols_gray = constellation_gray(indices + 1);
     Es_gray = mean(abs(constellation_gray).^2);
-    Eb_gray = Es_gray / k;
+    Eb_gray = Es_gray / b;
     
     for ebn0_idx = 1:length(EbN0dB)
         ebn0 = 10^(EbN0dB(ebn0_idx)/10);
@@ -74,17 +74,19 @@ for mod_idx = 1:length(modulations)
         received_normal = symbols_normal + noise_normal;
 
 
+        % distancia euclídea para calculo del error
         demod_indices_normal = zeros(1, length(received_normal));
         for ii = 1:length(received_normal)
-            [~, idx] = min(abs(received_normal(ii) - constellation_normal));
-            demod_indices_normal(ii) = idx - 1;
+            % ~ para non gardar o valor
+            [~, p] = min(abs(received_normal(ii) - constellation_normal));
+            demod_indices_normal(ii) = p - 1;
         end
         
         % Convertir índices a bits
         demod_bits_normal = [];
-        for i = 1:length(demod_indices_normal)
-            b = de2bi(demod_indices_normal(i), k);
-            demod_bits_normal = [demod_bits_normal, b];
+        for ii = 1:length(demod_indices_normal)
+            demod_bit = de2bi(demod_indices_normal(ii), b);
+            demod_bits_normal = [demod_bits_normal, demod_bit];
         end
         
         errors_normal = sum(bits ~= demod_bits_normal);
@@ -104,15 +106,15 @@ for mod_idx = 1:length(modulations)
 
         
         demod_indices_gray = zeros(1, length(received_gray));
-        for i = 1:length(received_gray)
-            [~, idx] = min(abs(received_gray(i) - constellation_gray));
-            demod_indices_gray(i) = idx - 1;
+        for ii = 1:length(received_gray)
+            [~, idx] = min(abs(received_gray(ii) - constellation_gray));
+            demod_indices_gray(ii) = idx - 1;
         end
         
         demod_bits_gray = [];
-        for i = 1:length(demod_indices_gray)
-            b = de2bi(demod_indices_gray(i), k);
-            demod_bits_gray = [demod_bits_gray, b];
+        for ii = 1:length(demod_indices_gray)
+            demod_bit = de2bi(demod_indices_gray(ii), b);
+            demod_bits_gray = [demod_bits_gray, demod_bit];
         end
         
         errors_gray = sum(bits ~= demod_bits_gray);
@@ -143,7 +145,7 @@ end
 grid on;
 xlabel('E_b/N_0 (dB)');
 ylabel('BER');
-title('BER vs Eb/N0 usando mapeo graymapping');
+title('BER vs Eb/N0 usando mapeo Gray');
 legend(modulations, 'Location', 'southwest');
 axis([min(EbN0dB) max(EbN0dB) 1e-6 1]);
 set(gca, 'FontSize', 12);
@@ -160,16 +162,16 @@ end
 grid on;
 xlabel('E_b/N_0 (dB)');
 ylabel('BER');
-title('Comparación de BER: Binaria vs Gray');
+title('Comparación de BER: Binario vs Gray');
 legend_entries = {};
-for i = 1:length(modulations)
-    legend_entries = [legend_entries, [modulations{i} ' Binario'], [modulations{i} ' Gray']];
+for ii = 1:length(modulations)
+    legend_entries = [legend_entries, [modulations{ii} ' Binario'], [modulations{ii} ' Gray']];
 end
 legend(legend_entries, 'Location', 'southwest');
 axis([min(EbN0dB) max(EbN0dB) 1e-6 1]);
 set(gca, 'FontSize', 12);
 
-% Gráfica comparativa Experimental vs Teórico
+% Gráfica comparativa Experimental (Gray) vs Teórico
 figure;
 markers = {'o', 's', 'd', '^'};
 for mod_idx = 1:length(modulations)
@@ -184,8 +186,29 @@ xlabel('E_b/N_0 (dB)');
 ylabel('BER');
 title('Comparación de BER: Experimental (Gray) vs Teórico');
 legend_entries = {};
-for i = 1:length(modulations)
-    legend_entries = [legend_entries, [modulations{i} ' Experimental'], [modulations{i} ' Teórico']];
+for ii = 1:length(modulations)
+    legend_entries = [legend_entries, [modulations{ii} ' Experimental'], [modulations{ii} ' Teórico']];
+end
+legend(legend_entries, 'Location', 'southwest');
+axis([min(EbN0dB) max(EbN0dB) 1e-6 1]);
+set(gca, 'FontSize', 12);
+
+figure;
+markers = {'o', 's', 'd', '^'};
+for mod_idx = 1:length(modulations)
+    semilogy(EbN0dB, BER_normal(mod_idx, :), [colors{mod_idx}(1) '-' markers{mod_idx}], 'LineWidth', 1.5, 'MarkerSize', 6);
+    hold on;
+    
+    semilogy(EbN0dB, BER_theoretical(mod_idx, :), [colors{mod_idx}(1) ':'], 'LineWidth', 2);
+end
+
+grid on;
+xlabel('E_b/N_0 (dB)');
+ylabel('BER');
+title('Comparación de BER: Experimental (Binario) vs Teórico');
+legend_entries = {};
+for ii = 1:length(modulations)
+    legend_entries = [legend_entries, [modulations{ii} ' Experimental (Binario)'], [modulations{ii} ' Teórico']];
 end
 legend(legend_entries, 'Location', 'southwest');
 axis([min(EbN0dB) max(EbN0dB) 1e-6 1]);
@@ -193,7 +216,7 @@ set(gca, 'FontSize', 12);
 
 function bits = de2bi(decimal, num_bits)
     bits = zeros(1, num_bits);
-    for i = 1:num_bits
-        bits(i) = bitget(decimal, num_bits-i+1);
+    for ii = 1:num_bits
+        bits(ii) = bitget(decimal, num_bits - ii + 1);
     end
 end
