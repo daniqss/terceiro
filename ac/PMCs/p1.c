@@ -1,3 +1,4 @@
+#include <papiStdEventDefs.h>
 #define N 600
 #define DATA_TYPE double
 
@@ -26,33 +27,32 @@ void handle_error(int retval) {
 
 int main(int argc, char **argv) {
   double *matrix, *result;
-  int retval, EventSet = PAPI_NULL;
-  unsigned native = 0x0;
-  PAPI_event_info_t info;
+  int retval, eventset = PAPI_NULL;
+  int events[] = {
+      PAPI_TOT_CYC, // bien
+      // PAPI_REF_CYC, // no existe
+      // PAPI_TOT_INS, // si existe pero no se puede contar por hardware??
+      // PAPI_L1_TCM,  // no existe
+      // PAPI_L2_TCM,  // no existe
+      // PAPI_L3_TCM,  // no existe
+      // PAPI_LD_INS, // no existe
+      // PAPI_SR_INS, // no existe
+      PAPI_FP_OPS, // yupi si existe
+  };
+  long long values[sizeof(events) / sizeof(int)];
 
-  printf("ei fuenas a todos aqui willirex\n");
-  /* Initialize the library */
-  retval = PAPI_library_init(PAPI_VER_CURRENT);
-  if (retval != PAPI_VER_CURRENT)
+  // iniciar papi
+  if ((retval = PAPI_library_init(PAPI_VER_CURRENT)) != PAPI_VER_CURRENT)
     handle_error(retval);
 
-  /* Create an EventSet */
-  retval = PAPI_create_eventset(&EventSet);
-  if (retval != PAPI_OK)
+  // crear un eventset al q añadiremos eventos q queramos controlar
+  if ((retval = PAPI_create_eventset(&eventset)) != PAPI_OK)
     handle_error(retval);
 
-  /* Find the first available native event */
-  native = PAPI_NATIVE_MASK | 0;
-  retval = PAPI_enum_event(&native, PAPI_ENUM_FIRST);
-  if (retval != PAPI_OK)
-    handle_error(retval);
-
-  printf("eieieiiie e pequeña no digas eso");
-
-  /* Add it to the eventset */
-  retval = PAPI_add_event(EventSet, native);
-  if (retval != PAPI_OK)
-    handle_error(retval);
+  for (int i = 0; i < sizeof(events) / sizeof(int); ++i) {
+    if ((retval = PAPI_add_event(eventset, events[i])) != PAPI_OK)
+      handle_error(retval);
+  }
 
   posix_memalign((void **)&matrix, 64, sizeof(double) * N * N);
   posix_memalign((void **)&result, 64, sizeof(double) * N * N);
@@ -66,7 +66,13 @@ int main(int argc, char **argv) {
 
   printf("Matrix size: %d x %d\n", N, N);
 
-  // Kernel que debemos medir
+  // empezamos a medir
+  if ((retval = PAPI_reset(eventset) != PAPI_OK))
+    handle_error(retval);
+  if ((retval = PAPI_start(eventset) != PAPI_OK))
+    handle_error(retval);
+
+  // kernel a medir
   for (int i = 1; i < N; ++i) {
     for (int j = 0; j < i; ++j) {
       for (int k = 0; k < N; ++k) {
@@ -74,16 +80,20 @@ int main(int argc, char **argv) {
       }
     }
   }
-  printf("Kernel: min(i,j,k)\n");
 
-  // Fin del kernel
+  // fin del kernel
+  // detenemos por tanto la medicion
+  if ((retval = PAPI_stop(eventset, values)) != PAPI_OK)
+    handle_error(retval);
+  for (int i = 0; i < sizeof(events) / sizeof(int); ++i) {
+    printf("Event %d: %lld\n", events[i], values[i]);
+  }
 
   if (argc > 42 && !strcmp(argv[0], "")) {
     print_array(N, result);
   }
 
-  /* Executes if all low-level PAPI
-  function calls returned PAPI_OK */
-  printf("\033[0;32mPASSED\n\033[0m");
-  exit(0);
+  PAPI_cleanup_eventset(eventset);
+  PAPI_destroy_eventset(&eventset);
+  return EXIT_SUCCESS;
 }
