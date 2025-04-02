@@ -160,6 +160,14 @@ SELECT d.dname, count(DISTINCT ep.empno)
 FROM Dept d LEFT JOIN Pro p on d.deptno = p.deptno AND d.deptno IN (30, 40)
     LEFT JOIN Emppro ep on ep.prono = p.prono
 GROUP BY d.deptno, d.dname;
+-- +------------+--------------------------+
+-- | dname      | count(DISTINCT ep.empno) |
+-- +------------+--------------------------+
+-- | ACCOUNTING |                        0 |
+-- | RESEARCH   |                        0 |
+-- | SALES      |                        4 |
+-- | OPERATIONS |                        0 |
+-- +------------+--------------------------+
 
 
 -- 1. Muestra cuántos empleados subordinados tiene cada jefe, que fueran contratados

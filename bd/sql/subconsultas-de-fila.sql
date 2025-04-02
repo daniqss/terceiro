@@ -1,6 +1,6 @@
 -- 1. Muestra los empleados que ganan más del salario medio de la empresa. Muestra
 -- también dicho salario medio.
-EXPLAIN SELECT ename, (SELECT avg(sal) FROM Emp)
+EXPLAIN SELECT ename, sal, (SELECT avg(sal) FROM Emp)
 FROM Emp
 WHERE sal > (SELECT avg(sal) FROM Emp)
 -- +-------+----------------------------+
@@ -34,11 +34,11 @@ WHERE sal > (SELECT avg(sal) FROM Emp)
 -- Muestra también dicho salario medio.
 SELECT ename, sal, deptno, sub.salario_medio
 FROM Emp e JOIN (
-    SELECT deptno depart, avg(sal) AS salario_medio
+    SELECT deptno as depart, avg(sal) AS salario_medio
     FROM Emp
     GROUP BY deptno
 ) AS sub ON deptno = depart
-WHERE sal > salario_medio
+WHERE sal > sub.salario_medio
 -- +-------+---------+--------+---------------+
 -- | ename | sal     | deptno | salario_medio |
 -- +-------+---------+--------+---------------+
@@ -94,7 +94,7 @@ HAVING sum(hours) >= ALL(
 -- empleados que trabajan en el proyecto).
 SELECT avg(sub.horas_medias)
 FROM (
-    SELECT sum(hours) AS horas_medias
+    SELECT sum(hours) AS horas_medias, prono
     FROM Emppro
     GROUP BY prono
 ) AS sub
