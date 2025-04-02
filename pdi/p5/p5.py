@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.fft as sp
 
+
 fs = 22100
 duracion = 22100
 n = np.arange(duracion) / fs
@@ -26,7 +27,7 @@ plt.figure(figsize=(10, 4))
 plt.stem(freqs_shifted, np.abs(X_shifted))
 plt.xlabel("Frecuencia (Hz)")
 plt.ylabel("Magnitud")
-plt.title("DFT de la señal sin ruido")
+plt.title("DFT de la señal original")
 plt.grid()
 plt.show()
 
@@ -41,5 +42,43 @@ plt.stem(freqs_shifted, np.abs(X_noisy_shifted))
 plt.xlabel("Frecuencia (Hz)")
 plt.ylabel("Magnitud")
 plt.title("DFT de la señal con ruido")
+plt.grid()
+plt.show()
+
+fcorte = 1500
+HPB = (freqs_shifted > -fcorte) & (freqs_shifted < fcorte)
+X_filtered = X_shifted * HPB
+x_filtered = sp.ifft(sp.ifftshift(X_filtered)).real
+
+plt.figure(figsize=(10, 4))
+plt.stem(freqs_shifted, np.abs(X_filtered))
+plt.xlabel("Frecuencia (Hz)")
+plt.ylabel("Magnitud")
+plt.title("DFT - Filtro Paso Bajo (Fundamental)")
+plt.grid()
+plt.show()
+
+HPB2 = ((freqs_shifted > -2500) & (freqs_shifted < -500)) | ((freqs_shifted > 500) & (freqs_shifted < 2500))
+X_filtered2 = X_shifted * HPB2
+x_filtered2 = sp.ifft(sp.ifftshift(X_filtered2)).real
+
+plt.figure(figsize=(10, 4))
+plt.stem(freqs_shifted, np.abs(X_filtered2))
+plt.xlabel("Frecuencia (Hz)")
+plt.ylabel("Magnitud")
+plt.title("DFT - Filtro Paso Banda (Fundamental + 1er Armónico)")
+plt.grid()
+plt.show()
+
+f_last = f * Na
+HPA = (freqs_shifted > f_last - 500) & (freqs_shifted < f_last + 500)
+X_filtered3 = X_shifted * HPA
+x_filtered3 = sp.ifft(sp.ifftshift(X_filtered3)).real
+
+plt.figure(figsize=(10, 4))
+plt.stem(freqs_shifted, np.abs(X_filtered3))
+plt.xlabel("Frecuencia (Hz)")
+plt.ylabel("Magnitud")
+plt.title("DFT - Filtro Último Armónico")
 plt.grid()
 plt.show()
