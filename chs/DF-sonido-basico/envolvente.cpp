@@ -1,39 +1,53 @@
-#include"envolvente.h"
-#include"generadorFrecuencia.h"
+#include "envolvente.h"
+#include "generadorFrecuencia.h"
+#include <cstdint>
 
-void envolvente::formar(){
+void envolvente::formar() {
 
-	sc_uint<12> muestra; 
-	int indice;
-	sc_uint<22> prod;
+  sc_uint<12> muestra;
+  int indice;
+  int32_t t1, t2;
+  sc_uint<22> prod;
+  indice = 0;
+  double x, y;
 
-	while(true){
+  while (true) {
 
-		indice = 0; 
+    // una envolvente muy sencilla en forma de subida y bajada relativamente
+    // suave y una meseta prolongada aquï¿½ se pueden crear envolventes mï¿½s
+    // sofisticadas siempre se debe usar aritmï¿½tica entera para conseguirlo, y
+    // nunca usar funciones trascenentales
 
-		// una envolvente muy sencilla en forma de subida y bajada relativamente suave y una meseta prolongada
-		// aquí se pueden crear envolventes más sofisticadas
-		// siempre se debe usar aritmética entera para conseguirlo, y nunca usar funciones trascenentales 
+    for (int i = 0; i < SAMPLES_PER_SECOND; ++i) {
 
-		for (int i = 0; i < SAMPLES_PER_SECOND; ++i) {
+      sampleIn->read(muestra);
 
-			sampleIn->read(muestra);
+      //   if (i < 1024) { // rampa de subida
+      //     prod = (muestra * indice) >> 10;
+      //     muestra = prod;
+      //     ++indice;
+      //   }
 
-			if (i < 1024) {		// rampa de subida
-				prod = (muestra * indice) >> 10;
-				muestra = prod;
-				++indice;
-			}
+      //   if (i > (SAMPLES_PER_SECOND - 1024)) { // rampa de bajada
+      //     prod = (muestra * indice) >> 10;
+      //     muestra = prod;
+      //     --indice;
+      //   }
 
-			if (i > (SAMPLES_PER_SECOND - 1024)) {		// rampa de bajada
-				prod = (muestra * indice) >> 10;
-				muestra = prod;
-				--indice;
-			}
+      x = i;
+      y = (-3E-09 * x * x) + (0.0001 * x) + 0.3;
+      y = y * muestra;
+      muestra = (int)y;
 
-			sampleOut->write( muestra );
+      // t2 = (-21 * i * i) >> 21;
+      // t1 = (219 * i) >> 9;
 
-		}
-	}
+      // y = t1 + t2 + 226;
 
+      // muestra *= y;
+      // muestra >>= 12;
+
+      sampleOut->write(muestra);
+    }
+  }
 }
