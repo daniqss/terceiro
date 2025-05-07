@@ -19,6 +19,6 @@ run: $(TARGET)
 	./$(TARGET)
 
 clean:
-	rm -f $(OBJ) $(TARGET) traza.vcd
+	rm -f $(OBJ) $(TARGET) traza.vcd sonidoGenerado.wav
 
 .PHONY: all clean run

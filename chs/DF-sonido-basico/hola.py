@@ -4,8 +4,8 @@ nxpuntos = []
 nypuntos = []
 for i in range(len(xpuntos)):
 
-    nxpuntos.append(35000*xpuntos[i]/240)
-    nypuntos.append(35000*ypuntos[i]/240)
+    nxpuntos.append(34000*xpuntos[i]/240)
+    nypuntos.append(34000*ypuntos[i]/240)
     print(f"x = {nxpuntos[i]:.4f} y = {nypuntos[i]:.4f} i = {i}\n")
 
 for i in range(len(nxpuntos) - 1):
