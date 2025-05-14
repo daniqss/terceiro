@@ -93,8 +93,8 @@ void envolvente::formar() {
       sustain_pos = indice - attack_samples;
       vibrato_cycle =
           (sustain_pos * SUSTAIN_VIBRATO_CYCLE_SCALE) % SAMPLES_PER_SECOND;
-      vibrato_angle =
-          (vibrato_cycle * SUSTAIN_VIBRATO_ANGLE_SCALE) / SAMPLES_PER_SECOND;
+
+      vibrato_angle = (vibrato_cycle * SUSTAIN_VIBRATO_ANGLE_SCALE) >> 15;
 
       vibrato_value = 0;
       if (vibrato_angle < 1024) {
